@@ -1,0 +1,126 @@
+<binding-template>
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.mdm.Model" />
+		<bean beanid="model-backend" class="com.cordys.coe.bf.content.types.coboc.mdm.ModelBackendRef" />		
+		<bean beanid="model-backend-entity" class="com.cordys.coe.bf.content.types.coboc.mdm.ModelBackendEntityRef" />		
+		<bean beanid="model-link" class="com.cordys.coe.bf.content.types.coboc.mdm.ModelLink" />		
+	</beans>
+	
+	<handlers>
+		<handler type="bean" beanid="default" xmlpath="@key" fieldname="key"  />
+		<handler type="bean" beanid="default" xmlpath="@name" fieldname="name"  />
+		<handler type="bean" beanid="default" xmlpath="@entity_type" fieldname="templateKey"  />
+		<handler type="bean" beanid="default" xmlpath="@lastModified" fieldname="lastModified"  />	
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/PARENT_KEY" fieldname="parentKey"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/ORGANIZATION" fieldname="organization"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OWNER" fieldname="owner"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/DESCRIPTION" fieldname="description"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/EVENT_FLAG" fieldname="eventFlag"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/HISTORY" fieldname="history"  />	
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/model/documentProperties" fieldname="documentProperties" xmlfield="true"/>
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/model/content/model/receiverdn" fieldname="receiverDn"/>
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/model/content/model/processordn" fieldname="processorDn"/>		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/model/content/model/description" fieldname="modelDescription"/>
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/model/content/model/hubname" fieldname="hubName" keepchildren="true"/>
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/model/content/model/hubname/@entity_id" fieldname="hubHandle.key"/>		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/model/content/backends/backend" fieldname="backendRefs" fieldbean="model-backend" keepchildren="true"/>
+		<handler type="bean" beanid="model-backend" xmlpath="old/ENTITY/OBJECT/model/content/backends/backend/@entity_id" fieldname="key" />
+		<handler type="bean" beanid="model-backend" xmlpath="old/ENTITY/OBJECT/model/content/backends/backend/@top" fieldname="top" />
+		<handler type="bean" beanid="model-backend" xmlpath="old/ENTITY/OBJECT/model/content/backends/backend/@left" fieldname="left" />
+		<handler type="bean" beanid="model-backend" xmlpath="old/ENTITY/OBJECT/model/content/backends/backend/@height" fieldname="height" />
+		<handler type="bean" beanid="model-backend" xmlpath="old/ENTITY/OBJECT/model/content/backends/backend/@width" fieldname="width" />
+		<handler type="bean" beanid="model-backend" xmlpath="old/ENTITY/OBJECT/model/content/backends/backend/entities/entity" fieldname="entityRefs" fieldbean="model-backend-entity" keepchildren="true" />
+		<handler type="bean" beanid="model-backend-entity" xmlpath="old/ENTITY/OBJECT/model/content/backends/backend/entities/entity/@entity_id" fieldname="key" />		
+		<handler type="bean" beanid="model-backend" xmlpath="old/ENTITY/OBJECT/model/content/backends/backend/entities/complexrelations/@backendname" fieldname="complexRelationsBackend" params="skip-empty"/>				
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/model/content/links/link" fieldname="links" fieldbean="model-link" keepchildren="true" />		
+		<handler type="bean" beanid="model-link" xmlpath="old/ENTITY/OBJECT/model/content/links/link/sod" fieldname="sodName" keepchildren="true" />		
+		<handler type="bean" beanid="model-link" xmlpath="old/ENTITY/OBJECT/model/content/links/link/sod/@entity_id" fieldname="sodHandle.key" />				
+		<handler type="bean" beanid="model-link" xmlpath="old/ENTITY/OBJECT/model/content/links/link/sod/@type" fieldname="sodType" />				
+		<handler type="bean" beanid="model-link" xmlpath="old/ENTITY/OBJECT/model/content/links/link/sodentity" fieldname="sodEntityName" keepchildren="true" />		
+		<handler type="bean" beanid="model-link" xmlpath="old/ENTITY/OBJECT/model/content/links/link/sodentity/@entity_id" fieldname="sodEntityHandle.key" />				
+		<handler type="bean" beanid="model-link" xmlpath="old/ENTITY/OBJECT/model/content/links/link/sodentity/@templatelocation" fieldname="sodEntityTemplate" />				
+		<handler type="bean" beanid="model-link" xmlpath="old/ENTITY/OBJECT/model/content/links/link/codentity" fieldname="codEntityName" keepchildren="true" />		
+		<handler type="bean" beanid="model-link" xmlpath="old/ENTITY/OBJECT/model/content/links/link/codentity/@entity_id" fieldname="codEntityHandle.key" />				
+		<handler type="bean" beanid="model-link" xmlpath="old/ENTITY/OBJECT/model/content/links/link/codentity/@templatelocation" fieldname="codEntityTemplate" />				
+		<handler type="bean" beanid="model-link" xmlpath="old/ENTITY/OBJECT/model/content/links/link/subscription" fieldname="subscription" xmlfield="true" />		
+	</handlers>
+	
+	<template>
+		<tuple key="" name="" entity_type="" lastModified="" FILE_TYPE="mdm-model">
+	        <old>
+	          <ENTITY>
+		            <PARENT_KEY></PARENT_KEY>
+		            <ORGANIZATION></ORGANIZATION>
+		            <OWNER></OWNER>
+		            <DESCRIPTION></DESCRIPTION>
+		            <EVENT_FLAG></EVENT_FLAG>
+		            <HISTORY></HISTORY>
+		            <CUSTOMKEY></CUSTOMKEY>
+		            <OBJECT>
+						<model>
+			                <documentProperties>
+			                  <name></name>
+			                  <description></description>
+			                  <caption></caption>
+			                  <mimeType/>
+			                  <notes/>
+			                  <version/>
+			                  <revision/>
+			                  <createdBy></createdBy>
+			                  <creationDate></creationDate>
+			                  <lastModifiedBy></lastModifiedBy>
+			                  <lastModificationDate></lastModificationDate>
+			                </documentProperties>
+			                <content>
+			                  <model>
+			                    <receiverdn></receiverdn>
+			                    <processordn></processordn>
+			                    <description></description>
+			                    <hubname entity_id=""></hubname>
+			                  </model>
+			                  <backends>
+			                    <backend entity_id="" top="" left="" height="" width="">
+			                      <entities>
+			                        <entity entity_id=""/>
+			                        <complexrelations backendname=""/>
+			                      </entities>
+			                    </backend>
+			                  </backends>
+			                  <links>
+			                    <link>
+			                      <sod type="" entity_id=""></sod>
+			                      <sodentity templatelocation="" entity_id=""></sodentity>
+			                      <codentity templatelocation="" entity_id=""></codentity>
+			                      <subscription>
+			                        <direction></direction>
+			                        <codtosod mapname="">
+			                          <allowinserts></allowinserts>
+			                          <publishertype publisher=""></publishertype>
+			                          <ruleid/>
+			                          <notifications>
+			                            <cpcinbox enable=""/>
+			                            <cpcprocessflow enable=""/>
+			                          </notifications>
+			                        </codtosod>
+			                        <sodtocod mapname="">
+			                          <allowinserts></allowinserts>
+			                          <ruleid/>
+			                          <mergemodel>
+			                          </mergemodel>
+			                          <notifications>
+			                            <cpcprocessflow enable=""/>
+			                            <cpcinbox enable=""/>
+			                          </notifications>
+			                        </sodtocod>
+			                      </subscription>
+			                      <download/>
+			                    </link>
+			                  </links>
+			                </content>
+			              </model>
+					</OBJECT>
+				</ENTITY>
+			</old>
+		</tuple>
+	</template>
+</binding-template>

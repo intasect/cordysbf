@@ -1,0 +1,53 @@
+<binding-template>
+	<imports>
+		<template file="ProcessBpml_FileSystem.xml" template-id="bpml" destpath="tuple/bpml" bean-rewrite="default>bpml" />
+		<template file="ProcessBpmn_FileSystem.xml" template-id="bpmn" destpath="tuple/bpmn" bean-rewrite="default>bpmn" />
+	</imports>
+	
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.folders.ProcessTemplate" />
+	</beans>
+	
+	<handlers>
+		<handler type="property" propname="bf-version" xmlpath="@bf-version"  />
+		<handler type="bean" beanid="default" xmlpath="@key" fieldname="key"  />
+		<handler type="bean" beanid="default" xmlpath="@name" fieldname="name"  />
+		<handler type="bean" beanid="default" xmlpath="@entity_type" fieldname="templateId"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/PARENT_KEY" fieldname="parentKey"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/ORGANIZATION" fieldname="organization"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OWNER" fieldname="owner"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/DESCRIPTION" fieldname="description"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/EVENT_FLAG" fieldname="eventFlag"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/HISTORY" fieldname="history"  />			
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/TEMPLATE_ID" fieldname="templateId"  />	
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/processinstance" fieldname="processTemplateData" xmlfield="true" params="keep-ns" />
+		<import-handlers template-id="bpmn" />
+		<handler type="bean" beanid="default" fieldbean="bpmn" xmlpath="bpmn" fieldname="bpmn" keepchildren="true" />
+		<import-handlers template-id="bpml" />
+		<handler type="bean" beanid="default" fieldbean="bpml" xmlpath="bpml" fieldname="bpml" keepchildren="true" />
+	</handlers>
+	
+	<template>
+		<tuple key="" name="" level="organization" entity_type="" FILE_TYPE="process-template" bf-version="">
+			<old>
+				<ENTITY>
+					<PARENT_KEY></PARENT_KEY>
+					<ORGANIZATION></ORGANIZATION>
+					<OWNER></OWNER>
+					<DESCRIPTION></DESCRIPTION>
+					<EVENT_FLAG></EVENT_FLAG>
+					<HISTORY></HISTORY>
+					<TEMPLATE_ID></TEMPLATE_ID>
+					<OBJECT>
+		              <processinstance>
+		              </processinstance>    
+					</OBJECT>
+				</ENTITY>
+			</old>
+			<bpml>
+			</bpml>
+			<bpmn>
+			</bpmn>
+		</tuple>
+	</template>
+</binding-template>

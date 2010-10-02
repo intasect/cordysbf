@@ -1,0 +1,68 @@
+<binding-template>
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.folders.Mapping" />
+	</beans>
+	
+	<handlers>
+		<handler type="bean" beanid="default" xmlpath="@key" fieldname="key"  />
+		<handler type="bean" beanid="default" xmlpath="@name" fieldname="name"  />
+		<handler type="bean" beanid="default" xmlpath="@entity_id" fieldname="objectId"  />
+		<handler type="bean" beanid="default" xmlpath="@customkey" fieldname="objectId"  />
+		<handler type="bean" beanid="default" xmlpath="@entity_type" fieldname="templateId"  />
+		<handler type="bean" beanid="default" xmlpath="@lastModified" fieldname="lastModified"  />	
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/ENTITY_ID" fieldname="objectId"  />			
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/PARENT_ID" fieldname="parentId"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/ORGANIZATION" fieldname="organization"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OWNER" fieldname="owner"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/DESCRIPTION" fieldname="description"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/EVENT_FLAG" fieldname="eventFlag"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/HISTORY" fieldname="history"  />			
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/CUSTOMKEY" fieldname="objectId"  />	
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/TEMPLATE_ID" fieldname="templateId"  />	
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/MAP_ID" fieldname="mapId" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/NAME" fieldname="key" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/VERSION" fieldname="version" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/SOURCE" fieldname="sourceId" keepchildren="true" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/SOURCE/@templatePath" fieldname="sourceKey" />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/SOURCE/@isShared" fieldname="sourceIsShared" />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/SOURCE/@shareName" fieldname="sourceShareName" />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/SOURCE/@version" fieldname="sourceVersion" />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/TARGET" fieldname="targetId" keepchildren="true" />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/TARGET/@templatePath" fieldname="targetKey" />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/TARGET/@isShared" fieldname="targetIsShared" />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/TARGET/@shareName" fieldname="targetShareName" />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/TARGET/@version" fieldname="targetVersion" />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/MAP_OBJECT/MAP_DATA" fieldname="mapData" xmlfield="true" />
+	</handlers>
+	
+	<template>
+		<tuple lastModified="" key="" name="" entity_id="" entity_type="" customkey="" level="organization">
+	        <old>
+	          <ENTITY>
+	            <ENTITY_ID></ENTITY_ID>
+	            <PARENT_ID></PARENT_ID>
+	            <ORGANIZATION></ORGANIZATION>
+	            <OWNER></OWNER>
+	            <DESCRIPTION></DESCRIPTION>
+	            <EVENT_FLAG>0</EVENT_FLAG>
+	            <HISTORY>0</HISTORY>
+	            <CUSTOMKEY></CUSTOMKEY>
+	            <TEMPLATE_ID></TEMPLATE_ID>
+	            <OBJECT>
+				  <MAP_OBJECT>
+	                <MAP_ID></MAP_ID>
+	                <NAME></NAME>
+	                <SOURCE templatePath="" isShared="" shareName="" version=""></SOURCE>
+	                <TARGET templatePath="" isShared="" shareName="" version=""></TARGET>
+	                <DESCRIPTION></DESCRIPTION>
+	                <VERSION></VERSION>
+	                <MAP_DATA>
+	                  
+	                </MAP_DATA>
+	              </MAP_OBJECT>	            
+	            </OBJECT>
+	          </ENTITY>
+	        </old>
+	      </tuple>
+	</template>
+</binding-template>

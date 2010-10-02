@@ -1,0 +1,25 @@
+<binding-template>
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.messagemodels.EmailModel" />
+	</beans>
+	
+	<handlers>
+		<handler type="bean" beanid="default" xmlpath="old/EmailModel/EmailModelId" fieldname="objectId" />
+		<handler type="bean" beanid="default" xmlpath="old/EmailModel/EmailModelName" fieldname="name" />
+		<handler type="bean" beanid="default" xmlpath="old/EmailModel/MessageTemplateId" fieldname="parentId" />
+		<handler type="bean" beanid="default" xmlpath="old/EmailModel/LastModified" fieldname="lastModified" />
+	</handlers>
+	
+	<template>
+        <tuple>
+          <old>
+            <EmailModel>
+              <EmailModelId></EmailModelId>
+              <EmailModelName></EmailModelName>
+              <MessageTemplateId></MessageTemplateId>
+              <LastModified></LastModified>
+            </EmailModel>
+          </old>
+        </tuple>
+	</template>
+</binding-template>

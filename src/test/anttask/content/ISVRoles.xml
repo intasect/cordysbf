@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<roles>
+  <role file="${src.content}\Roles\Kanban Navigator (Administrator).xml" />
+
+  <role name="Kanban Navigator (Controller)" description="Kanban Navigator (Controller)">
+    <menu>/Cordys/WCP/Menu/Kanban/controller</menu>
+  </role>
+</roles>
+
