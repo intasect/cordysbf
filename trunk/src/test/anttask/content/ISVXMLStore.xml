@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmlcontents>
+	<xmlcontent key="/Cordys/CC/CCProperties.xml" file="${src.content}\XMLStore\Cordys\CC\CCProperties.xml"/>
+	<xmlcontent
+		key="/VAFConfig.xml"
+		name="VAFConfig.xml">
+		<applications>
+			<application
+				name="OLCM">
+				<classname>com.cordys.cg.olcm.plugin.OLCMPlugin</classname>
+				<link/>
+			</application>
+		</applications>
+	</xmlcontent>
+</xmlcontents>

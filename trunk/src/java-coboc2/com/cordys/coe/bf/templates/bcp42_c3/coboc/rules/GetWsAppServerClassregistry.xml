@@ -1,0 +1,14 @@
+<binding-template templateid="COBOC-GetWsAppServerClassRegistry">
+	<handlers>
+	</handlers>
+	
+	<template>
+		<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/" >
+		  <SOAP:Body>
+			<GetCollection xmlns="http://schemas.cordys.com/1.0/xmlstore">
+				<folder recursive="true" detail="true" version="">/Cordys/WS-AppServer/runtime/classregistry</folder>
+			</GetCollection>
+		  </SOAP:Body>
+		</SOAP:Envelope>
+	</template>
+</binding-template>

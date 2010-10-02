@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<applicationconnectors>
+    <applicationconnector key="/Cordys/WCP/Application Connector/com.cordys.rtf.ApplicationConnector1">
+        <step>
+            <url>/cordys/rtf/developer/content/adminsetting.htm</url>
+            <description>ApplicationConnector1</description>
+            <caption>Provide Details for ApplicationConnector1</caption>
+            <implementation>com.cordys.rtf.ApplicationConnector1</implementation>
+            <image>/cordys/wcp/images/admin/configurationconnector.gif</image>
+            <isv>Cordys</isv>
+            <product>CPC</product>
+        </step>
+    </applicationconnector>
+    <applicationconnector key="/Cordys/WCP/Application Connector/com.cordys.rtf.ApplicationConnector2">
+        <step>
+            <url>/cordys/rtf/developer/content/adminsetting.htm</url>
+            <description>ApplicationConnector2</description>
+            <caption>Provide Details for ApplicationConnector2</caption>
+            <implementation>com.cordys.rtf.ApplicationConnector2</implementation>
+            <image>/cordys/wcp/images/admin/configurationconnector.gif</image>
+            <isv>Cordys</isv>
+            <product>CPC</product>
+        </step>
+    </applicationconnector>
+    <applicationconnector key="/Cordys/WCP/Application Connector/com.cordys.rtf.ApplicationConnector4"  file="${src.xmlstore}/appcons/AppCon4.xml" />
+</applicationconnectors>
