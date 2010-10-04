@@ -1,4 +1,4 @@
-package/**
+/**
  * Copyright 2005 Cordys R&D B.V. 
  * 
  * This file is part of the Cordys Build Framework. 
