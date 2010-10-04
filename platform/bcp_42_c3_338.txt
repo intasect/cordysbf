@@ -1,5 +1,0 @@
-Cordys
-Copyright © 2001-06 Cordys R&D B.V. All rights reserved.
-Version: C3.001
-Build: 338
-Revision: 64251
