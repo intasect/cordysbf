@@ -1,0 +1,43 @@
+<project default="upgrade-project" basedir="../../..">
+	<echo message="Base dir: ${basedir}"/>
+	<property file="${additional.properties}" />
+	<property file="./sdk/build/upgrade/upgrade.properties" />
+
+	<!-- Import the current set of properties -->
+	<property file="user.properties"/>
+	<property file="project.properties"/>
+	<property file="./sdk/build/framework.properties"/>
+	<property file="${sdk.build.framework.dir}/content-handlers.properties"/>
+	
+	<!-- Import the current tasks that are part of the build framework. -->
+	<import file="${basedir}/sdk/build/task-defs.xml"/>
+	
+	<!--Classpath -->
+	<path id="classpath">
+		<fileset dir="${sdk.lib.dir}">    
+            <include name="**/*.jar"/>
+        </fileset>
+		<fileset dir="${platform.dir}">
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>	
+	
+	<!--Pattern set which matches all Non Subversion folders -->
+	<patternset id="all.non.svn.files">
+		<include name="**/*" />
+		<exclude name="**/.svn/**" />
+	</patternset>	
+	
+	<!-- ================================= 
+          target: upgrade-project
+         ================================= -->
+    <target name="upgrade-project" 
+    	    description="--> This target upgrades the project to the current version of the SDK folder.">
+        <upgradeproject/>
+    </target>
+	
+	<!-- ================================================================ -->
+	<!-- = This section is used for target to upgrade from before 1.5.0 = -->
+	<!-- ================================================================ -->
+	
+</project>
