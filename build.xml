@@ -152,7 +152,7 @@
     	<available file="changelog.xml" property="changelog.file.exists"></available>
     	<defflag property="include.source" />
     	
-		<check-file-property property="project.site.settings.file" />    	
+		<!--check-file-property property="project.site.settings.file" /-->    	
     </target>	
 	
 	<import file="${src.buildfiles.external}/build/build-projectsite.xml"/>
@@ -458,7 +458,7 @@
 	<!-- ================================= 
           target: createrepos              
          ================================= -->
-    <target name="createrepos" description="--> Creates a new repository with this external present">
+    <target name="createrepos" if="using.svn" description="--> Creates a new repository with this external present">
         <!-- The repository will include both the build framework and the platform against which this is compiled. -->
     	<echo message="Creating folders"/>
     	<delete dir="${build.repos}"/>
@@ -518,7 +518,7 @@
 	<!--Target for making distribution of the project -->
 	<target name="dist"
 			description="Creates a distribution of the project after running tests."
-			depends="_init,checkuserprops,cleandist,updateworkingcopy,buildcoelib,test,dobuildnumber,jar,_loadtaskdefs,labelbuild,_check_changelog,docs,javadocs,copy-dist,copychangelog,makeexternal,createrepos,_create-build-info,_upload-build-to-site,deploy-site,commit-changelog">
+			depends="_init,checkuserprops,cleandist,updateworkingcopy,test,dobuildnumber,jar,_loadtaskdefs,labelbuild,_check_changelog,docs,javadocs,copy-dist,copychangelog,makeexternal,createrepos,_create-build-info,_upload-build-to-site,deploy-site,commit-changelog">
 	</target>
 
 	<!--Target for making distribution of the project -->
@@ -648,7 +648,7 @@
     <!-- ================================= 
           target: updateworkingcopy
          ================================= -->
-	<target name="updateworkingcopy" description="This target updates the local working copy">
+	<target name="updateworkingcopy" if="using.svn" description="This target updates the local working copy">
 		<svn username="${svn.username}">
 			<update dir="."/>
 		</svn>
@@ -667,7 +667,7 @@
     <!-- ================================= 
           target: updateworkingcopy-dev
          ================================= -->
-	<target name="updateworkingcopy-dev" description="This target updates the local working copy">
+	<target name="updateworkingcopy-dev" if="using.svn" description="This target updates the local working copy">
 <!--		<svn username="${svn.username}">
 			<update dir="."/>
 		</svn>
@@ -681,7 +681,7 @@
     <!-- ================================= 
           target: makeexternal              
          ================================= -->
-    <target name="makeexternal" description="--> This target adds the new release to the externals position in the repository.">
+    <target name="makeexternal" if="using.svn" description="--> This target adds the new release to the externals position in the repository.">
     	<!-- Fix the version number. -->
 		<!-- Replace the '.' in the version with an '_' -->
 		<concat append="false" force="yes" destfile="${build.dir}/tmpversion.properties">tmpversion=${version.full}</concat>
@@ -732,7 +732,7 @@
 
     </target>
 	
-	<target name="dobuildnumber" description="Makes sure a proper release can be built.">
+	<target name="dobuildnumber" if="using.svn" description="Makes sure a proper release can be built.">
 		<!-- Import the SVN tasks -->
 		<property name="do.build.number" value="true"/>
 		<svn username="${svn.username}">
@@ -755,7 +755,7 @@
 		<property file="${build.dir}/tmp.properties"/>
 	</target>
 			
-	<target name="commit-changelog" description="Commits the changelog.xml">
+	<target name="commit-changelog" if="using.svn" description="Commits the changelog.xml">
 		<svn username="${svn.username}">
 			<commit message="Updated the changelog release information (build ${version.full})">
 				<fileset file="changelog.xml" />
@@ -766,7 +766,7 @@
     <!-- ================================= 
 	      target: labelbuild              
 	     ================================= -->
-    <target name="labelbuild" description="--> To label the build in subversion">
+    <target name="labelbuild" if="using.svn" description="--> To label the build in subversion">
 		<property name="version.full" value="${project.version}.${tmp.milestone.number}"/>
 		<property name="version.svn.full" value="${project.version}.${milestone.number}"/>
 		<tstamp>
