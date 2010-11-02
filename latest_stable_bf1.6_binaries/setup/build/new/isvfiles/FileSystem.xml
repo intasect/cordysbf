@@ -1,0 +1,7 @@
+<filesystem xmlns="">
+    <file source="${build.jar}/${project.jar.name}.jar" destdir="${project.deploy}" ecxdir="cordys_install_dir" unless="skip.java"/>
+    <file source="${sdk.lib.dir}/coelib.jar" destdir="${project.deploy}" ecxdir="cordys_install_dir" unless="skip.java"/>
+  	<file source="${build.apidocs}" destdir="${project.deploy}\docs\javadoc" ecxdir="cordys_install_dir" unless="skip.javadocs"/>
+  	<file source="${build.web}" destdir="\Web${project.deploy}" ecxdir="cordys_install_dir"/>
+</filesystem>
+

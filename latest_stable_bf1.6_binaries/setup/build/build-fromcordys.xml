@@ -1,0 +1,398 @@
+<!--
+	Contains targets for exporting content from BCP
+-->
+<project name="fromcordys-content-project" default="fromcordys-all">
+	<import file="${sdk.build.framework.dir}/content-filters.xml" />
+	
+	<!--
+		Target for exporting content from ISV package or organization 
+	-->
+	<target name="fromcordys-all" 
+  			description="Exports the contents from ECX to File System">
+		<check-cordys-operation contenttype="all" operation="fromcordys" />	
+		
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter="${content.filter}"
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="roles" dir="${src.content.roles}"/>
+			<content type="methodsets" dir="${src.content.methodsets}" />
+			<content type="menus" dir="${src.content.menus}" formatOutput="${xmlstore.format.content}" />
+			<content type="toolbars" dir="${src.content.toolbars}" formatOutput="${xmlstore.format.content}" />
+			<content type="xmlstore" dir="${src.content.xmlstore}" formatOutput="${xmlstore.format.content}">	
+				<patternset refid="xmlstore.content.filter" />
+			</content>    		
+			<content type="styles" dir="${src.content.styles}"  formatOutput="${xmlstore.format.content}" />
+			<content type="applicationconnectors" dir="${src.content.appcon}" formatOutput="${xmlstore.format.content}" />
+			<content type="studio-xforms" dir="${src.content.studio.xforms}">
+				<patternset refid="studio.xforms.path.filter" />
+			</content>
+    		<content type="studio-bpms" dir="${src.content.studio.flows}">
+				<patternset refid="studio.bpm.path.filter" />
+			</content>
+    		<content type="${handler.xas}" dir="${src.content.xas}" />
+    		<content type="${handler.coboc}" dir="${src.content.coboc.folders}">
+				<patternset refid="coboc.folders.path.filter" />
+			</content>
+			<content type="xreports" dir="${src.content.xreports}">
+   				<patternset refid="xreports.path.filter" />
+   			</content>
+			<content type="localizations" dir="${src.content.localizations}">
+				<patternset refid="localizations.path.filter" />
+			</content>
+    	</contentmanager>
+  	</target>
+	
+	<!--Target for exporting the roles from ISV package or organization -->
+	<target name="fromcordys-roles" 
+  			description="Exports the roles from ECX to File System">
+		<check-cordys-operation contenttype="roles" operation="fromcordys" />
+		
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="roles" dir="${src.content.roles}" />
+    	</contentmanager>
+  	</target>
+	
+	<!--Target for exporting the users organization -->
+	<target name="fromcordys-users" 
+  			description="Exports the users from ECX to File System">
+		<check-cordys-operation contenttype="users" operation="fromcordys" />
+	
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="users" dir="${src.content.users}" />
+    	</contentmanager>
+  	</target>
+    		
+	<!--Target for exporting the methodsets from ISV package or organization -->
+	<target name="fromcordys-methodsets" 
+  			description="Exports the methodsets from ECX to File System">
+		<check-cordys-operation contenttype="methodsets" operation="fromcordys" />
+			
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="methodsets" dir="${src.content.methodsets}" />
+    	</contentmanager>
+  	</target>
+  	
+  	<!--Target for exporting the methodsets from ISV package or organization -->
+	<target name="fromcordys-localizations" 
+  			description="Exports the methodsets from ECX to File System">
+		<check-cordys-operation contenttype="localizations" operation="fromcordys" />
+  				
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="localizations" dir="${src.content.localizations}">
+				<patternset refid="localizations.path.filter" />
+			</content>
+    	</contentmanager>
+  	</target>
+	
+	<!--Target for exporting the menus from ISV package or organization -->
+	<target name="fromcordys-menus" 
+  			description="Exports the menus from ECX to File System">
+		<check-cordys-operation contenttype="menus" operation="fromcordys" />
+		
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="menus" dir="${src.content.menus}"  formatOutput="${xmlstore.format.content}" />
+    	</contentmanager>
+  	</target>
+	
+	<!--Target for exporting the toolbars from ISV package or organization -->
+	<target name="fromcordys-toolbars" 
+  			description="Exports the toolbars from ECX to File System">
+		<check-cordys-operation contenttype="toolbars" operation="fromcordys" />
+				
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="toolbars" dir="${src.content.toolbars}" formatOutput="${xmlstore.format.content}" />
+    	</contentmanager>
+  	</target>
+	
+	<!--Target for exporting the xmlstore contents from ISV package or organization -->
+	<target name="fromcordys-xmlstore" 
+  			description="Exports the xmlstore content from ECX to File System">
+		<check-cordys-operation contenttype="xmlstore" operation="fromcordys" />
+  				
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="xmlstore" dir="${src.content.xmlstore}" formatOutput="${xmlstore.format.content}">																								
+				<patternset refid="xmlstore.content.filter" />
+			</content>
+    	</contentmanager>
+  	</target>
+	
+	<!--Target for exporting the styles from ISV package or organization -->
+	<target name="fromcordys-styles" 
+  			description="Exports the styles from ECX to File System">
+		<check-cordys-operation contenttype="styles" operation="fromcordys" />
+	    		
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="styles" dir="${src.content.styles}" formatOutput="${xmlstore.format.content}" />
+    	</contentmanager>
+  	</target>
+	
+	<!--Target for exporting the application connectors from ISV package or organization -->
+	<target name="fromcordys-applicationconnectors" 
+  			description="Exports the applicationconnectors from ECX to File System">
+		<check-cordys-operation contenttype="applicationconnectors" operation="fromcordys" />
+		
+		<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="applicationconnectors" dir="${src.content.appcon}" formatOutput="${xmlstore.format.content}" />
+    	</contentmanager>
+  	</target>
+
+	<!-- 
+		Target for exporting CoBOC content. 
+	-->
+	<target name="fromcordys-coboc" 
+  			description="Exports the CoBOC contents from ECX to File System">
+		<check-cordys-operation contenttype="coboc" operation="fromcordys" />	
+	
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="${handler.coboc}" dir="${src.content.coboc.folders}">
+				<patternset refid="coboc.folders.path.filter" />
+			</content>				
+    	</contentmanager>
+  	</target>	
+
+	<!-- 
+		Target for exporting Studio BPM content. The property studio.bpm.path.filter 
+	     must be set before this target can be run.
+	-->
+	<target name="fromcordys-flows" 
+  			description="Exports the Studio BPM contents from ECX to File System">
+		<check-cordys-operation contenttype="flows" operation="fromcordys" />
+		
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="studio-bpms" dir="${src.content.studio.flows}">
+				<patternset refid="studio.bpm.path.filter" />
+			</content>
+    	</contentmanager>
+  	</target>	
+	
+	<!-- 
+		Target for exporting Studio XForms content. The property studio.xforms.path.filter 
+	     must be set before this target can be run.
+	-->
+	<target name="fromcordys-xforms" 
+  			description="Exports the Studio XForms contents from ECX to File System">
+		<check-cordys-operation contenttype="xforms" operation="fromcordys" />
+  				
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="studio-xforms" dir="${src.content.studio.xforms}">
+				<patternset refid="studio.xforms.path.filter" />
+			</content>
+    	</contentmanager>
+  	</target>		
+	
+	<!--Target for exporting all SOAP nodes under the organization from ECX to file system  -->
+	<target name="fromcordys-soapnodes" 
+  			description="Exports all SOAP nodes from ECX to file system">
+		<check-cordys-operation contenttype="soapnodes" operation="fromcordys" />
+		
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="soapnodes" dir="${src.content.soapnodes}" />
+    	</contentmanager>
+  	</target>
+	
+	<target name="fromcordys-xas" 
+  			description="Exports the XAS content from ECX to File System">
+		<check-cordys-operation contenttype="xas" operation="fromcordys" />
+	    		
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="${handler.xas}" dir="${src.content.xas}" />
+    	</contentmanager>
+  	</target>
+  	
+  	<target name="fromcordys-xreports" 
+  			description="Exports the XReports content from ECX to File System">
+		<check-cordys-operation contenttype="xreports" operation="fromcordys" />
+	    		
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter=""
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="xreports" dir="${src.content.xreports}" />
+    	</contentmanager>
+  	</target>
+	
+	<!--Target for deploying web resources to the Cordys web folder-->
+	<target name="fromcordys-web"
+			description="Copies web resources from Cordys Web Folder to File System">
+		<check-cordys-operation contenttype="web" operation="fromcordys" />
+	
+		<copy todir="${src.web}">
+			<fileset dir="${cordys.home}/Web/${project.web.name}">
+				<patternset refid="all.non.cvs.files" />
+				<patternset refid="all.non.vss.files" />
+				<patternset refid="all.non.svn.files" />
+			</fileset>
+		</copy>
+	</target>
+				
+	<!--Target for exporting content like roles, methodsets or menus 
+			from an ISV package -->
+	<target name="fromcordys-isvcontent" 
+  			description="Exports the contents from an ISV package installed on ECX to File System">
+		<check-cordys-operation contenttype="isvcontent" operation="fromcordys" />
+  				
+    	<contentmanager
+    		organization="${content.org}"
+	    	userdn="${content.userdn}"
+    		isvdn="${isv.package.dn}"
+   			operation="ecxtofile"
+   			filter="${content.filter}"
+   			host="${ldap.server}"
+	    	port="${ldap.port}"
+	    	password="${ldap.password}"
+	    	username="${ldap.user}"
+   		>
+			<content type="roles" dir="${src.content.roles}" />
+			<content type="methodsets" dir="${src.content.methodsets}" />
+			<content type="menus" dir="${src.content.menus}" formatOutput="${xmlstore.format.content}" />
+			<content type="toolbars" dir="${src.content.toolbars}" formatOutput="${xmlstore.format.content}" />
+			<content type="xmlstore" dir="${src.content.xmlstore}" formatOutput="${xmlstore.format.content}">													
+				<patternset refid="xmlstore.content.filter" />
+			</content>    		
+			<content type="styles" dir="${src.content.styles}" formatOutput="${xmlstore.format.content}" />
+			<content type="applicationconnectors" dir="${src.content.appcon}" formatOutput="${xmlstore.format.content}" />
+			<content type="xforms" dir="${src.content.studio.xforms}">
+				<patternset refid="studio.xforms.path.filter" />
+			</content>    		
+    	</contentmanager>
+  	</target>
+</project>
