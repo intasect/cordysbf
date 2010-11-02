@@ -1,8 +1,0 @@
-<project>
-	<fileset id="user.devclasses.fileset" refid="devclasses-all">
-	</fileset>
-	
-	<fileset id="devclasses-all" dir="classes">
-		<include name="**/*.class" />
-	</fileset>
-</project>
