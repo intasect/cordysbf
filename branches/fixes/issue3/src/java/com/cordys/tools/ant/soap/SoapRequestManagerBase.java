@@ -61,6 +61,11 @@ public abstract class SoapRequestManagerBase
      */
     protected String sUserDN;
     /**
+     * Current sReceiver.
+     */
+    protected String sReceiver="";    
+    
+    /**
      * Flag indicating if NOM collection is enabled.
      */
     protected boolean bNomCollectionEnabled = true;
@@ -244,6 +249,7 @@ public abstract class SoapRequestManagerBase
             int iRequestMethodNode;
 
             ISoapRequest soapRequest = createSoapRequest();
+            soapRequest.setReceiver(getReceiver());
             iRequestMethodNode = soapRequest.addMethod(getOrganizationDN(),
                                                        iOrigRequestMethodNode);
 
@@ -408,4 +414,12 @@ public abstract class SoapRequestManagerBase
     {
         this.bcpVersion = bcpVersion;
     }
+
+	public String getReceiver() {
+		return sReceiver;
+	}
+
+	public void setReceiver(String receiver) {
+		this.sReceiver = receiver;
+	}
 }
