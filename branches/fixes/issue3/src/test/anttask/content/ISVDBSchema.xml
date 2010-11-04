@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<dbschema>
+  <schema loader="${src.content}/DBSchema/HelloWorldDBInstall.sql" unloader="${src.content}/DBSchema/HelloWorldDBUnInstall.sql" /> 
+</dbschema>

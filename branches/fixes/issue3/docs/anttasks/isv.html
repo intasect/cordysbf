@@ -1,0 +1,134 @@
+<html>
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<title>ISV Task - Provided by BCP Build Framework</title>
+	<link rel="stylesheet" type="text/css" href="../stylesheets/antmanual.css">
+</head>
+
+<body>
+<h2><a name="isv">ISV</a></h2>
+<h3>Description</h3>
+<p>Creates Cordys BCP ISV package based on the given isv content xml file</p>
+<p><a href="isv-content.html">Content</a>s are used to specify the content that should be shipped with isvp.</p>
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">owner</td>
+    <td valign="top">Name of the owner of the ISV Package.</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">productname</td>
+    <td valign="top">Name of the product that will be contained in the ISV Package.</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">version</td>
+    <td valign="top">Version of the product being created.</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">type</td>
+    <td valign="top">The type of the ISV Package. The value could be 'standard' or 'componentized'.</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">destdir</td>
+    <td valign="top">The destination directory where the ISV package should be placed after creation.</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">eulafile</td>
+    <td valign="top">The File class which will provide the path of the End User License Argreement(EULA).</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+  <tr>
+    <td valign="top">imagefile</td>
+    <td valign="top">The file which will provide the path of the Side bar image  shown while uploading the ISV package.</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+  <tr>
+    <td valign="top">filename</td>
+    <td valign="top">The name of file which is created by the ISV. The name doesn't contain extension of the file.</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+  <tr>
+    <td valign="top">isvDN</td>
+    <td valign="top">Attribute which stores the distiguished name(dn) of the isv.</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+</table>
+
+<h3>Examples</h3>
+<pre>
+ &lt;isv
+ 	owner=&quot;${isv.owner}&quot;
+ 	productname=&quot;${isv.owner}&quot;
+ 	version=&quot;${isv.version}&quot;
+ 	type=&quot;${isv.type}&quot;
+ 	name=&quot;${isv.name}&quot;
+ 	filename=&quot;${isv.filename}&quot;
+ 	eulafile=&quot;{src.isv}/content/eula.html&quot;
+ 	imagefile=&quot;{src.isv}/content/sidebar.bmp&quot;
+ 	destdir=&quot;${dist.dir}&quot;&gt;
+ 		&lt;content type=&quot;roles&quot; contentfile=&quot;<a href="src/isv/content/roles.xml">${src.isv}/content/roles.xml</a>&quot; /&gt;
+ 		&lt;content type=&quot;filesystem&quot; contentfile=&quot;<a href="src/isv/content/filesystem.xml">${src.isv}/content/filesystem.xml</a>&quot; /&gt;
+ 		&lt;content type=&quot;methodsets&quot; contentfile=&quot;<a href="src/isv/content/methodsets.xml">${src.isv}/content/methodsets.xml</a>&quot; /&gt;
+ 		&lt;content type=&quot;menus&quot; contentfile=&quot;<a href="src/isv/content/menus.xml">${src.isv}/content/menus.xml</a>&quot; /&gt;
+ 		&lt;content type=&quot;systemenvironment&quot; contentfile=&quot;<a href="src/isv/content/sysenv.xml">${src.isv}/content/sysenv.xml</a>&quot; /&gt;
+ 		&lt;content type=&quot;prompts&quot; contentfile=&quot;<a href="src/isv/content/prompts.xml">${src.isv}/content/prompts.xml</a>&quot; /&gt;
+ 		&lt;content type=&quot;xmlstore&quot; contentfile=&quot;<a href="src/isv/content/xmlstore.xml">${src.isv}/content/xmlstore.xml</a>&quot; /&gt;
+ 		&lt;content type=&quot;applicationconnectors&quot; contentfile=&quot;<a href="src/isv/content/connectors.xml">${src.isv}/content/connectors.xml</a>&quot; /&gt;
+ 		&lt;content type=&quot;styles&quot; contentfile=&quot;<a href="src/isv/content/styles.xml">${src.isv}/content/styles.xml</a>&quot; /&gt;
+ 		&lt;content type=&quot;dbschema&quot; contentfile=&quot;<a href="src/isv/content/dbschema.xml">${src.isv}/content/dbschema.xml</a>&quot; /&gt;
+ 		&lt;content type=&quot;virtualdirectories&quot; contentfile=&quot;<a href="src/isv/content/virtualdir.xml">${src.isv}/content/virtualdir.xml</a>&quot; /&gt;
+ 		&lt;content type=&quot;custom&quot; handler=&quot;com.cordys.cpc.ant.BusinessObjectLoader&quot; contentfile=&quot;<a href="src/isv/content/cobocdata.xml">${src.isv}/content/cobocdata.xml</a>&quot; /&gt;
+ &lt;/isv&gt;
+</pre>
+
+<h3>Example property values</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Name</b></td>
+    <td valign="top"><b>Value</b></td>
+  </tr>
+  <tr>
+    <td valign="top">isv.owner</td>
+    <td valign="top">Cordys</td>
+  </tr>
+  <tr>
+    <td valign="top">isv.productname </td>
+    <td valign="top">HelloWorld</td>
+  </tr>
+  <tr>
+    <td valign="top">isv.version</td>
+    <td valign="top">4.2</td>
+  </tr>
+  <tr>
+    <td valign="top">isv.name</td>
+    <td valign="top">${isv.owner} ${isv.productname} ${isv.version}</td>
+  </tr>
+  <tr>
+    <td valign="top">isv.filename</td>
+    <td valign="top">${isv.name}</td>
+  </tr>
+  <tr>
+    <td valign="top">src.isv</td>
+    <td valign="top">./src/isv</td>
+  </tr>
+  <tr>
+    <td valign="top">dist.dir</td>
+    <td valign="top">./dist</td>
+  </tr>
+</table>
+<br/>
+<hr><p align="center">Copyright &copy; 2004 Cordys All rights Reserved.</p>
+</body>
+</html>
+
