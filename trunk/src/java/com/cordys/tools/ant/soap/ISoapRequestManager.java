@@ -118,20 +118,6 @@ public interface ISoapRequestManager
     public abstract String getOrganizationDN();
 
     /**
-     * Sets the current receiver.
-     *
-     * @param sReceiver receiver : soap processor's dn which needs to receive the request.
-     */
-    public void setReceiver(String sReceiver);
-
-    /**
-     * Returns the current receiver
-     *
-     * @return Current receiver
-     */
-    public String getReceiver();
-    
-    /**
      * Set the class which implements the interface <code>ISoapRequest</code>
      * This method can be used to set the class which implements interface
      * methods that the SoapRequestManager class uses.
