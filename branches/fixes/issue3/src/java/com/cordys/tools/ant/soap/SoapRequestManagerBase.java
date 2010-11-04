@@ -414,11 +414,19 @@ public abstract class SoapRequestManagerBase
     {
         this.bcpVersion = bcpVersion;
     }
-
+    
+    /*
+     * (non-Javadoc)
+     * @see com.cordys.tools.ant.soap.ISoapRequestManager#getReceiver()
+     */
 	public String getReceiver() {
 		return sReceiver;
 	}
-
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.cordys.tools.ant.soap.ISoapRequestManager#setReceiver(java.lang.String)
+	 */
 	public void setReceiver(String receiver) {
 		this.sReceiver = receiver;
 	}
