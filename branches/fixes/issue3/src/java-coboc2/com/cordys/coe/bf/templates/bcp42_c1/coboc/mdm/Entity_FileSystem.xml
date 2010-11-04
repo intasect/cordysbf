@@ -1,0 +1,63 @@
+<binding-template>
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.mdm.Entity" />
+	</beans>
+	
+	<handlers>
+		<handler type="bean" beanid="default" xmlpath="@key" fieldname="key"  />
+		<handler type="bean" beanid="default" xmlpath="@name" fieldname="name"  />
+		<handler type="bean" beanid="default" xmlpath="@entity_type" fieldname="templateKey"  />
+		<handler type="bean" beanid="default" xmlpath="@lastModified" fieldname="lastModified"  />	
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/PARENT_KEY" fieldname="parentKey"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/ORGANIZATION" fieldname="organization"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OWNER" fieldname="owner"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/DESCRIPTION" fieldname="description"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/EVENT_FLAG" fieldname="eventFlag"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/HISTORY" fieldname="history"  />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/documentProperties" fieldname="documentProperties" xmlfield="true"/>
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/content/backendname" fieldname="backendKey" />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/content/displayname" fieldname="displayName" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/content/identity" fieldname="identity" />		
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/content/templatelocation" fieldname="templateLocation" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/content/templateversion" fieldname="templateVersion" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/content/audittablename" fieldname="auditTableName" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/content/scheduleinterval" fieldname="scheduleInterval" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/content/getmethod" fieldname="getMethod" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/content/pullmethod" fieldname="pullMethod" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/content/updatemethod" fieldname="updateMethod" />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/entity/content/keyfields" fieldname="keyFields" />	
+	</handlers>
+
+	<template>
+		<tuple lastModified="" key="" name="" level="organization" entity_type="" FILE_TYPE="mdm-entity">
+			<old>
+				<ENTITY>
+					<PARENT_KEY></PARENT_KEY>
+					<ORGANIZATION></ORGANIZATION>
+					<OWNER></OWNER>
+					<DESCRIPTION></DESCRIPTION>
+					<EVENT_FLAG></EVENT_FLAG>
+					<HISTORY></HISTORY>
+					<OBJECT>
+						<entity>
+							<documentProperties></documentProperties>
+							<content>
+								<backendname></backendname>
+								<displayname></displayname>
+								<identity></identity>
+								<templatelocation></templatelocation>
+								<templateversion></templateversion>
+								<audittablename />
+								<scheduleinterval />
+								<getmethod></getmethod>
+								<pullmethod />
+								<updatemethod></updatemethod>
+								<keyfields></keyfields>
+							</content>
+						</entity>
+					</OBJECT>
+				</ENTITY>
+			</old>
+		</tuple>
+	</template>
+</binding-template>

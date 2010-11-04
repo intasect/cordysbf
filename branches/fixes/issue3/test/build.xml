@@ -1,0 +1,787 @@
+<project default="all" basedir=".">
+	<!--
+		Macro to convert the given path to an absolute path.
+	-->	
+	<macrodef name="abspath">
+		<attribute name="path" />
+		<attribute name="property" />
+		<sequential>
+			<pathconvert property="@{property}" dirsep="/">
+				<path path="@{path}" />
+			</pathconvert>
+		</sequential>
+	</macrodef>		
+	
+	<!-- Get the test project root folder and convert backslashes to forward slashes. -->
+	<abspath path="${basedir}" property="path.test.root" />
+		
+	<!-- Load project properties -->
+	<property environment="env" />
+	<property file="test.user.properties" />
+	<property file="test.properties" />
+		
+	<!-- Define Ant macros used by this script -->
+	<macrodef name="defflag">
+		<attribute name="property" />
+		<attribute name="dest-property" default="defined.@{property}" />        
+		<sequential>
+			<condition property="@{dest-property}">
+				<istrue value="${@{property}}"/>
+			</condition>
+		</sequential>
+	</macrodef>
+	
+    <macrodef name="check-property">
+        <attribute name="property" />
+    	<attribute name="message-no-prop" default="Property @{property} needs to be set."/>
+        <sequential>
+    		<fail message="@{message-no-prop}">
+    			<condition>
+    				<not>
+	    				<isset property="@{property}" />
+    				</not>
+    			</condition>
+    		</fail>     
+        </sequential>
+    </macrodef>	
+	
+    <macrodef name="check-file-property">
+        <attribute name="property" />
+    	<attribute name="message-no-prop" default="Property @{property} needs to be set."/>
+		<attribute name="message-no-file" default="Property @{property} needs to point to an existing file or directory."/>
+        <sequential>
+    		<fail message="@{message-no-prop}">
+    			<condition>
+    				<not>
+	    				<isset property="@{property}" />
+    				</not>
+    			</condition>
+    		</fail>     
+    		<fail message="@{message-no-file}">
+    			<condition>
+    				<not>
+	    				<available file="${@{property}}" />
+    				</not>
+    			</condition>
+    		</fail>      			
+        </sequential>
+    </macrodef>
+		
+	<macrodef name="run-bf-target">
+		<attribute name="targetname" />
+		<attribute name="targetcontenttype" default="${content.type}" />
+		<element name="filter" implicit="true" />
+		<sequential>
+	    	<copy file="project.user.properties" 
+	    	      tofile="${path.project.@{targetname}}/user.properties"
+	    	      overwrite="true">
+				<filterset refid="filterset.common" />
+				<filterset>
+					<filter />
+				</filterset>
+	    	</copy>  			
+	  			
+			<java classname="org.apache.tools.ant.launch.Launcher"
+				  fork="true"
+ 				  failonerror="true"
+				  dir="${path.project.@{targetname}}">
+	       		<classpath>
+	          		<pathelement location="${path.sdk.lib.ant}/ant-launcher.jar"/>
+		        </classpath>
+				<env key="PATH" path="${path.platform}/bin;${env.PATH}"/>
+
+				<arg value="-Dplatform.real.dir=${path.platform}" />
+				<arg value="-Dsdk.real.dir=${path.sdk.build}/.." />
+	       		<arg value="${ant.debug.level}"/>
+	       		<arg value="-lib"/>
+	       		<arg pathref="libs.classpath"/>
+	       		<arg value="@{targetname}-@{targetcontenttype}" />
+	       </java>  
+		</sequential>	    
+	</macrodef>
+	
+	<macrodef name="create-bf-project">
+		<attribute name="targetname" />
+		<sequential>
+			<!-- Create a temporaty build file and copy the needed targets from build-new-project.xml -->
+			<property name="tmp.build.file" value="${path.binary.root}/build/tmp-build-new-project.xml" />
+				
+	    	<echo file="${tmp.build.file}" append="false">
+	        	<![CDATA[<project default="dummy" basedir=".">
+	    				<property file="${src.sdk.folder}/build/new/newproject.properties" />
+				      	<target name="runit" />
+		      		</project>]]>
+	      	</echo>
+
+		    <xmltask source="${path.abs.sdk}/build/new/build-new-project.xml">
+	    		<copy path="/project/patternset" buffer="root-buffer" />
+		    	<copy path="/project/target[@name='copy-sdk-folder']/*" buffer="target-buffer" append="true" />
+				<copy path="/project/target[@name='copy-bf-basefiles']/*" buffer="target-buffer" append="true" />
+				<copy path="/project/target[@name='create-folders']/*" buffer="target-buffer" append="true" />
+			</xmltask>
+
+		    <xmltask source="${tmp.build.file}" dest="${tmp.build.file}">
+				<paste path="/project" buffer="root-buffer" />
+		    	<paste path="/project/target" buffer="target-buffer" />
+			</xmltask>
+
+			<!-- Run the created build file -->
+			<ant antfile="${tmp.build.file}"
+				inheritAll="false" 
+				target="runit">
+				<property name="project.sdk" value="${path.project.@{targetname}}/sdk" />
+				<property name="src.sdk.folder" value="${path.abs.sdk}"/>
+				<property name="src.platform.folder" value="${path.abs.platform}"/>
+				<property name="create.svn" value="false"/>
+				<property name="project.root" value="${path.project.@{targetname}}" />
+			</ant>
+			
+			<delete file="${tmp.build.file}" />
+		</sequential>
+	</macrodef>	
+	
+    <macrodef name="compare-xml-content">
+        <attribute name="contenttype" />
+    	<attribute name="contentpath" default="@{contenttype}" />
+		<element name="xmlfilter" implicit="true" optional="true"/>
+        <sequential>
+        	<xmlcompare destination="${path.project.fromcordys}/src/content/@{contentpath}"
+    			        condition="${content.type} in [@{contenttype}, all]">    		
+    			<fileset dir="${test.abs.content.location}/content/@{contentpath}">
+    				<patternset refid="all.non.cvs.files" />
+    				<patternset refid="all.non.vss.files" />
+    				<patternset refid="all.non.svn.files" />
+    			</fileset> 
+        		<xmlfilter />
+        	</xmlcompare>  	            
+        </sequential>
+    </macrodef>
+			
+	<!-- Convert the configured path to absolute -->
+	<abspath path="${test.content.location}" property="test.abs.content.location" />
+	<abspath path="${path.sdk.build}/.." property="path.abs.sdk" />
+	<abspath path="${path.platform}" property="path.abs.platform" />
+	<abspath path="${path.cordys.home}" property="path.abs.cordys.home" />
+	<abspath path="${path.sdk.lib}" property="path.abs.sdk.lib" />
+	<abspath path="${path.sdk.lib.cobertura}" property="path.abs.sdk.lib.cobertura" />
+		
+	<!-- Pattensets for excluding all source control files -->
+    <patternset id="all.non.cvs.files">
+    	<include name="**/*"/>
+    	<exclude name="**/CVS/**"/>
+    </patternset>
+    <patternset id="all.non.vss.files">
+    	<include name="**/*"/>
+    	<exclude name="**/*.scc"/>
+    </patternset>
+    <patternset id="all.non.svn.files">
+    	<include name="**/*"/>
+    	<exclude name="**/.svn/**"/>
+    </patternset>
+	
+	<!-- Set up the needed classpaths -->
+	<path id="ant.classpath">
+		<fileset dir="${path.platform}">    
+            <include name="int/*.jar"/>
+            <include name="ext/*.jar"/>
+            <include name="orc/*.jar"/>
+        </fileset>
+    </path>
+	
+	<path id="libs.classpath">
+		<fileset dir="${path.platform}">    
+            <include name="int/*.jar"/>
+            <include name="ext/*.jar"/>
+            <include name="orc/*.jar"/>
+        </fileset>            	
+		<pathelement location="${build.cobertura.instrumented}" />
+		<pathelement location="${path.sdk.lib.cobertura}" />
+        <pathelement location="${path.buildtasks.jar}"/>
+        <pathelement location="${path.buildtasks.coboc2.jar}"/>
+        <pathelement location="${path.coelib.jar}"/>
+        <pathelement location="${path.freemarker.jar}"/>
+		<pathelement location="${path.sdk.lib.ant}"/>
+		<pathelement location="${path.sdk.lib.svn}"/>
+		<fileset dir="${path.sdk.lib.libs-coboc2}">    
+            <include name="**/*.jar"/>
+        </fileset>		
+		<fileset dir="${path.sdk.lib.commons}">    
+	        <include name="**/*.jar"/>
+	    </fileset>	        	
+    </path>    
+			
+	<path id="cobertura-classpath">
+		<pathelement location="${path.sdk.lib.cobertura}/cobertura.jar" />
+		<pathelement location="${path.sdk.lib.cobertura}/asm-2.2.1.jar" />
+		<pathelement location="${path.sdk.lib.cobertura}/jakarta-oro-2.0.8.jar" />
+		<pathelement location="${path.platform}/ext/log4j-1.2.13.jar" />	
+		<path refid="libs.classpath"/>    
+	</path>
+
+	<path id="newproject.classpath">
+		<pathelement location="${path.abs.platform}/int"/>    
+		<pathelement location="${path.abs.platform}/ext"/>    
+		<pathelement location="${path.abs.platform}/orc"/>    
+		<pathelement location="${path.abs.sdk.lib.cobertura}/cobertura.jar" />
+		<pathelement location="${path.abs.sdk.lib.cobertura}/asm-2.2.1.jar" />
+		<pathelement location="${path.abs.sdk.lib.cobertura}/jakarta-oro-2.0.8.jar" />
+        <pathelement location="${path.buildtasks.jar}"/>
+        <pathelement location="${path.buildtasks.coboc2.jar}"/>
+        <pathelement location="${path.coelib.jar}"/>
+		<pathelement location="${path.sdk.lib.ant}"/>
+		<pathelement location="${path.sdk.lib.svn}"/>
+		<pathelement location="${path.sdk.lib.libs-coboc2}"/>
+	</path>
+	
+	<!-- Set up needed task defs -->
+	<taskdef classpathref="cobertura-classpath" name="cobertura-instrument" classname="net.sourceforge.cobertura.ant.InstrumentTask"/>
+	<taskdef classpathref="cobertura-classpath" name="cobertura-merge" classname="net.sourceforge.cobertura.ant.MergeTask"/>
+	<taskdef classpathref="cobertura-classpath" name="cobertura-report" classname="net.sourceforge.cobertura.ant.ReportTask"/>
+	<taskdef classpathref="cobertura-classpath" name="cobertura-check" classname="net.sourceforge.cobertura.ant.CheckTask"/>
+	
+	<taskdef name="xmlcompare"
+		     classname="com.cordys.tools.ant.taskdefs.CompareXmlFilesTask">
+		<classpath>
+			<pathelement location="${path.buildtasks.jar}"/>
+			<pathelement location="${path.coelib.jar}"/>
+			<pathelement location="${path.xmlunit.jar}"/>
+			<pathelement location="${path.sdk.lib}/junit.jar"/>
+			<pathelement location="${path.platform}/int/wcp.jar" />
+			<pathelement location="${path.platform}/ext/log4j-1.2.13.jar" />				
+		</classpath>
+	</taskdef>	
+	
+	<taskdef name="exec-targets"
+		     classname="com.cordys.tools.ant.taskdefs.ExecuteTargets">
+		<classpath>
+			<pathelement location="${path.buildtasks.jar}"/>
+		</classpath>
+	</taskdef>	
+	
+	<taskdef name="if"
+		     classname="com.cordys.tools.ant.taskdefs.IfTask">
+		<classpath>
+			<pathelement location="${path.buildtasks.jar}"/>
+		</classpath>
+	</taskdef>		
+	
+	<taskdef name="bcp-status"
+		     classname="com.cordys.tools.ant.taskdefs.BcpStatusCondition">
+		<classpath>
+			<pathelement location="${path.buildtasks.jar}"/>
+			<pathelement location="${path.coelib.jar}"/>
+		</classpath>
+	</taskdef>		
+	
+	<taskdef name="prepare-isv-content"
+		     classname="com.cordys.coe.bf.ant.taskdefs.PrepareIsvXmlForCompare">
+		<classpath>
+			<pathelement location="${path.buildtasks.jar}"/>
+			<pathelement location="${path.buildtasks.coboc2.jar}"/>
+			<pathelement location="${path.coelib.jar}"/>
+		</classpath>
+	</taskdef>			
+
+	<taskdef name="xmltask" 
+	            classname="com.oopsconsultancy.xmltask.ant.XmlTask">
+		<classpath>
+			<pathelement location="${path.sdk.lib.ant}/xmltask-v1.14.jar"/>
+		</classpath>
+	</taskdef>	
+	
+    <!-- Define flags based on boolean properties. -->
+	<defflag property="use.cobertura" />
+	<defflag property="use.vmware" />
+	
+	<filterset id="filterset.common">
+<!--		<filter token="LIB_DIR_LOCATION" value="${path.buildtasks.jar}"/> -->
+		<filter token="LIB_DIR_LOCATION" value="${build.cobertura.instrumented}"/>
+		<filter token="SDK_LIB_DIR_LOCATION" value="${path.sdk.lib}"/>
+		<filter token="PLATFORM_DIR_LOCATION" value="${path.platform}"/>
+		
+		<filter token="CORDYS_HOME" value="${path.abs.cordys.home}"/>
+
+		<filter token="BCP_SERVER" value="${bcp.server}"/>
+		<filter token="BCP_USER" value="${bcp.user}"/>
+		<filter token="BCP_PASSWORD" value="${bcp.password}"/>
+		<filter token="BCP_ORGANIZATION" value="${bcp.organization}"/>
+	</filterset>
+	
+	<!-- Checks the needed properties are set. -->
+	<target name="check-input-properties" description="Checks the needed properties are set.">
+		<!-- Check that the needed properties are set -->
+		<check-file-property property="path.buildtasks.coboc2.src.java" />
+		<check-file-property property="path.buildtasks.coboc2.classes" />
+		<check-file-property property="test.controlisv.location" />
+		<check-file-property property="test.controlisv.project.properties.location" />
+	</target>
+    
+	<!--Target for cleaning temporary build folders -->
+	<target name="cleanbuild">
+		<delete dir="${path.project.fromcordys}" />
+		<delete dir="${path.project.tocordys}" />
+		<delete dir="${path.project.deletecordys}" />
+		<delete dir="${build.cobertura}" />
+		<delete dir="${path.cordys.home}"/>
+	</target>
+	
+	<!-- Created needed project structure for all projects -->
+	<target name="init-test-project"
+			description="Creates the test project skeletion.">
+		<mkdir dir="${path.abs.cordys.home}" />
+		
+		<create-bf-project targetname="tocordys" />
+		<create-bf-project targetname="fromcordys" />		
+		<create-bf-project targetname="deletecordys" />			
+	</target>
+	
+  	<target name="run-fromcordys" 
+  			description="Reads content from BCP">
+		<run-bf-target targetname="fromcordys">
+			<filter token="CONTENT_LOCATION" value="${path.project.fromcordys}/src"/>
+		</run-bf-target>  		
+				
+  		<if value="${content.type}" regex="all|soapnodes">
+  			<then>						
+		  		<run-bf-target targetname="fromcordys" targetcontenttype="soapnodes">
+					<filter token="CONTENT_LOCATION" value="${path.project.fromcordys}/src"/>
+		    	</run-bf-target>  				
+			</then>						
+		</if>		
+  		<if value="${content.type}" regex="all|users">
+  			<then>						
+		  		<run-bf-target targetname="fromcordys" targetcontenttype="users">
+					<filter token="CONTENT_LOCATION" value="${path.project.fromcordys}/src"/>
+		    	</run-bf-target>  				
+			</then>						
+		</if>	  		
+  	</target>
+  	
+  	<target name="run-tocordys" 
+  			description="Sends content to BCP">
+  		<run-bf-target targetname="tocordys">
+			<filter token="CONTENT_LOCATION" value="${test.abs.content.location}"/>
+	   	</run-bf-target>  
+				
+  		<if value="${content.type}" regex="all|soapnodes">
+  			<then>
+		  		<run-bf-target targetname="tocordys" targetcontenttype="soapnodes">
+					<filter token="CONTENT_LOCATION" value="${test.abs.content.location}"/>
+		    	</run-bf-target>  			
+			</then>						
+		</if>	
+  		<if value="${content.type}" regex="all|users">
+  			<then>				
+		  		<run-bf-target targetname="tocordys" targetcontenttype="users">
+					<filter token="CONTENT_LOCATION" value="${test.abs.content.location}"/>
+		    	</run-bf-target>  
+			</then>							
+		</if>		  		
+  		<if value="${content.type}" regex="all|web">
+  			<then>				
+		  		<run-bf-target targetname="tocordys" targetcontenttype="web">
+					<filter token="CONTENT_LOCATION" value="${test.abs.content.location}"/>
+		    	</run-bf-target>  
+			</then>							
+		</if>						
+  		<if value="${content.type}" regex="all|classes">
+  			<then>
+		  		<run-bf-target targetname="tocordys" targetcontenttype="classes">
+					<filter token="CONTENT_LOCATION" value="${test.abs.content.location}"/>
+		    	</run-bf-target>  			
+			</then>							
+	    </if>
+  	</target>  	
+  	
+  	<target name="run-deletecordys" 
+  			description="Deletes content from BCP">
+  		<run-bf-target targetname="deletecordys">
+			<filter token="CONTENT_LOCATION" value="${path.project.deletecordys}/src"/>
+    	</run-bf-target> 	
+  			
+  		<if value="${content.type}" regex="all|soapnodes">
+  			<then>   		
+		  		<run-bf-target targetname="deletecordys" targetcontenttype="soapnodes">
+					<filter token="CONTENT_LOCATION" value="${path.project.deletecordys}/src"/>
+			   	</run-bf-target>   	
+			</then>							
+	    </if>			
+  	</target>   
+	
+  	<target name="run-buildisv" 
+  			description="Builds an ISV package">
+    	<copy file="${test.controlisv.project.properties.location}" 
+    	      tofile="${path.project.tocordys}/project.properties"
+    	      overwrite="true">
+    	</copy>   		
+  		
+    	<copy file="project.user.properties" 
+    	      tofile="${path.project.tocordys}/user.properties"
+    	      overwrite="true">
+			<filterset refid="filterset.common" />
+			<filterset>
+				<filter token="CONTENT_LOCATION" value="${test.abs.content.location}"/>
+			</filterset>
+    	</copy>  			
+  			
+		<java classname="org.apache.tools.ant.launch.Launcher"
+			  fork="true"
+    		  failonerror="true"
+			  dir="${path.project.tocordys}">
+       		<classpath>
+       			<pathelement location="${path.sdk.lib.ant}/ant-launcher.jar"/>
+          		<pathelement location="${path.junit.jar}"/>       		
+	        </classpath>
+			<env key="PATH" path="${path.platform}/bin;${env.PATH}"/>
+
+			<arg value="-Dplatform.real.dir=${path.platform}" />
+			<arg value="-Dsdk.real.dir=${path.sdk.build}/.." />
+       		<arg value="${ant.debug.level}"/>
+       		<arg value="-lib"/>
+       		<arg pathref="libs.classpath"/>
+       		<arg value="all" />
+       </java>    		
+  	</target>   	
+	
+  	<target name="create-organization" 
+  			description="Creates an organization." >
+  		<createorganization file="dest-org-config.xml" />
+  	</target>
+	
+  	<target name="compare-files" 
+  			description="Compares two sets of XML content files." >
+  		<!-- Compare method sets. -->
+  		<compare-xml-content contenttype="methodsets">
+    		<xmlfilter xpath="/methodset/method/busmethodsignature" deletenode="true"/>
+    		<xmlfilter xpath="/methodset/method/methodreturntype/text()" 
+    				   valueregex="^(cn=[^,]+,cn=[^,]+,cn=[^,]+)," />    
+    		
+    		<xmlfilter xpath="/methodset/method/methodimplementation/implementation[@type='CGMAP']/mapid/text()" />
+    	</compare-xml-content>  
+  		
+  		<!-- Compare application connectors. -->
+  		<compare-xml-content contenttype="applicationconnectors">  		
+    	</compare-xml-content> 
+  		
+  		<!-- Compare roles. -->
+  		<compare-xml-content contenttype="roles">  		
+    		<xmlfilter xpath="/role/sub-role/text()" 
+    				   valueregex="^(cn=[^,]+,cn=[^,]+)," />
+    	</compare-xml-content>  	  	
+  		
+  		<!-- Compare styles. -->
+		<compare-xml-content contenttype="styles">      		
+    	</compare-xml-content>  	 
+  		
+  		<!-- Compare menus. -->
+		<compare-xml-content contenttype="menus">      		
+    	</compare-xml-content> 	  
+  		
+  		<!-- Compare toolbars. -->
+		<compare-xml-content contenttype="toolbars">      		
+    	</compare-xml-content> 	  	 
+	
+  		<!-- Compare XMLStore content. -->
+		<compare-xml-content contenttype="xmlstore">      		
+    	</compare-xml-content> 	  	
+  		
+  		<!-- Compare Ws-AppServer content. -->
+		<compare-xml-content contenttype="xas">      		
+    	</compare-xml-content> 	 	
+				
+  		<!-- Compare Studio BPM's. -->
+    	<xmlcompare destination="${test.abs.content.location}/content/studio/flows"
+			        condition="${content.type} in [flows, all]">
+			<fileset dir="${path.project.fromcordys}/src/content/studio/flows">
+				<include name="**/*.vcmdata" />
+			</fileset> 
+    		
+    		<!-- Defines files to be read from the vcmdata files -->
+    		<zipfileset>
+    			<include name="**/*.bpm" />
+    		</zipfileset>
+    		
+    		<xmlfilter xpath="/tuple/@lastModified" />
+    		<xmlfilter xpath="/tuple/@objectID" />
+    		<xmlfilter xpath="/tuple/old/bpm/content/svg" deletenode="true" />
+    		<xmlfilter xpath="/tuple/old/bpm/content/modelProperties/dataObject/validBpml/text()" />
+    		<xmlfilter xpath="/tuple/old/bpm/content/modelProperties/dataObject/validationDate" deletenode="true" />
+    		<xmlfilter xpath="/tuple/old/bpm/content/modelProperties/dataObject/validationUser" deletenode="true" />
+    		<xmlfilter xpath="/tuple/old/bpm/content/modelProperties/dataObject/publishDate" deletenode="true" />
+    		<xmlfilter xpath="/tuple/old/bpm/content/modelProperties/dataObject/publishUser" deletenode="true" />    		
+    		<xmlfilter xpath="/tuple/old/bpm/content/modelProperties/dataObject/published/text()" />  
+    		<xmlfilter xpath="/tuple/old/bpm/content/model/object/dataObject/roles/role/text()"
+    				   valueregex="^(cn=[^,]+,cn=[^,]+)," />
+						
+			<!-- C3 -->
+			<xmlfilter xpath="/tuple/old/bpm/documentProperties/createdBy/text()" deletenode="true" />
+			<xmlfilter xpath="/tuple/old/bpm/documentProperties/lastModifiedBy/text()" deletenode="true" />
+			<xmlfilter xpath="/tuple/old/bpm/documentProperties/lastModificationDate/text()" deletenode="true" />			
+    	</xmlcompare>
+  		
+  		<!-- Compare Studio XForms. -->
+		<compare-xml-content contenttype="xforms" contentpath="studio/xforms">      		
+    		<xmlfilter xpath="/caf/documentProperties/createdBy" deletenode="true"/>
+    		<xmlfilter xpath="/caf/documentProperties/creationDate" deletenode="true"/>
+			<xmlfilter xpath="/mlm/documentProperties/createdBy" deletenode="true"/>
+			<xmlfilter xpath="/mlm/documentProperties/creationDate" deletenode="true"/>
+			
+			<!-- C3 -->
+			<xmlfilter xpath="/caf/content/xformhtml/xformsscript/text()" 
+  						replaceregex="^[ \t]+" replacevalue="" regexflags="multiline" />
+			<xmlfilter xpath="/caf/content/xformhtml/xbody//action//text()" 
+  						replaceregex="^[ \t]+" replacevalue="" regexflags="multiline" />				
+  			 
+    	</compare-xml-content>  	
+    				   	
+  		<!-- Compare CoBOC folders content. -->
+		<compare-xml-content contenttype="coboc" contentpath="coboc/folders">
+			<xmlfilter xpath="/tuple/@bf-version" />
+    		<xmlfilter xpath="/tuple/old/ENTITY/HISTORY/text()" />
+    		<xmlfilter xpath="/tuple/old/ENTITY/ORGANIZATION/text()"/>
+    		<xmlfilter xpath="/tuple/old/ENTITY/OWNER/text()"/>
+			<xmlfilter xpath="/template_content/tuple/@bf-version" />
+    		<xmlfilter xpath="/template_content/tuple/old/ENTITY/ORGANIZATION/text()"/>
+    		<xmlfilter xpath="/template_content/tuple/old/ENTITY/OWNER/text()"/>    
+			<xmlfilter xpath="/tuple/old/ENTITY/OBJECT/processinstance/processmodel/package/definitions/types/schema/*[local-name()='include']/@schemaLocation" />
+			<xmlfilter xpath="/tuple/old/ENTITY/OBJECT/processinstance/processmodel/package/locator/Application/data/user/text()"
+					   valueregex="^(cn=[^,]+,cn=[^,]+)," />
+			
+			<!-- C3 -->
+			<xmlfilter xpath="/tuple/old/ENTITY/OBJECT/bpmtuplewsdl/tuple/@lastModified" />
+			<xmlfilter xpath="/tuple/old/ENTITY/OBJECT/bpmtuplewsdl/tuple/@objectID" />
+			<xmlfilter xpath="/tuple/bpml/tuple/old/ENTITY/HISTORY/text()" />
+    	</compare-xml-content>  		
+
+  		<!-- Compare CoBOC inbox models. -->
+		<compare-xml-content contenttype="coboc" contentpath="coboc/inbox-models">      		
+			<xmlfilter xpath="/message-model/@bf-version" />
+    		<xmlfilter xpath="/message-model/MESSAGE_MODEL/ORGANIZATION/text()" />
+    		<xmlfilter xpath="/message-model/MESSAGE_MODEL/SUBSCRIBERS/PARTICIPANT/text()" 
+    				   valueregex="^(cn=[^,]+,cn=[^,]+)," />
+    	</compare-xml-content>  		
+    		
+  		<!-- Compare CoBOC rules. -->
+		<compare-xml-content contenttype="coboc" contentpath="coboc/rules">    
+			<xmlfilter xpath="/rulegroup/@bf-version" />
+    		<xmlfilter xpath="/rulegroup/rulegroup-content/rulegroup/orgcontext/text()" />
+    		<xmlfilter xpath="/rulegroup/rulegroup-content/rulegroup/rulegroupowner/text()" />
+    		<xmlfilter xpath="/rulegroup/rules/rule/orgcontext/text()" />
+    		<xmlfilter xpath="/rulegroup/rules/rule/ruleowner/text()" />
+    	</compare-xml-content>  	    
+
+  		<!-- Compare CoBOC schedules. -->
+		<compare-xml-content contenttype="coboc" contentpath="coboc/schedules">  
+			<xmlfilter xpath="/schedule-template/@bf-version" />
+    	</compare-xml-content>  
+  		
+  		<!-- Compare SOAP nodes. -->
+		<compare-xml-content contenttype="soapnodes">
+			<xmlfilter xpath="/soapnode/soapprocessor/@computer" />	
+			<xmlfilter xpath="/soapnode/soapprocessor/connectionpoint/@labeleduri" />
+    		<xmlfilter xpath="/soapnode/methodset/text()" 
+    				   valueregex="^(cn=[^,]+,cn=[^,]+)," />			
+    	</compare-xml-content> 	   		
+  	</target>   	
+	
+	<target name="prepare-isv-content">
+		<unzip src="${test.controlisv.location}" 
+			   dest="${path.controlisv.unzip}" />
+		
+		<unzip dest="${path.testisv.unzip}">			
+		    <fileset dir="${path.project.tocordys}/build/isv">
+		        <include name="*.isvp"/>
+		    </fileset>			
+		</unzip>
+			
+		<prepare-isv-content file="${path.controlisv.unzip}/isv.xml" 
+			                 outfile="${path.controlisv.unzip}/prepared-isv.xml"  />
+		<prepare-isv-content file="${path.testisv.unzip}/isv.xml" 
+			                 outfile="${path.testisv.unzip}/prepared-isv.xml"  />			
+	</target>
+	
+	<target name="compare-isv-content">
+		<xmlcompare destination="${path.testisv.unzip}"
+			        condition="${content.type} in [flows, all]">
+			<fileset dir="${path.controlisv.unzip}">
+				<include name="prepared-isv.xml" />
+			</fileset> 
+			
+			<xmlfilter xpath="/ISVPackage/description" deletenode="true"/>
+    		<xmlfilter xpath="/ISVPackage/content/busorganizationalroles/busorganizationalrole/entry/role/string/text()" 
+    		           	valueregex="^(cn=[^,]+,cn=[^,]+)," />
+    		<xmlfilter xpath="/ISVPackage/content/CPCImporter/FolderContent/folder/tuple/@lastModified" />
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/TemplateContent/template/tuple/@lastModified" />
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/MappingContent/map/tuple/@lastModified" />			
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/MappingContent/map/tuple/old/ENTITY/HISTORY/text()" />
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/ContentMapContent/contentmap/tuple/@lastModified" />				
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/ContentMapContent/contentmap/tuple/old/ENTITY/HISTORY/text()" />
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/DecisionCaseContent/decisioncase/tuple/@lastModified" />		
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/DecisionCaseContent/decisioncase/tuple/old/ENTITY/HISTORY/text()" />		
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/ConditionTemplateContent/conditiontemplate/tuple/@lastModified" />					
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/ConditionTemplateContent/conditiontemplate/tuple/old/ENTITY/HISTORY/text()" />					
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/ActionTemplateContent/actiontemplate/tuple/@lastModified" />					
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/ActionTemplateContent/actiontemplate/tuple/old/ENTITY/HISTORY/text()" />					
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/ScheduleContent/tuple/old/SCHEDULETEMPLATE/LASTUPDATED/text()" />	
+			<xmlfilter xpath="/ISVPackage/content/CPCNotificationImporter/CPCNotificationContent/MESSAGE_MODEL/LAST_MODIFIED/text()" />
+			<xmlfilter xpath="/ISVPackage/content/CPCNotificationImporter/CPCNotificationContent/MESSAGE_MODEL/SUBSCRIBERS/PARTICIPANT/text()"
+    				   valueregex="^(cn=[^,]+,cn=[^,]+)," />
+			<xmlfilter xpath="/ISVPackage/content/busmethodsets/busmethodset/entry/busmethodreturntype/string/text()"
+    				   valueregex="^(cn=[^,]+,cn=[^,]+,cn=[^,]+)," />
+    		<xmlfilter xpath="/ISVPackage/content/CPCImporter/RuleGroupContent/rulegroup/orgcontext/text()" />
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/RuleGroupContent/rulegroup/rulegroupowner/text()" />
+    		<xmlfilter xpath="/ISVPackage/content/CPCImporter/RuleGroupContent/orgcontext/text()" />
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/RuleContent/rule/ruleowner/text()" />
+			<xmlfilter xpath="/ISVPackage/content/CPCImporter/RuleContent/rule/orgcontext/text()" />
+			
+			<!-- C3 -->
+			<xmlfilter xpath="/ISVPackage/content/CPCNotificationImporter/CPCNotificationContent//messageTemplate/lastmodified/text()" />
+		</xmlcompare>			
+	</target>
+	
+	<target name="init-cobertura-folders">
+		<!--
+				Remove the coverage data file and any old instrumentation.
+			-->
+		<delete file="${build.cobertura}/cobertura.ser" />
+		<delete dir="${build.cobertura.instrumented}" />
+		<mkdir dir="${build.cobertura.instrumented}" />
+	</target>
+	
+	<target name="cobertura-instrument" depends="init-cobertura-folders" if="defined.use.cobertura">
+		<!--
+				Instrument the application classes, writing the
+				instrumented classes into ${build.instrumented.dir}.
+			-->
+		<cobertura-instrument datafile="${build.cobertura}/cobertura.ser"
+		                      todir="${build.cobertura.instrumented}"
+		>
+			<!--
+					The following line causes instrument to ignore any
+					source line containing a reference to log4j, for the
+					purposes of coverage reporting.
+				-->
+			<ignore regex="org.apache.log4j.*" />
+
+			<fileset dir="${path.buildtasks.jar}">
+				<!--
+						Instrument all the application classes, but
+						don't instrument the test classes.
+					-->
+				<include name="**/*.class" />
+				<exclude name="**/*Test.class" />
+			</fileset>
+
+			<fileset file="${path.buildtasks.coboc2.classes}">
+				<!--
+						Instrument all the application classes, but
+						don't instrument the test classes.
+					-->
+				<include name="**/*.class" />
+				<exclude name="**/*Test.class" />
+			</fileset>			
+		</cobertura-instrument>
+	</target>	
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: cobertura-report
+         - - - - - - - - - - - - - - - - - -->
+	<target name="cobertura-report" if="defined.use.cobertura">
+		<cobertura-report datafile="${build.cobertura}/cobertura.ser"
+		                  destdir="${build.cobertura.report}"
+		                  format="html" >
+		    <fileset dir="${path.buildtasks.src.java}">
+		        <include name="**/*.java" />
+		        <exclude name="**/*Stub.java" />
+		    </fileset>
+		    <fileset dir="${path.buildtasks.coboc2.src.java}">
+		        <include name="**/*.java" />
+		        <exclude name="**/*RB.java" />
+		    </fileset>			
+		</cobertura-report>
+	</target>	
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: cobertura-merge
+         - - - - - - - - - - - - - - - - - -->
+	<target name="cobertura-merge" if="defined.use.cobertura">
+		<cobertura-merge datafile="${build.cobertura}/cobertura.ser">
+		    <fileset dir="${path.project.fromcordys}">
+		        <include name="cobertura.ser" />
+		    </fileset>
+
+		    <fileset dir="${path.project.tocordys}">
+		        <include name="cobertura.ser" />
+		    </fileset>
+			
+		    <fileset dir="${path.project.deletecordys}">
+		        <include name="cobertura.ser" />
+		    </fileset>			
+		</cobertura-merge>	
+	</target>	
+	
+	<!--
+		Optional task to start a VMware image before running the tests. 
+		At least with VMWare Server, no user interaction is required 
+		and the image runs in the background.
+	 -->
+	<target name="start-vmware"
+			description="Starts a VMWare image before running the tests.">
+		<check-property property="path.cordys.vmware.image"/>
+		<check-property property="path.vmware.vmware-cmd"/>
+
+		<exec executable="${path.vmware.vmware-cmd}">
+			<arg value="${path.cordys.vmware.image}"/>
+			<arg value="start" />
+		</exec>
+	
+		<waitfor checkevery="10" checkeveryunit="second">
+			<!-- Wait for the Cordys installation to be started. -->
+			<bcp-status url="http://${bcp.server}/cordys/com.eibus.web.soap.Gateway.wcp" 
+						    user="${bcp.user}" 
+							password="${bcp.password}" />
+		</waitfor>
+	</target>
+
+	<!--
+		Optional task to stop a VMware image after running the tests. 
+		This task tries to do a soft shutdown, so that the OS can
+		shutdown itself gracefully.
+	 -->
+	<target name="stop-vmware"
+			description="Stops a VMWare image after running the tests.">
+		<check-property property="path.cordys.vmware.image"/>
+		<check-property property="path.vmware.vmware-cmd"/>
+		
+		<exec executable="${path.vmware.vmware-cmd}">
+			<arg value="${path.cordys.vmware.image}"/>
+			<arg value="stop" />
+			<arg value="trysoft" />				
+		</exec>
+	</target>
+	
+ 	<target name="all" 
+  			description="Runs all tests"
+			depends="check-input-properties" >
+		<exec-targets targetnames="cleanbuild,cobertura-instrument,init-test-project" />
+ 		<if value="${use.vmware}" regex="true">
+			<then> 			
+		 		<exec-targets targetnames="start-vmware" />
+		 	</then>
+ 		</if>
+		<exec-targets targetnames="run-deletecordys" /> <!-- Delete any exising content -->
+		<exec-targets targetnames="run-tocordys" /> <!-- Insert content -->
+		<exec-targets targetnames="run-tocordys" /> <!-- Update content -->
+		<exec-targets targetnames="run-fromcordys" />
+ 		<exec-targets targetnames="compare-files" />
+		<exec-targets targetnames="run-deletecordys" />
+		<exec-targets targetnames="run-buildisv" />
+		<exec-targets targetnames="prepare-isv-content,compare-isv-content" />
+		<if value="${use.vmware}" regex="true">
+			<then>
+		 		<exec-targets targetnames="stop-vmware" />
+ 			</then>
+		</if>
+		<exec-targets targetnames="cobertura-merge,cobertura-report" />
+	</target>	
+</project>	

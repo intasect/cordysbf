@@ -1,0 +1,8 @@
+=================================
+About Cordys Build Framework
+=================================
+Cordys Build Framework makes the development process of Cordys 
+applications scalable (with more people), distributed (on more machines, 
+in remote locations) and repeatable (predictable result).
+
+change 2
