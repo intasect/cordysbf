@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-
-<!-- Prompts are stored in this xml -->
-<!-- 'prompts' is the root tag here -->
-<prompts xmlns="">
-    <!-- Every prompt is enclosed within the <prompt>...</prompt> tag -->
-    <prompt description="Where to install Hello World?" id="Prompt01"/>
-</prompts>
