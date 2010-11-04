@@ -490,7 +490,8 @@ public class FlowExporter
 
         // Send the export request.
         mExportResponse = srmSoap.makeSoapRequest(mExportRequest);
-
+        String sReceiver = mExportResponse.getParent().getParent().getValue(".//reply-to",true);
+        
         // Create the destination file name
         String sDestFileName = createFlowFileName(sFlowKey);
 
@@ -503,7 +504,9 @@ public class FlowExporter
         {
             fDestFileParentDir.mkdirs();
         }
-
+        
+        //set the Receiver (fix for  export, download, delete sequence issue in the case of clustered environment)
+        srmSoap.setReceiver(sReceiver);
         // Download the file
         String sFileData = downloadFile(sExportFile);
 
@@ -556,7 +559,8 @@ public class FlowExporter
         saFilesToBeDeleted = new String[] { sExportFile };
 
         deleteFiles("export", saFilesToBeDeleted);
-
+        //Set the receiver back to empty
+        srmSoap.setReceiver("");
         sthTask.addProcessItem();
     }
 
