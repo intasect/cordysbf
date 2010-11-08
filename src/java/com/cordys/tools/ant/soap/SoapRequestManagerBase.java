@@ -1,14 +1,14 @@
 /**
- * Copyright 2006 Cordys R&D B.V.
- *
- * This file is part of the Cordys Build Framework.
+ * Copyright 2006 Cordys R&D B.V. 
+ * 
+ * This file is part of the Cordys Build Framework. 
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,11 +60,6 @@ public abstract class SoapRequestManagerBase
      * Current user DN.
      */
     protected String sUserDN;
-    /**
-     * Current sReceiver.
-     */
-    protected String sReceiver="";
-
     /**
      * Flag indicating if NOM collection is enabled.
      */
@@ -249,7 +244,6 @@ public abstract class SoapRequestManagerBase
             int iRequestMethodNode;
 
             ISoapRequest soapRequest = createSoapRequest();
-            soapRequest.setReceiver(getReceiver());
             iRequestMethodNode = soapRequest.addMethod(getOrganizationDN(),
                                                        iOrigRequestMethodNode);
 
@@ -372,19 +366,19 @@ public abstract class SoapRequestManagerBase
          * If Soap Fault occurs, display appropriate message and halt the build.
          */
         SoapFaultInfo info = SoapFaultInfo.findSoapFault(responseNode);
-
+        
         if (info != null) {
             String faultString = info.getFaultstring();
-
+            
             if (faultString != null) {
                 errorMess = "\nMessage: " + faultString;
             }
 
             int detailNode = info.getDetail();
-
+            
             if (detailNode != 0) {
                 int descNode = Find.firstMatch(detailNode, "<><errordescription>");
-
+                
                 errorMess = errorMess + "\nDetails: " + Node.getData(descNode);
             }
         }
@@ -414,22 +408,4 @@ public abstract class SoapRequestManagerBase
     {
         this.bcpVersion = bcpVersion;
     }
-
-    /**
-     * (non-Javadoc)
-     * @see com.cordys.tools.ant.soap.ISoapRequestManager#getReceiver()
-     */
-	public String getReceiver()
-	{
-		return sReceiver;
-	}
-
-	/**
-	 * (non-Javadoc)
-	 * @see com.cordys.tools.ant.soap.ISoapRequestManager#setReceiver(java.lang.String)
-	 */
-	public void setReceiver(String receiver)
-	{
-		this.sReceiver = receiver;
-	}
 }
