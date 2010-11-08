@@ -1,0 +1,66 @@
+<libraries source="platform">
+	<library>
+		<name>Integrator</name>
+		<description>Cordys BCP Integrator libraries</description>
+		<jars>	
+			<jar>
+				<location>platform/components/eibxml/eibxml.jar</location>
+				<javadoc type="jar:platform"><location>platform/docs/bcp-javadocs.zip!/</location></javadoc>					
+			</jar>			
+			<jar>
+				<location>platform/components/esbclient/esbclient.jar</location>
+				<javadoc type="jar:platform"><location>platform/docs/bcp-javadocs.zip!/</location></javadoc>					
+			</jar>			
+			<jar>
+				<location>platform/components/basicutil/basicutil.jar</location>
+				<javadoc type="jar:platform"><location>platform/docs/bcp-javadocs.zip!/</location></javadoc>					
+			</jar>			
+			<jar>
+				<location>platform/components/managementlib/managementlib.jar</location>
+				<javadoc type="jar:platform"><location>platform/docs/bcp-javadocs.zip!/</location></javadoc>					
+			</jar>	
+			<jar>
+				<location>platform/components/ccutil/ccutil.jar</location>
+				<javadoc type="jar:platform"><location>platform/docs/bcp-javadocs.zip!/</location></javadoc>					
+			</jar>	
+			<jar>
+				<location>platform/components/esbserver/esbserver.jar</location>
+				<javadoc type="jar:platform"><location>platform/docs/bcp-javadocs.zip!/</location></javadoc>					
+			</jar>	
+			<jar>
+				<location>platform/components/acllib/acllib.jar</location>
+				<javadoc type="jar:platform"><location>platform/docs/bcp-javadocs.zip!/</location></javadoc>					
+			</jar>	
+			<jar>
+				<location>platform/components/javacallconn/javaconn.jar</location>
+				<javadoc type="jar:platform"><location>platform/docs/bcp-javadocs.zip!/</location></javadoc>					
+			</jar>				
+			<jar>
+				<location>platform/ext/log4j-1.2.14_cordys.jar</location>
+				<match-pattern>^platform/ext/log4j-.*</match-pattern>
+			</jar>			
+			<jar>
+				<location>platform/ext/ldap.jar</location>
+			</jar>			
+		</jars>
+	</library>	
+	
+	<library>
+		<name>WS-AppServer</name>
+		<description>Cordys BCP WS-AppServer libraries</description>
+		<jars>
+			<jar>
+				<location>platform/components/wsappserver/wsappserver.jar</location>
+				<javadoc type="jar:platform"><location>platform/docs/bcp-javadocs.zip!/</location></javadoc>
+			</jar>	
+			<jar>
+				<location>platform/components/ruleengine/ruleengine.jar</location>
+				<javadoc type="jar:platform"><location>platform/docs/bcp-javadocs.zip!/</location></javadoc>
+			</jar>   			
+			<jar>
+				<location>platform/components/dbconnection/dbconnection.jar</location>
+				<javadoc type="jar:platform"><location>platform/docs/bcp-javadocs.zip!/</location></javadoc>
+			</jar>   
+		</jars>
+	</library>		
+</libraries>

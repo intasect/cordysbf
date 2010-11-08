@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- System environment variables are stored in this xml -->
+<!-- 'systemenvironment' is the root tag here -->
+<systemenvironment>
+	<!-- Every variable is enclosed within the <variable>...</variable> tag -->
+	<variable name="CLASSPATH" value="cordys_install_dir\helloworld\helloworld.jar" />
+</systemenvironment>				
+

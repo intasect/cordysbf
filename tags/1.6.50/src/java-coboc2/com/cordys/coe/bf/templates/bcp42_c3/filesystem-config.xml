@@ -1,0 +1,39 @@
+<config extends="../bcp42_c1/filesystem-config.xml">
+    <binding-templates>
+        <!--  CoBOC Folders Bindings -->
+        <template path="coboc/folders/ActionTemplate_FileSystem.xml" content-type="COBOC_FOLDERS_ACTIONTEMPLATE" />      
+        <template path="coboc/folders/ProcessTemplate_FileSystem.xml" content-type="COBOC_FOLDERS_PROCESSTEMPLATE" />      
+        <template path="coboc/folders/ProcessBpmn_FileSystem.xml" content-type="COBOC_FOLDERS_PROCESSBPMN" />      
+     	<template path="coboc/folders/ProcessBpml_FileSystem.xml" content-type="COBOC_FOLDERS_PROCESSBPML" />      
+    
+        <!--  CoBOC Rule Bindings -->
+        <template path="coboc/rules/Rule_FileSystem.xml" content-type="COBOC_RULES_RULE" />
+        
+        <!--  CoBOC Message Model Bindings -->
+        <template path="coboc/messagemodels/MessageTemplate_FileSystem.xml" content-type="COBOC_MESSAGE_TEMPLATE" />
+        <template path="coboc/messagemodels/InboxModel_FileSystem.xml" content-type="COBOC_INBOX_MODEL_C3" />
+        <template path="coboc/messagemodels/EmailModel_FileSystem.xml" content-type="COBOC_EMAIL_MODEL" />
+    </binding-templates>
+    
+    <read-methods>
+    	<method>
+    		<content-types>COBOC_FOLDERS,MDM</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c3.FileSystemReadMethod_Folders</class>
+    	</method>    
+	   	<method>
+	   		<content-types>COBOC_MESSAGE_TEMPLATE,COBOC_INBOX_MODEL_C3,COBOC_EMAIL_MODEL</content-types>
+	   		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c3.FileSystemReadMethod_MessageModels</class>
+	   	</method>
+   </read-methods> 
+	   
+    <write-methods>
+    	<method>
+    		<content-types>COBOC_FOLDERS,MDM</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c3.FileSystemWriteMethod_Folders</class>
+    	</method>    
+    	<method>
+    		<content-types>COBOC_MESSAGE_TEMPLATE,COBOC_INBOX_MODEL_C3,COBOC_EMAIL_MODEL</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c3.FileSystemWriteMethod_MessageModels</class>
+    	</method>
+    </write-methods>       
+</config>

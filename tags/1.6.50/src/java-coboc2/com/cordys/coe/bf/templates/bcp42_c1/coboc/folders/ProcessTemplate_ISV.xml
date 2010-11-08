@@ -1,0 +1,22 @@
+<binding-template>
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.folders.ProcessTemplate" />
+	</beans>
+	
+	<handlers>
+		<handler type="bean" beanid="default" xmlpath="processname" fieldname="key"  />
+		<handler type="bean" beanid="default" xmlpath="processmodel/processinstance" fieldname="processTemplateData" xmlfield="true" />
+		<handler type="bean" beanid="default" xmlpath="key" fieldname="key"  />
+	</handlers>
+	
+	<template>
+		<process>
+        	<processname xmlns="http://schemas.cordys.com/1.0/coboc"></processname>
+          	<processmodel xmlns="http://schemas.cordys.com/1.0/coboc">
+	        	<processinstance>
+	            </processinstance>       
+	        </processmodel>
+	        <key></key>
+	    </process>
+	</template>
+</binding-template>

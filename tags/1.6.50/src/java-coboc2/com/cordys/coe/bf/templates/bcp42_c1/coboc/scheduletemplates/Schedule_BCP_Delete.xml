@@ -1,0 +1,15 @@
+
+<binding-template>
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.schedules.ScheduleTemplate" />
+	</beans>
+	
+	<handlers>
+		<handler type="bean" beanid="default" xmlpath="@templateid" fieldname="objectId"  />
+		<handler type="bean" beanid="default" xmlpath="@lastupdated" fieldname="lastModified"  />
+	</handlers>
+	
+	<template>
+		<schedule templateid="" lastupdated="" />
+	</template>
+</binding-template>

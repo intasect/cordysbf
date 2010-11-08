@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<methodsets>
+	<methodset file="${src.content}\Methodsets\Maintain_Planned_MRP_Productio_B40Oc4stnd.xml" />
+	<methodset
+		name="Method Set WarehouseItems"
+		description=""
+		implementationclass="com.eibus.applicationconnector.baan.BaanMapper"
+		namespace="http://schemas.cordys.com/tdinv001">
+		<method
+			name="GetAllWarehouseItemsInRange">
+			<methodimplementation><implementation type="BaanSQL"><constructor language="BaanSQL"><query>select tdinv001.item,tdinv001.cwar,tdinv001.ecoq,tiitm001.suno from tdinv001,tiitm001 where tdinv001.item=tiitm001.item and tdinv001.item between :fromitem and :toitem and tdinv001.cwar between :fromcwar and :tocwar</query><parameters/></constructor></implementation></methodimplementation>
+			<methodreturntype>cn=tdinv001.xsd,cn=Method Set WarehouseItems,cn=method sets,o=Test,cn=cordys,o=vanenburg.com</methodreturntype>
+			<methodwsdl><definitions name="GetAllWarehouseItemsInRange" targetNamespace="http://schemas.cordys.com/tdinv001" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://schemas.cordys.com/tdinv001"><types><schema targetNamespace="http://schemas.cordys.com/tdinv001" xmlns="http://www.w3.org/2000/10/XMLSchema"><element name="GetAllWarehouseItemsInRange"><complexType><element name="fromitem" type="xsd:string"/><element name="toitem" type="xsd:string"/><element name="fromcwar" type="xsd:string"/><element name="tocwar" type="xsd:string"/></complexType></element><element name="GetAllWarehouseItemsInRangeResponse"><complexType><element name="tuple" minOccurs="0" maxOccurs="unbounded"><complexType><element name="old"><complexType><element name="tdinv001"><complexType><annotation><description>Item Data by Warehouse</description></annotation><all><element name="cwar"><simpleType><annotation><description>Warehouse</description></annotation><restriction base="xsd:string"><length value="3"/></restriction></simpleType></element><element name="item"><simpleType><annotation><description>Item</description></annotation><restriction base="xsd:string"><length value="16"/></restriction></simpleType></element><element name="ecoq" type="xsd:r8"><annotation><description>Economic Order Quantity</description></annotation></element><element name="suno" type="xsd:r8"><annotation><description>Supplier</description></annotation></element></all></complexType></element></complexType></element></complexType></element></complexType></element></schema></types><message name="GetAllWarehouseItemsInRangeInput"><part name="body" element="tns:GetAllWarehouseItemsInRange"/></message><message name="GetAllWarehouseItemsInRangeOutput"><part name="body" element="tns:GetAllWarehouseItemsInRangeResponse"/></message><portType name="Method Set WarehouseItems PortType"><operation name="GetAllWarehouseItemsInRange"><input message="tns:GetAllWarehouseItemsInRangeInput"/><output message="tns:GetAllWarehouseItemsInRangeOutput"/></operation></portType></definitions></methodwsdl>
+			<methodinterface/>
+		</method>
+		<xsd
+			name="tdinv001.xsd">
+			<methodxsd><schema xmlns='http://www.w3.org/2000/10/XMLSchema' xmlns:wcp='http://schemas.cordys.com/' targetNamespace='http://schemas.cordys.com/tdinv001' xmlns:tns='http://schemas.cordys.com/tdinv001' xmlns:tdp='http://schemas.cordys.com/tdpur041' xmlns:tds='http://schemas.cordys.com/tdsls041' xmlns:trd='http://schemas.cordys.com/trdrp001' xmlns:trdr='http://schemas.cordys.com/trdrp020'>
+		<complexType name='tdinv001'>
+			<annotation>
+				<description>Item Data by Warehouse</description>
+			</annotation>
+			<all>
+				<element name='cwar'>
+					<simpleType>
+						<annotation>
+							<description>Warehouse</description>
+						</annotation>
+						<restriction base='xsd:string'>
+							<length value='3'/>
+						</restriction>
+					</simpleType>
+				</element>
+				<element name='item'>
+					<simpleType>
+						<annotation>
+							<description>Item</description>
+						</annotation>
+						<restriction base='xsd:string'>
+							<length value='16'/>
+						</restriction>
+					</simpleType>
+				</element>
+				<element name='cntr'>
+					<simpleType>
+						<annotation>
+							<description>Container</description>
+						</annotation>
+						<restriction base='xsd:string'>
+							<length value='3'/>
+						</restriction>
+					</simpleType>
+				</element>
+				<element name='wloc'>
+					<simpleType>
+						<annotation>
+							<description>Inventory Location</description>
+						</annotation>
+						<restriction base='xsd:string'>
+							<length value='8'/>
+						</restriction>
+					</simpleType>
+				</element>
+				<element name='uidt' type='xsd:ui1'>
+					<annotation>
+						<description>Use Item Parameters</description>
+					</annotation>
+				</element>
+				<element name='sfst' type='xsd:r8'>
+					<annotation>
+						<description>Safety Stock</description>
+					</annotation>
+				</element>
+				<element name='csps'>
+					<simpleType>
+						<annotation>
+							<description>Season Pattern for Safety Stock</description>
+						</annotation>
+						<restriction base='xsd:string'>
+							<length value='3'/>
+						</restriction>
+					</simpleType>
+				</element>
+				<element name='maxs' type='xsd:r8'>
+					<annotation>
+						<description>Maximum Inventory</description>
+					</annotation>
+				</element>
+				<element name='slmp' type='xsd:ui1'>
+					<annotation>
+						<description>Slow Moving Percentage</description>
+					</annotation>
+				</element>
+				<element name='serv' type='xsd:ui1'>
+					<annotation>
+						<description>Service Level [%%]</description>
+					</annotation>
+				</element>
+				<element name='scst' type='xsd:r8'>
+					<annotation>
+						<description>Inventory Carrying Costs per Year</description>
+					</annotation>
+				</element>
+				<element name='omth' type='xsd:ui1'>
+					<annotation>
+						<description>Order Method</description>
+					</annotation>
+				</element>
+				<element name='oint' type='xsd:i2'>
+					<annotation>
+						<description>Order Interval</description>
+					</annotation>
+				</element>
+				<element name='fodt' type='xsd:date'>
+					<annotation>
+						<description>First Allowed Order Date</description>
+					</annotation>
+				</element>
+				<element name='mioq' type='xsd:r8'>
+					<annotation>
+						<description>Minimum Order Quantity</description>
+					</annotation>
+				</element>
+				<element name='maoq' type='xsd:r8'>
+					<annotation>
+						<description>Maximum Order Quantity</description>
+					</annotation>
+				</element>
+				<element name='fioq' type='xsd:r8'>
+					<annotation>
+						<description>Fixed Order Quantity</description>
+					</annotation>
+				</element>
+				<element name='ecoq' type='xsd:r8'>
+					<annotation>
+						<description>Economic Order Quantity</description>
+					</annotation>
+				</element>
+				<element name='oqmf' type='xsd:r8'>
+					<annotation>
+						<description>Order Quantity Multiplication Factor</description>
+					</annotation>
+				</element>
+				<element name='ocst' type='xsd:r8'>
+					<annotation>
+						<description>Order Costs</description>
+					</annotation>
+				</element>
+				<element name='auso' type='xsd:ui1'>
+					<annotation>
+						<description>Update Inventory Parameters</description>
+					</annotation>
+				</element>
+				<element name='cspd'>
+					<simpleType>
+						<annotation>
+							<description>Season Pattern for Demand</description>
+						</annotation>
+						<restriction base='xsd:string'>
+							<length value='3'/>
+						</restriction>
+					</simpleType>
+				</element>
+				<element name='cfmd'>
+					<simpleType>
+						<annotation>
+							<description>Forecast Method Code</description>
+						</annotation>
+						<restriction base='xsd:string'>
+							<length value='3'/>
+						</restriction>
+					</simpleType>
+				</element>
+				<element name='stoc' type='xsd:r8'>
+					<annotation>
+						<description>Inventory on Hand</description>
+					</annotation>
+				</element>
+				<element name='ordr' type='xsd:r8'>
+					<annotation>
+						<description>Inventory on Order</description>
+					</annotation>
+				</element>
+				<element name='allo' type='xsd:r8'>
+					<annotation>
+						<description>Allocated Inventory</description>
+					</annotation>
+				</element>
+				<element name='hall' type='xsd:r8'>
+					<annotation>
+						<description>Hard Allocated Inventory</description>
+					</annotation>
+				</element>
+				<element name='ltdt' type='xsd:date'>
+					<annotation>
+						<description>Last Inventory Transaction Date</description>
+					</annotation>
+				</element>
+				<element name='lcod' type='xsd:date'>
+					<annotation>
+						<description>Last Counting Date</description>
+					</annotation>
+				</element>
+				<element name='uscu' type='xsd:r8'>
+					<annotation>
+						<description>Cumulative Issue</description>
+					</annotation>
+				</element>
+				<element name='usab' type='xsd:r8'>
+					<annotation>
+						<description>Expected Annual Issue (Actual)</description>
+					</annotation>
+				</element>
+				<element name='reop' type='xsd:r8'>
+					<annotation>
+						<description>Reorder Point</description>
+					</annotation>
+				</element>
+				<element name='hstb' type='xsd:r8'>
+					<annotation>
+						<description>Historical Inventory Balance</description>
+					</annotation>
+				</element>
+				<element name='hstd' type='xsd:date'>
+					<annotation>
+						<description>Date of Historical Inventory Balance</description>
+					</annotation>
+				</element>
+				<element name='wist' type='xsd:ui1'>
+					<annotation>
+						<description>Cycle Counting Order Generated</description>
+					</annotation>
+				</element>
+				<element name='blck' type='xsd:r8'>
+					<annotation>
+						<description>Inventory on Hold</description>
+					</annotation>
+				</element>
+				<element name='qbsi' type='xsd:r8'>
+					<annotation>
+						<description>Quantity Blocked for Storage Inspection</description>
+					</annotation>
+				</element>
+				<element name='lsid' type='xsd:date'>
+					<annotation>
+						<description>Last Storage Inspection Date</description>
+					</annotation>
+				</element>
+				<element name='alpl' type='xsd:r8'>
+					<annotation>
+						<description>Allocated for Picking List</description>
+					</annotation>
+				</element>
+				<element name='llcd' type='xsd:ui1'>
+					<annotation>
+						<description>DRP Level</description>
+					</annotation>
+				</element>
+				<element name='tdpur041' type='tdp:tdpur041' minOccurs='0' maxOccurs='unbounded' wcp:relation='association'/>
+				<element name='tdsls041' type='tds:tdsls041' minOccurs='0' maxOccurs='unbounded' wcp:relation='association'/>
+				<element name='trdrp001' type='trd:trdrp001' minOccurs='0' maxOccurs='unbounded' wcp:relation='association'/>
+				<element name='trdrp020' type='trdr:trdrp020' minOccurs='0' maxOccurs='unbounded' wcp:relation='association'/>
+				<element name='trdrp020' type='trdr:trdrp020' minOccurs='0' maxOccurs='unbounded' wcp:relation='association'/>
+			</all>
+		</complexType>
+	</schema>
+	</methodxsd>
+		</xsd>
+		<method
+			name="Update">
+			<methodimplementation><implementation type="BaanSQL"><update/></implementation></methodimplementation>
+			<methodreturntype/>
+			<methodwsdl><empty/></methodwsdl>
+			<methodinterface/>
+		</method>
+	</methodset>
+</methodsets>
