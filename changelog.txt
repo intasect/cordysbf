@@ -1,4 +1,6 @@
 VERSION 1.6.48 (2010-06-08) 
+- Fix: Fixed Issue 3 : Exporting processes fails in the case of clustered environment.
+VERSION 1.6.48 (2010-06-08) 
 - Fix: Fixed INC5103 duplicate folder names while exporting a BPM.
 
 VERSION 1.6.47 (2010-06-07) 
