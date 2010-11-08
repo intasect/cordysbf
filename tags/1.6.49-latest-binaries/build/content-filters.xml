@@ -26,7 +26,7 @@
 	
 	<!-- Pattern set for Studio BPM content -->
 	<patternset id="studio.bpm.path.filter">
-		<include name="${studio.bpm.root.path}/**" />
+		<include name="/**" />
 	</patternset>
 
 	<!-- Pattern set for Studio XForms content -->

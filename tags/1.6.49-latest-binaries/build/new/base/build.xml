@@ -12,6 +12,7 @@
 		All the batch files specify the sdk.real.dir and the platform.real.dir via a
 		-D properties. This makes sure that both relative and absolute paths work
 	-->
+	<property name="sdk.real.dir" value="./sdk"/>
 	<dirname file="${sdk.real.dir}/build" property="sdk.dir"/>
 	<dirname file="${platform.real.dir}/build" property="platform.dir"/>
 
