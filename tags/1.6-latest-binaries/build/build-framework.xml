@@ -821,7 +821,7 @@
 	-->
 	<target name="release"
 	        description="Creates a distribution of the project after running tests."
-	        depends="cleanall,_labelrelease,_check_changelog,test,jar,docs,javadocs,_isv,copy-release,publish,_upload-build-to-site,deploy-site,_make_svn_build_label"
+	        depends="cleanall,_labelrelease,_check_changelog,test,jar,docs,javadocs,_isv,copy-release,publish"
 	>
 	</target>
 
