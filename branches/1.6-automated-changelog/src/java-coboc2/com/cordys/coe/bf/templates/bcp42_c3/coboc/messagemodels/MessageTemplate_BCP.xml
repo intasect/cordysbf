@@ -1,0 +1,20 @@
+<binding-template>
+	<imports>
+		<template file="MessageTemplate_Common.xml" template-id="common" destpath="tuple/old" />
+	</imports>
+	
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.messagemodels.MessageTemplate" />
+	</beans>
+	
+	<handlers>
+		<import-handlers template-id="common" />
+	</handlers>
+	
+	<template>
+      	<tuple>
+        	<old>
+        	</old>
+		</tuple>
+	</template>
+</binding-template>

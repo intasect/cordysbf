@@ -1,0 +1,59 @@
+<binding-template>
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.rules.Rule" />
+	</beans>
+	
+	<handlers>
+		<handler type="bean" beanid="default" xmlpath="ruleid" fieldname="key"  />
+		<handler type="bean" beanid="default" xmlpath="rulename" fieldname="name"  />
+		<handler type="bean" beanid="default" xmlpath="version" fieldname="version"  />		
+		<handler type="bean" beanid="default" xmlpath="rulegroupid" fieldname="parent.key"  />
+		<handler type="bean" beanid="default" xmlpath="orgcontext" fieldname="organization"  />
+		<handler type="bean" beanid="default" xmlpath="ruleowner" fieldname="owner"  />
+		<handler type="bean" beanid="default" xmlpath="ruledescription" fieldname="description"  />		
+		<handler type="bean" beanid="default" xmlpath="rulepriority" fieldname="priority"  />				
+		<handler type="bean" beanid="default" xmlpath="expirydate" fieldname="expiryDate"  />
+		<handler type="bean" beanid="default" xmlpath="enabled" fieldname="enabled"  />
+		<handler type="bean" beanid="default" xmlpath="ruletype" fieldname="ruleType"  />
+		<handler type="bean" beanid="default" xmlpath="link" fieldname="linkHandle.key"  />
+		<handler type="bean" beanid="default" xmlpath="ruletemplateid" fieldname="ruleTemplateHandle.key"  />
+		<handler type="bean" beanid="default" xmlpath="mutex_rules" fieldname="mutexRules" xmlfield="true"  />
+		<handler type="bean" beanid="default" xmlpath="overrides_rules" fieldname="overridesRules" xmlfield="true" />
+		<handler type="bean" beanid="default" xmlpath="br_triggers" fieldname="triggers" xmlfield="true" />
+		<handler type="bean" beanid="default" xmlpath="ruledefinition" fieldname="ruleDefinition" xmlfield="true" />
+	</handlers>
+	
+	<template>
+		<rule>
+           <ruleid></ruleid>
+           <version></version>
+           <rulegroupid></rulegroupid>
+           <rulename></rulename>
+           <ruleowner></ruleowner>
+           <orgcontext></orgcontext>
+           <ruledescription/>
+           <rulepriority></rulepriority>
+           <expirydate/>
+           <enabled>true</enabled>
+           <debug>false</debug>
+           <toggletype>false</toggletype>
+           <ruletype></ruletype>
+           <link/>
+           <ruletemplateid/>
+           <mutex_rules/>
+           <overrides_rules/>
+           <br_triggers>
+             <trigger>
+               <template_id></template_id>
+               <template_name></template_name>
+               <on_insert></on_insert>
+               <on_update></on_update>
+               <on_delete></on_delete>
+             </trigger>
+           </br_triggers>
+           <ruledefinition>
+             
+           </ruledefinition>
+         </rule>
+	</template>
+</binding-template>

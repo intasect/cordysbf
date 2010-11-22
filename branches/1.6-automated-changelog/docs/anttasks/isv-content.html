@@ -1,0 +1,98 @@
+<html>
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<title>Content Type - Provided by BCP Build Framework</title>
+	<link rel="stylesheet" type="text/css" href="../stylesheets/antmanual.css">
+</head>
+
+<body>
+<h2><a name="content">Content</a></h2>
+<h3>Description</h3>
+<p>Content refers to a specific type of content that should be shipped with isvp.</p>
+<p>Some of the content types have default handlers. If you want to write your own handler, you can override the default handler by using handler property. For new types (we call it as non-standard), you will have to write your own handler. Except for types 'custom' and 'static', you can have only one occurance of type nested within an isv task. Type 'custom' is a non-standard type. It doesn't have a default handler.
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">type</td>
+    <td valign="top">Type of the content that you need to ship with isvp.</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">handler</td>
+    <td valign="top">Java class that implement content handler for specific type. For standard types this is optional. Required for non standard types. <br/>
+    Note: For standard types, you can use this to override the default handler. (Not yet implemented) </td>
+    <td valign="top" align="center">Yes/No</td>
+  </tr>
+  <tr>
+    <td valign="top">contentfile</td>
+    <td valign="top">File where specification of the content is given. This file should contain valid xml.</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+</table>
+
+<h3>Possible value for attribute type</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Value</b></td>
+    <td valign="top"><b>Description</b></td>
+  </tr>
+  <tr>
+    <td valign="top">filesystem</td>
+    <td valign="top">To specify the file system contents that needs to be shipped with ISV.</td>
+  </tr>
+  <tr>
+    <td valign="top">systemenvironment</td>
+    <td valign="top">To specify the system environment variables that needs to be shipped with ISV.</td>
+  </tr>
+  <tr>
+    <td valign="top">roles</td>
+    <td valign="top">To specify the roles that needs to be shipped with ISV.</td>
+  </tr>
+  <tr>
+    <td valign="top">methodsets</td>
+    <td valign="top">To specify the methodsets that needs to be shipped with ISV.</td>
+  </tr>
+  <tr>
+    <td valign="top">menus</td>
+    <td valign="top">To specify the menus that needs to be shipped with ISV.</td>
+  </tr>
+  <tr>
+    <td valign="top">applicationconnectors</td>
+    <td valign="top">To specify the application connector definitions that needs to be shipped with ISV.</td>
+  </tr>
+  <tr>
+    <td valign="top">styles</td>
+    <td valign="top">To specify the styles that needs to be shipped with ISV.</td>
+  </tr>
+  <tr>
+    <td valign="top">xmlstore</td>
+    <td valign="top">To specify the xml store contents that needs to be shipped with ISV.</td>
+  </tr>
+  <tr>
+    <td valign="top">virtualdirectories</td>
+    <td valign="top">To specify the virtual directories that needs to be created at the BCP server.</td>
+  </tr>
+  <tr>
+    <td valign="top">prompts</td>
+    <td valign="top">To specify the prompts that will be taken during the installation of ISV.</td>
+  </tr>
+  <tr>
+    <td valign="top">static</td>
+    <td valign="top">To specify some static xml content that needs to be inserted as such in the content definition of ISV.</td>
+  </tr>
+  <tr>
+    <td valign="top">custom</td>
+    <td valign="top">To implement your own handler for some custom content. You can send the patch/file to BCP build framework so that it will be made a standard type in the future releases.</td>
+  </tr>
+</table>
+<br/>
+<hr><p align="center">Copyright &copy; 2004 Cordys All rights Reserved.</p>
+</body>
+</html>
+

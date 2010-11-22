@@ -1,0 +1,73 @@
+<config>
+    <binding-templates>
+    	<!--  LDAP bindings -->
+    	
+    	<!--  CoBOC Folders Bindings -->
+       	<template path="coboc/folders/Folder_FileSystem.xml" content-type="COBOC_FOLDERS_FOLDER" />
+        <template path="coboc/folders/Template_FileSystem.xml" content-type="COBOC_FOLDERS_TEMPLATE" />
+        <template path="coboc/folders/SpecialAttribute_FileSystem.xml" content-type="COBOC_FOLDERS_SPECIAL_ATTRIBUTE" />       
+        <template path="coboc/folders/Mapping_FileSystem.xml" content-type="COBOC_FOLDERS_MAPPING" />
+        <template path="coboc/folders/ContentMap_FileSystem.xml" content-type="COBOC_FOLDERS_CONTENTMAP" />      
+        <template path="coboc/folders/ActionTemplate_FileSystem.xml" content-type="COBOC_FOLDERS_ACTIONTEMPLATE" />      
+        <template path="coboc/folders/ActionTemplateXForm_FileSystem.xml" content-type="COBOC_FOLDERS_ACTIONTEMPLATE_XFORM" />      
+        <template path="coboc/folders/ConditionTemplate_FileSystem.xml" content-type="COBOC_FOLDERS_CONDITIONTEMPLATE" />      
+        <template path="coboc/folders/ConditionTemplateXForm_FileSystem.xml" content-type="COBOC_FOLDERS_CONDITIONTEMPLATE_XFORM" />      
+        <template path="coboc/folders/DecisionCase_FileSystem.xml" content-type="COBOC_FOLDERS_DECISIONCASE" />  
+        <template path="coboc/folders/ProcessTemplate_FileSystem.xml" content-type="COBOC_FOLDERS_PROCESSTEMPLATE" />      
+        <template path="coboc/folders/ProcessBpmn_FileSystem.xml" content-type="COBOC_FOLDERS_PROCESSBPMN" />      
+        
+        <!--  CoBOC Rule Bindings -->
+        <template path="coboc/rules/RuleGroup_FileSystem.xml" content-type="COBOC_RULES_RULEGROUP" />
+        <template path="coboc/rules/Rule_FileSystem.xml" content-type="COBOC_RULES_RULE" />
+        
+        <!--  CoBOC Schedule Bindings -->
+        <template path="coboc/scheduletemplates/Schedule_FileSystem.xml" content-type="COBOC_SCHEDULE_TEMPLATE" />
+        
+        <!--  CoBOC Inbox Message Model Bindings -->
+        <template path="coboc/messagemodels/MessageModel_FileSystem.xml" content-type="COBOC_INBOX_MODEL_C1" />
+        
+        <!--  MDM Bindings -->
+        <template path="coboc/mdm/Backend_FileSystem.xml" content-type="MDM_BACKEND" />
+        <template path="coboc/mdm/Entity_FileSystem.xml" content-type="MDM_ENTITY" />
+        <template path="coboc/mdm/EntityFolder_FileSystem.xml" content-type="MDM_ENTITY_FOLDER" />
+        <template path="coboc/mdm/Model_FileSystem.xml" content-type="MDM_MODEL" />
+    </binding-templates>
+    
+    <read-methods>
+    	<method>
+    		<content-types>COBOC_FOLDERS,MDM</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.FileSystemReadMethod_Folders</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_RULES</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.FileSystemReadMethod_CobocRules</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_SCHEDULES</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.FileSystemReadMethod_ScheduleTemplates</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_INBOX_MODEL_C1</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.FileSystemReadMethod_MessageModels</class>
+    	</method>
+    </read-methods>
+    
+	<write-methods>
+    	<method>
+    		<content-types>COBOC_FOLDERS,MDM</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.FileSystemWriteMethod_Folders</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_RULES</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.FileSystemWriteMethod_CobocRules</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_SCHEDULES</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.FileSystemWriteMethod_ScheduleTemplates</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_INBOX_MODEL_C1</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.FileSystemWriteMethod_MessageModels</class>
+    	</method>
+    </write-methods>    
+</config>
