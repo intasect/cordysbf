@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<properties>
+    <page id="pGeneral" label="prop.pGeneral.label">
+    	<group id="gdependencies" label="prop.pGeneral.gdependencies.label">
+			<text type="sdkversion" id="tdependenciessdkversion" label="prop.pGeneral.gdependencies.tdependenciessdkversion.label" description="The version of the build framework for this project." width="250"/>
+			<text type="platformversion" id="tdependenciesplatformversion" label="prop.pGeneral.gdependencies.tdependenciesplatformversion.label" description="The version of the platform for this project." width="250"/>
+    	</group>
+        <group id="gproject" label="prop.pGeneral.gproject.label">
+            <text description="The name of the folder in which the project should be deployed within the Cordys installation folder." id="tprojectdeploy" label="prop.pGeneral.gproject.tprojectdeploy.label" propertyname="project.deploy" width="250"/>
+            <text description="The name of the project&apos;s jar file." id="tprojectjarname" label="prop.pGeneral.gproject.tprojectjarname.label" propertyname="project.jar.name" width="250"/>
+            <text description="The name of the project." id="tprojectname" label="prop.pGeneral.gproject.tprojectname.label" propertyname="project.name" width="250"/>
+            <text description="The version of the product." id="tprojectversion" label="prop.pGeneral.gproject.tprojectversion.label" propertyname="project.version" width="250"/>
+            <text description="The deploy-location of the web files within &lt;cordys_install_dir>/Web" id="tprojectwebname" label="prop.pGeneral.gproject.tprojectwebname.label" propertyname="project.web.name" width="250"/>
+        </group>
+        <group id="gproduct" label="prop.pGeneral.gproduct.label">
+            <text description="The vendor of this product." id="tproductvendor" label="prop.pGeneral.gproduct.tproductvendor.label" propertyname="product.vendor" width="250"/>
+        </group>
+    </page>
+    <page id="pConnection" label="prop.pConnection.label">
+        <group id="gdev" label="prop.pGeneral.gdev.label">
+            <text description="The name of the server on which the project is bing developed." id="tdevserver" label="prop.pGeneral.gdev.tdevserver.label" propertyname="dev.server" width="250"/>
+        </group>
+        <group id="gconnection" label="prop.pGeneral.gconnection.label">
+            <text description="The type of connection used to communicate with Cordys (bus / webgateway" id="tconnectionmode" label="prop.pGeneral.gconnection.tconnectionmode.label" propertyname="connection.mode" width="250"/>
+        </group>
+        <group id="gldap" label="prop.pGeneral.gldap.label">
+            <text description="bus - The password for the ldap server." id="tldappassword" label="prop.pGeneral.gldap.tldappassword.label" propertyname="ldap.password" width="250"/>
+            <text description="bus - The portnumber on which the LDAP server is running." id="tldapport" label="prop.pGeneral.gldap.tldapport.label" propertyname="ldap.port" width="250"/>
+            <text description="bus - The name of the server to connect to." id="tldapserver" label="prop.pGeneral.gldap.tldapserver.label" propertyname="ldap.server" width="250"/>
+            <text description="bus - The username for the LDAP server." id="tldapuser" label="prop.pGeneral.gldap.tldapuser.label" propertyname="ldap.user" width="250"/>
+        </group>
+		<group id="gbus" label="prop.pGeneral.gbus.label">
+            <text description="bus - Indicates whether or not the LDAP uses SSL." id="tbusldapprocessorssl" label="prop.pGeneral.gbus.tbusldapprocessorssl.label" propertyname="bus.ldap.processor.ssl" width="250"/>
+            <text description="bus - The location of the trust store for connecting to an SSL enabled LDAP directly." id="tbusssltruststore" label="prop.pGeneral.gbus.tbusssltruststore.label" propertyname="bus.ssl.truststore" width="250"/>
+            <text description="bus - The password of the trust store for connecting to an SSL enabled LDAP directly." id="tbusssltruststorepassword" label="prop.pGeneral.gbus.tbusssltruststorepassword.label" propertyname="bus.ssl.truststorepassword" width="250"/>
+        </group>
+        <group id="gcordys" label="prop.pGeneral.gcordys.label">
+            <text description="The location of the Cordys installation folder of the server you are developing on." id="tcordyshome" label="prop.pGeneral.gcordys.tcordyshome.label" propertyname="cordys.home" width="250"/>
+        </group>
+        <group id="gwebgateway" label="prop.pGeneral.gwebgateway.label">
+            <text description="webgateway - The password for authenticating to the webgateway" id="twebgatewaypassword" label="prop.pGeneral.gwebgateway.twebgatewaypassword.label" propertyname="webgateway.password" width="250"/>
+            <text description="webgateway - The URL where the webgateway is running." id="twebgatewayurl" label="prop.pGeneral.gwebgateway.twebgatewayurl.label" propertyname="webgateway.url" width="250"/>
+            <text description="webgateway - The username to use for authenticating to the webgateway" id="twebgatewayuser" label="prop.pGeneral.gwebgateway.twebgatewayuser.label" propertyname="webgateway.user" width="250"/>
+        </group>
+        <group id="gcontent" label="prop.pGeneral.gcontent.label">
+            <text description="Defines the filter of the different types of content that the ContentManager task should handle." id="tcontentfilter" label="prop.pGeneral.gcontent.tcontentfilter.label" propertyname="content.filter" width="250"/>
+            <text description="The organization used for transferring content to and from Cordys." id="tcontentorg" label="prop.pGeneral.gcontent.tcontentorg.label" propertyname="content.org" width="250"/>
+        </group>
+    </page>
+    <page id="pJava" label="prop.pJava.label">
+         <group id="gjavac" label="prop.pGeneral.gjavac.label">
+            <text description="Whether or not to compile the classes in debug mode." id="tjavacdebug" label="prop.pGeneral.gjavac.tjavacdebug.label" propertyname="javac.debug" width="250"/>
+            <text description="Whether or not to compile the classes and show deprecation warnings." id="tjavacdeprecation" label="prop.pGeneral.gjavac.tjavacdeprecation.label" propertyname="javac.deprecation" width="250"/>
+            <text description="Whether or not to optimize the classes." id="tjavacoptimize" label="prop.pGeneral.gjavac.tjavacoptimize.label" propertyname="javac.optimize" width="250"/>
+        </group>
+        <group id="gjavadoc" label="prop.pGeneral.gjavadoc.label">
+            <text description="Whether or not to include the author tag in the generated documentation." id="tjavadocauthor" label="prop.pGeneral.gjavadoc.tjavadocauthor.label" propertyname="javadoc.author" width="250"/>
+            <text description="The base package of which to generate JavaDocs" id="tjavadocpackagename" label="prop.pGeneral.gjavadoc.tjavadocpackagename.label" propertyname="javadoc.packagename" width="250"/>
+            <text description="Whether or not to include the private methods in the generated documentation." id="tjavadocprivate" label="prop.pGeneral.gjavadoc.tjavadocprivate.label" propertyname="javadoc.private" width="250"/>
+            <text description="Whether or not to create class and package usage pages." id="tjavadocuse" label="prop.pGeneral.gjavadoc.tjavadocuse.label" propertyname="javadoc.use" width="250"/>
+            <text description="Whether or not to include the version tag in the generated documentation." id="tjavadocversion" label="prop.pGeneral.gjavadoc.tjavadocversion.label" propertyname="javadoc.version" width="250"/>
+            <text description="The window title in the generated documentation." id="tjavadocwindowtitle" label="prop.pGeneral.gjavadoc.tjavadocwindowtitle.label" propertyname="javadoc.windowtitle" width="250"/>
+        </group>
+        <group id="gjunit" label="prop.pGeneral.gjunit.label">
+            <text description="Custom stylesheet for the JUnit reports." id="tjunitcustomcss" label="prop.pGeneral.gjunit.tjunitcustomcss.label" propertyname="junit.custom.css" width="250"/>
+        </group>
+    </page>
+    <page id="pISV" label="prop.pISV.label">
+        <group id="gcoboc" label="prop.pGeneral.gcoboc.label">
+            <text description="Specify the different types of CoBOC content that your project has. Removing content from here will disable the reading of that type from BCP and file system." id="tcoboccontent" label="prop.pGeneral.gcoboc.tcoboccontent.label" propertyname="coboc.content" width="250"/>
+            <text description="CoBOC folder content path filter. Used to limit the operations to only a specific subtree." id="tcobocrootpath" label="prop.pGeneral.gcoboc.tcobocrootpath.label" propertyname="coboc.root.path" width="250"/>
+        </group>
+        <group id="gisv" label="prop.pGeneral.gisv.label">
+            <text description="Specifies the types of content that should be packaged within the ISV package." id="tisvcontent" label="prop.pGeneral.gisv.tisvcontent.label" propertyname="isv.content" width="250"/>
+            <text description="The filename of the ISV package that is created." id="tisvfilename" label="prop.pGeneral.gisv.tisvfilename.label" propertyname="isv.filename" width="250"/>
+            <text description="The name of the ISV package that is created (The final DN)." id="tisvname" label="prop.pGeneral.gisv.tisvname.label" propertyname="isv.name" width="250"/>
+            <text description="The organization used for creating an ISV package." id="tisvorg" label="prop.pGeneral.gisv.tisvorg.label" propertyname="isv.org" width="250"/>
+            <text description="The owner of the ISV package that is created." id="tisvowner" label="prop.pGeneral.gisv.tisvowner.label" propertyname="isv.owner" width="250"/>
+            <text description="The product name of the ISV package that is created." id="tisvproductname" label="prop.pGeneral.gisv.tisvproductname.label" propertyname="isv.productname" width="250"/>
+            <text description="The DN of the user to use when sending ISV related requests to Cordys." id="tisvuserdn" label="prop.pGeneral.gisv.tisvuserdn.label" propertyname="isv.userdn" width="250"/>
+            <text description="The DN of the user to use when sending content related requests to Cordys." id="tisvuserdn" label="prop.pGeneral.gisv.tisvuserdn.label" propertyname="isv.userdn" width="250"/>
+            <text description="The version of the ISV package that is created." id="tisvversion" label="prop.pGeneral.gisv.tisvversion.label" propertyname="isv.version" width="250"/>
+        </group>
+         <group id="ghandler" label="prop.pGeneral.ghandler.label">
+            <text description="Specifies the WsAppServer handler to be used. Valid values are: xas - Ws-Appserver files in &lt;CORDYS_HOME&gt; wsappserver - Ws-Appserver files in XMLStore (Cordys C2 and later). This is default." id="thandlerxas" label="prop.pGeneral.ghandler.thandlerxas.label" propertyname="handler.xas" width="250"/>
+        </group>
+        <group id="gstudio" label="prop.pGeneral.gstudio.label">
+            <text description="Determines if BPM vcmdata files has linked submodels included." id="tstudiobmpexportsubprocesses" label="prop.pGeneral.gstudio.tstudiobmpexportsubprocesses.label" propertyname="studio.bmp.export.subprocesses" width="250"/>
+            <text description="Studio BPM content root path. Used to limit the operations to only a specific subtree." id="tstudiobpmrootpath" label="prop.pGeneral.gstudio.tstudiobpmrootpath.label" propertyname="studio.bpm.root.path" width="250"/>
+            <text description="Specifies versions for exporting Studio XForms and BPM&apos;s. Multiple version can be separated with a semi-colon. If not set, all versions will be exported." id="tstudioexportversions" label="prop.pGeneral.gstudio.tstudioexportversions.label" propertyname="studio.export.versions" width="250"/>
+            <text description="Specifies if Studio XForms are pretty printed when exported from the server. Setting this to &apos;true&apos; can help comparing two version more easily." id="tstudioxformsexportformatxml" label="prop.pGeneral.gstudio.tstudioxformsexportformatxml.label" propertyname="studio.xforms.export.formatxml" width="250"/>
+            <text description="Studio XForms content root path. Used to limit the operations to only a specific subtree." id="tstudioxformsrootpath" label="prop.pGeneral.gstudio.tstudioxformsrootpath.label" propertyname="studio.xforms.root.path" width="250"/>
+        </group>
+        <group id="gxas" label="prop.pGeneral.gxas.label">
+            <text description="Set this property to the actual XAS package that is part of this project. Multiple packages can be separated with a semi-colon." id="txaspackage" label="prop.pGeneral.gxas.txaspackage.label" propertyname="xas.package" width="250"/>
+        </group>
+        <group id="gxmlstore" label="prop.pGeneral.gxmlstore.label">
+            <text description="This controls wheter all XMLStore contents are pretty printed when exported from BCP." id="txmlstoreformatcontent" label="prop.pGeneral.gxmlstore.txmlstoreformatcontent.label" propertyname="xmlstore.format.content" width="250"/>
+        </group>
+    </page>
+    <page id="pSourceFolders" label="prop.pSourceFolders.label">
+        <group id="gdocs" label="prop.pGeneral.gdocs.label">
+            <text description="The location base for all documentation related content." id="tdocsdir" label="prop.pGeneral.gdocs.tdocsdir.label" propertyname="docs.dir" width="250"/>
+            <text description="The location for all external projetc documentation." id="tdocsexternal" label="prop.pGeneral.gdocs.tdocsexternal.label" propertyname="docs.external" width="250"/>
+            <text description="The location for all internal projetc documentation." id="tdocsinternal" label="prop.pGeneral.gdocs.tdocsinternal.label" propertyname="docs.internal" width="250"/>
+        </group>
+        <group id="glib" label="prop.pGeneral.glib.label">
+            <text description="The file that contains the version of the buildframework that the current project was last updated to." id="tlibbfversionfile" label="prop.pGeneral.glib.tlibbfversionfile.label" propertyname="lib.bf.version.file" width="250"/>
+            <text description="The file that holds the checksums of each file." id="tlibchecksumfile" label="prop.pGeneral.glib.tlibchecksumfile.label" propertyname="lib.checksum.file" width="250"/>
+            <text description="Holds the folder in which configuration files with regard to the build framework." id="tlibconfig" label="prop.pGeneral.glib.tlibconfig.label" propertyname="lib.config" width="250"/>
+            <text description="The location of the project specific java libraries folder (./lib)" id="tlibdir" label="prop.pGeneral.glib.tlibdir.label" propertyname="lib.dir" width="250"/>
+        </group>
+        <group id="gplatform" label="prop.pGeneral.gplatform.label">
+            <text description="The location of the folder containing all the platform binaries." id="tplatformdir" label="prop.pGeneral.gplatform.tplatformdir.label" propertyname="platform.dir" width="250"/>
+        </group>
+        <group id="gsdk" label="prop.pGeneral.gsdk.label">
+            <text description="The location of the folder of the build framework with the buildfiles (./sdk/build)" id="tsdkbuilddir" label="prop.pGeneral.gsdk.tsdkbuilddir.label" propertyname="sdk.build.dir" width="250"/>
+            <text description="The location of the different level for the buildfiles." id="tsdkbuildframeworkdir" label="prop.pGeneral.gsdk.tsdkbuildframeworkdir.label" propertyname="sdk.build.framework.dir" width="250"/>
+            <text description="The location of the base folder of the build framework related libraries (./sdk)" id="tsdkdir" label="prop.pGeneral.gsdk.tsdkdir.label" propertyname="sdk.dir" width="250"/>
+            <text description="The location of the base folder of the build framework related Java libraries (./sdk/lib)" id="tsdklibdir" label="prop.pGeneral.gsdk.tsdklibdir.label" propertyname="sdk.lib.dir" width="250"/>
+        </group>
+        <group id="gsrc" label="prop.pGeneral.gsrc.label">
+            <text description="The location of the Cordys content source folder (./src/content)" id="tsrccontent" label="prop.pGeneral.gsrc.tsrccontent.label" propertyname="src.content" width="250"/>
+            <text description="The location of the application connectors source folder (./src/content/applicationconnectors)" id="tsrccontentappcon" label="prop.pGeneral.gsrc.tsrccontentappcon.label" propertyname="src.content.appcon" width="250"/>
+            <text description="The location of the CoBOC source folder (./src/content/coboc)" id="tsrccontentcoboc" label="prop.pGeneral.gsrc.tsrccontentcoboc.label" propertyname="src.content.coboc" width="250"/>
+            <text description="The location of the CoBOC folders source folder (./src/content/coboc/folders)" id="tsrccontentcobocfolders" label="prop.pGeneral.gsrc.tsrccontentcobocfolders.label" propertyname="src.content.coboc.folders" width="250"/>
+            <text description="The location of the dbschema source folder (./src/content/dbschema)" id="tsrccontentdbschema" label="prop.pGeneral.gsrc.tsrccontentdbschema.label" propertyname="src.content.dbschema" width="250"/>
+            <text description="The location of the ISV packaging control files folder (./src/content/isv)" id="tsrccontentisv" label="prop.pGeneral.gsrc.tsrccontentisv.label" propertyname="src.content.isv" width="250"/>
+            <text description="The location of the localizations source folder (./src/content/localization)" id="tsrccontentlocalizations=" label="prop.pGeneral.gsrc.tsrccontentlocalizations.label" propertyname="src.content.localizations=" width="250"/>
+            <text description="The location of the menus source folder (./src/content/menus)" id="tsrccontentmenus" label="prop.pGeneral.gsrc.tsrccontentmenus.label" propertyname="src.content.menus" width="250"/>
+            <text description="The location of the method sets source folder (./src/content/methodsets)" id="tsrccontentmethodsets" label="prop.pGeneral.gsrc.tsrccontentmethodsets.label" propertyname="src.content.methodsets" width="250"/>
+            <text description="The location of the roles source folder (./src/content/roles)" id="tsrccontentroles" label="prop.pGeneral.gsrc.tsrccontentroles.label" propertyname="src.content.roles" width="250"/>
+            <text description="The location of the SOAP nodes source folder (./src/content/soapnodes)" id="tsrccontentsoapnodes" label="prop.pGeneral.gsrc.tsrccontentsoapnodes.label" propertyname="src.content.soapnodes" width="250"/>
+            <text description="The location of the studio source folder (./src/content/studio)" id="tsrccontentstudio" label="prop.pGeneral.gsrc.tsrccontentstudio.label" propertyname="src.content.studio" width="250"/>
+            <text description="The location of the BPM flows source folder (./src/content/studio/flows)" id="tsrccontentstudioflows" label="prop.pGeneral.gsrc.tsrccontentstudioflows.label" propertyname="src.content.studio.flows" width="250"/>
+            <text description="The location of the XForms source folder (./src/content/studio/xforms)" id="tsrccontentstudioxforms" label="prop.pGeneral.gsrc.tsrccontentstudioxforms.label" propertyname="src.content.studio.xforms" width="250"/>
+            <text description="The location of the styles source folder (./src/content/styles)" id="tsrccontentstyles" label="prop.pGeneral.gsrc.tsrccontentstyles.label" propertyname="src.content.styles" width="250"/>
+            <text description="The location of the toolbars source folder (./src/content/toolbars)" id="tsrccontenttoolbars" label="prop.pGeneral.gsrc.tsrccontenttoolbars.label" propertyname="src.content.toolbars" width="250"/>
+            <text description="The location of the WsApp-Server source folder (./src/content/xas)" id="tsrccontentxas=" label="prop.pGeneral.gsrc.tsrccontentxas.label" propertyname="src.content.xas=" width="250"/>
+            <text description="The location of the XML store source folder (./src/content/xmlstore)" id="tsrccontentxmlstore" label="prop.pGeneral.gsrc.tsrccontentxmlstore.label" propertyname="src.content.xmlstore" width="250"/>
+            <text description="The location of the dbschema source folder (./src/dbschema)" id="tsrcdbschema" label="prop.pGeneral.gsrc.tsrcdbschema.label" propertyname="src.dbschema" width="250"/>
+            <text description="The location of the src folder" id="tsrcdir" label="prop.pGeneral.gsrc.tsrcdir.label" propertyname="src.dir" width="250"/>
+            <text description="The location of the java source folder (./src/java)" id="tsrcjava" label="prop.pGeneral.gsrc.tsrcjava.label" propertyname="src.java" width="250"/>
+            <text description="The location of the web source folder (./src/web)" id="tsrcweb" label="prop.pGeneral.gsrc.tsrcweb.label" propertyname="src.web" width="250"/>
+        </group>
+    </page>
+    <page id="pBuildFolders" label="prop.pBuildFolders.label">
+        <group id="gbuild" label="prop.pGeneral.gbuild.label">
+            <text description="The location of the build apidocs folder (./build/apidocs)" id="tbuildapidocs" label="prop.pGeneral.gbuild.tbuildapidocs.label" propertyname="build.apidocs" width="250"/>
+            <text description="The location of the build bin folder (./build/bin)" id="tbuildbin" label="prop.pGeneral.gbuild.tbuildbin.label" propertyname="build.bin" width="250"/>
+            <text description="The location of the build classes folder (./build/classes)" id="tbuildclasses" label="prop.pGeneral.gbuild.tbuildclasses.label" propertyname="build.classes" width="250"/>
+            <text description="The location of the build folder for Cobertura reports." id="tbuildcobertura" label="prop.pGeneral.gbuild.tbuildcobertura.label" propertyname="build.cobertura" width="250"/>
+            <text description="The location of the build folder for Cobertura &apos;instrumented&apos; reports." id="tbuildcoberturainstrumented" label="prop.pGeneral.gbuild.tbuildcoberturainstrumented.label" propertyname="build.cobertura.instrumented" width="250"/>
+            <text description="The location of the build folder for the actual Cobertura generated reports." id="tbuildcoberturareport" label="prop.pGeneral.gbuild.tbuildcoberturareport.label" propertyname="build.cobertura.report" width="250"/>
+            <text description="The location of the build content folder (./build/content)" id="tbuildcontent" label="prop.pGeneral.gbuild.tbuildcontent.label" propertyname="build.content" width="250"/>
+            <text description="The location of the build folder (./build)" id="tbuilddir" label="prop.pGeneral.gbuild.tbuilddir.label" propertyname="build.dir" width="250"/>
+            <text description="The location of the build docs folder (./build/documentation)" id="tbuilddocs" label="prop.pGeneral.gbuild.tbuilddocs.label" propertyname="build.docs" width="250"/>
+            <text description="The location of the build isv folder (./build/isv)" id="tbuildisv" label="prop.pGeneral.gbuild.tbuildisv.label" propertyname="build.isv" width="250"/>
+            <text description="The location of the build jar folder (./build/jar)" id="tbuildjar" label="prop.pGeneral.gbuild.tbuildjar.label" propertyname="build.jar" width="250"/>
+            <text description="The location of the build junitreports folder (./build/junit-reports)" id="tbuildjunitreports" label="prop.pGeneral.gbuild.tbuildjunitreports.label" propertyname="build.junitreports" width="250"/>
+            <text description="The location of the build localizations folder (./build/localization)" id="tbuildlocalizations" label="prop.pGeneral.gbuild.tbuildlocalizations.label" propertyname="build.localizations" width="250"/>
+            <text description="The resulting Studio vcmdata file that has all the vcmdata files merged into it." id="tbuildstudioisvfilename" label="prop.pGeneral.gbuild.tbuildstudioisvfilename.label" propertyname="build.studio.isv.filename" width="250"/>
+            <text description="The location of the build test folder (./build/test)" id="tbuildtest" label="prop.pGeneral.gbuild.tbuildtest.label" propertyname="build.test" width="250"/>
+            <text description="The location of the build test classes folder (./build/testclasses)" id="tbuildtestclasses" label="prop.pGeneral.gbuild.tbuildtestclasses.label" propertyname="build.test.classes" width="250"/>
+            <text description="The location of the build web folder (./build/web)" id="tbuildweb" label="prop.pGeneral.gbuild.tbuildweb.label" propertyname="build.web" width="250"/>
+        </group>
+        <group id="gdist" label="prop.pGeneral.gdist.label">
+            <text description="The location of the dist apidocs folder (./dist/apidocs)" id="tdistapidocs" label="prop.pGeneral.gdist.tdistapidocs.label" propertyname="dist.apidocs" width="250"/>
+            <text description="The location of the dist folder (./dist)" id="tdistdir" label="prop.pGeneral.gdist.tdistdir.label" propertyname="dist.dir" width="250"/>
+            <text description="The location of the dist docs folder (./dist/docs)" id="tdistdocs" label="prop.pGeneral.gdist.tdistdocs.label" propertyname="dist.docs" width="250"/>
+            <text description="Whether or not to include a zipped version of the sources in the distribution." id="tdistincludesources" label="prop.pGeneral.gdist.tdistincludesources.label" propertyname="dist.include.sources" width="250"/>
+            <text description="The location of the dist setup folder (./dist/setup)" id="tdistsetup" label="prop.pGeneral.gdist.tdistsetup.label" propertyname="dist.setup" width="250"/>
+        </group>
+        <group id="grelease" label="prop.pGeneral.grelease.label">
+            <text description="Path of the project release repository where all release build contents will be copied. By default this is a local path but for shared projects this should be a location on a file server, e.g. \\my-server\shared-location
+elease-repository. If this property is not set, release builds are not copied." id="treleaserepositorypath" label="prop.pGeneral.grelease.treleaserepositorypath.label" propertyname="release.repository.path" width="250"/>
+            <text description="The prefix for release versions." id="treleaseversionpostfix" label="prop.pGeneral.grelease.treleaseversionpostfix.label" propertyname="release.version.postfix" width="250"/>
+            <text description="The prefix for release versions." id="treleaseversionprefix" label="prop.pGeneral.grelease.treleaseversionprefix.label" propertyname="release.version.prefix" width="250"/>
+        </group>
+	</page>
+	<page id="pSVN" label="prop.pSVN.label">
+        <group id="gusing" label="prop.pGeneral.gusing.label">
+            <text description="This property indicates whether or not the project is under subversion. When this property is set all svn tasks will be executed. To indicate a project that is not under subversion remove this property." id="tusingsvn" label="prop.pGeneral.gusing.tusingsvn.label" propertyname="using.svn" width="250"/>
+        </group>
+        <group id="gsvn" label="prop.pGeneral.gsvn.label">
+            <text description="The SubVersion URL of the branches." id="tsvnbranches" label="prop.pGeneral.gsvn.tsvnbranches.label" propertyname="svn.branches" width="250"/>
+            <text description="The text to prefex to the version number when creating a new branch." id="tsvnlabel" label="prop.pGeneral.gsvn.tsvnlabel.label" propertyname="svn.label" width="250"/>
+            <text description="The SubVersion URL of the main (trunk)." id="tsvnmain" label="prop.pGeneral.gsvn.tsvnmain.label" propertyname="svn.main" width="250"/>
+            <text description="The password to use for connecting to SubVersion." id="tsvnpassword" label="prop.pGeneral.gsvn.tsvnpassword.label" propertyname="svn.password" width="250"/>
+            <text description="The SubVersion base URL of the project." id="tsvnproject" label="prop.pGeneral.gsvn.tsvnproject.label" propertyname="svn.project" width="250"/>
+            <text description="The username to use for connecting to SubVersion." id="tsvnusername" label="prop.pGeneral.gsvn.tsvnusername.label" propertyname="svn.username" width="250"/>
+        </group>
+	</page>
+	<page id="pMisc" label="prop.pMisc.label">
+        <group id="gskip" label="prop.pGeneral.gskip.label">
+            <text description="" id="tskippublish" label="prop.pGeneral.gskip.tskippublish.label" propertyname="skip.publish" width="250"/>
+            <text description="The location where the .class files will be published when tocordys classes is executed." id="tuserclassdir" label="prop.pGeneral.gskip.tuserclassdir.label" propertyname="user.classdir" width="250"/>
+        </group>
+        <group id="gsnapshot" label="prop.pGeneral.gsnapshot.label">
+            <text description="The postfix for snapshot versions." id="tsnapshotversionpostfix" label="prop.pGeneral.gsnapshot.tsnapshotversionpostfix.label" propertyname="snapshot.version.postfix" width="250"/>
+            <text description="The prefix for snapshot versions." id="tsnapshotversionprefix" label="prop.pGeneral.gsnapshot.tsnapshotversionprefix.label" propertyname="snapshot.version.prefix" width="250"/>
+        </group>
+        <group id="gtest" label="prop.pGeneral.gtest.label">
+            <text description="The location of the base folder for all test-related sources." id="ttestdir" label="prop.pGeneral.gtest.ttestdir.label" propertyname="test.dir" width="250"/>
+            <text description="The location of the base folder for all test-related Java sources." id="ttestjava" label="prop.pGeneral.gtest.ttestjava.label" propertyname="test.java" width="250"/>
+        </group>
+        <group id="gversionfile" label="prop.pGeneral.gversionfile.label">
+            <text description="The name of the version class." id="tversionfileclassname" label="prop.pGeneral.gversionfile.tversionfileclassname.label" propertyname="versionfile.class.name" width="250"/>
+            <text description="The package in which the version class should be put." id="tversionfileclasspackage" label="prop.pGeneral.gversionfile.tversionfileclasspackage.label" propertyname="versionfile.class.package" width="250"/>
+            <text description="Indicates whether or not the version file should be generated" id="tversionfilegenerate" label="prop.pGeneral.gversionfile.tversionfilegenerate.label" propertyname="versionfile.generate" width="250"/>
+            <text description="The product name that should be displayed in the version file." id="tversionfileproductname" label="prop.pGeneral.gversionfile.tversionfileproductname.label" propertyname="versionfile.productname" width="250"/>
+            <text description="The location of the template to use for the version class." id="tversionfiletemplate" label="prop.pGeneral.gversionfile.tversionfiletemplate.label" propertyname="versionfile.template" width="250"/>
+        </group>
+        <group id="gMisc" label="prop.pGeneral.gMisc.label">
+            <text description="" id="tIncludesources" label="prop.pGeneral.gMisc.tIncludesources.label" propertyname="include.source" width="250"/>
+        </group>
+    </page>
+</properties>

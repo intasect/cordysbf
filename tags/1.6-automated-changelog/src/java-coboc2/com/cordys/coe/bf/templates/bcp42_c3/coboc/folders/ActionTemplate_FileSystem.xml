@@ -1,0 +1,46 @@
+<binding-template>
+	<imports>
+		<template file="ActionTemplate_Common.xml" template-id="common" destpath="tuple/old/ENTITY/OBJECT" />
+	</imports>
+	
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.folders.ActionTemplate" />
+	</beans>
+	
+	<handlers>
+		<handler type="property" propname="bf-version" xmlpath="@bf-version"  />
+		<handler type="bean" beanid="default" xmlpath="@key" fieldname="key"  />
+		<handler type="bean" beanid="default" xmlpath="@name" fieldname="name"  />
+		<handler type="bean" beanid="default" xmlpath="@entity_type" fieldname="templateId"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/PARENT_KEY" fieldname="parentKey"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/ORGANIZATION" fieldname="organization"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OWNER" fieldname="owner"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/DESCRIPTION" fieldname="description"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/EVENT_FLAG" fieldname="eventFlag"  />
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/HISTORY" fieldname="history"  />			
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/TEMPLATE_ID" fieldname="templateId"  />	
+		<import-handlers template-id="common" />
+
+		<!-- Modifications for the common template -->
+		<handler type="bean" beanid="default" xmlpath="old/ENTITY/OBJECT/Action/ActionDetails/ActionRepositoryId" fieldname="parentKey" />
+		<remove-handler xmlpath="old/ENTITY/OBJECT/Action/ActionDetails/TemplateID" />
+	</handlers>
+	
+	<template>
+		<tuple key="" name="" level="organization" entity_type="" FILE_TYPE="action-template" bf-version="">
+			<old>
+				<ENTITY>
+					<PARENT_KEY></PARENT_KEY>
+					<ORGANIZATION></ORGANIZATION>
+					<OWNER></OWNER>
+					<DESCRIPTION></DESCRIPTION>
+					<EVENT_FLAG></EVENT_FLAG>
+					<HISTORY></HISTORY>
+					<TEMPLATE_ID></TEMPLATE_ID>
+					<OBJECT>
+					</OBJECT>
+				</ENTITY>
+			</old>
+		</tuple>
+	</template>
+</binding-template>

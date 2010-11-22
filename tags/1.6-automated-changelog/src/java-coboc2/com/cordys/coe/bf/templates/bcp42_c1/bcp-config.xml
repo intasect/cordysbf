@@ -1,0 +1,128 @@
+<config>
+	<soaprequest-templates>
+		<!--  LDAP SOAP Templates -->
+		<template path="ldap/GetMethodSetsRequest.xml" />
+        <template path="ldap/GetChildrenRequest.xml" />
+        
+        <!--  CoBOC SOAP Templates -->
+        <template path="coboc/rules/GetRuleGroupsByOwner.xml" />
+        <template path="coboc/rules/GetRulesByOwner.xml" />
+        <template path="coboc/scheduletemplates/GetAllScheduleTemplates.xml" />
+        <template path="coboc/messagemodels/GetAllMessageModels.xml" />
+        <template path="coboc/messagemodels/GetMessageModelDetails.xml" />
+        <template path="coboc/folders/SelectTemplateSpecialAttributes.xml" />
+        <template path="coboc/folders/CreateTemplateSpecialAttribute.xml" />
+        <template path="coboc/folders/DeleteTemplateSpecialAttribute.xml" />
+    </soaprequest-templates>
+    
+    <binding-templates>
+    	<!--  LDAP bindings -->
+    	<template path="ldap/MethodSetEntry.xml" content-type="METHOD_SET" />
+        <template path="ldap/MethodEntry.xml" content-type="METHOD" />
+        <template path="ldap/MethodXsdEntry.xml" content-type="METHOD_XSD" />       
+        
+        <!--  CoBOC Folders Bindings -->
+        <template path="coboc/folders/Folder_BCP.xml" content-type="COBOC_FOLDERS_FOLDER" />
+        <template path="coboc/folders/Folder_BCP_Update.xml" content-type="COBOC_FOLDERS_FOLDER" sub-type="BCP-Update" />       
+        <template path="coboc/folders/Template_BCP.xml" content-type="COBOC_FOLDERS_TEMPLATE" />       
+        <template path="coboc/folders/Template_BCP_Update.xml" content-type="COBOC_FOLDERS_TEMPLATE" sub-type="BCP-Update" />            
+        <template path="coboc/folders/SpecialAttribute_BCP.xml" content-type="COBOC_FOLDERS_SPECIAL_ATTRIBUTE" />       
+        <template path="coboc/folders/Mapping_BCP.xml" content-type="COBOC_FOLDERS_MAPPING" />      
+        <template path="coboc/folders/Mapping_BCP_Update.xml" content-type="COBOC_FOLDERS_MAPPING" sub-type="BCP-Update" />           
+        <template path="coboc/folders/ContentMap_BCP.xml" content-type="COBOC_FOLDERS_CONTENTMAP" />      
+        <template path="coboc/folders/ContentMap_BCP_Update.xml" content-type="COBOC_FOLDERS_CONTENTMAP" sub-type="BCP-Update" />           
+        <template path="coboc/folders/ActionTemplate_BCP.xml" content-type="COBOC_FOLDERS_ACTIONTEMPLATE" />      
+        <template path="coboc/folders/ActionTemplate_BCP_Update.xml" content-type="COBOC_FOLDERS_ACTIONTEMPLATE" sub-type="BCP-Update" />           
+        <template path="coboc/folders/ActionTemplateXForm_BCP.xml" content-type="COBOC_FOLDERS_ACTIONTEMPLATE_XFORM" />           
+        <template path="coboc/folders/ActionTemplateXForm_BCP_Update.xml" content-type="COBOC_FOLDERS_ACTIONTEMPLATE_XFORM" sub-type="BCP-Update" />           
+        <template path="coboc/folders/ConditionTemplate_BCP.xml" content-type="COBOC_FOLDERS_CONDITIONTEMPLATE" />      
+        <template path="coboc/folders/ConditionTemplate_BCP_Update.xml" content-type="COBOC_FOLDERS_CONDITIONTEMPLATE" sub-type="BCP-Update" />           
+        <template path="coboc/folders/ConditionTemplateXForm_BCP.xml" content-type="COBOC_FOLDERS_CONDITIONTEMPLATE_XFORM" />           
+        <template path="coboc/folders/ConditionTemplateXForm_BCP_Update.xml" content-type="COBOC_FOLDERS_CONDITIONTEMPLATE_XFORM" sub-type="BCP-Update" />           
+        <template path="coboc/folders/DecisionCase_BCP.xml" content-type="COBOC_FOLDERS_DECISIONCASE" />      
+        <template path="coboc/folders/DecisionCase_BCP_Update.xml" content-type="COBOC_FOLDERS_DECISIONCASE" sub-type="BCP-Update" />           
+        <template path="coboc/folders/ProcessTemplate_BCP.xml" content-type="COBOC_FOLDERS_PROCESSTEMPLATE" />      
+        <template path="coboc/folders/ProcessTemplate_BCP_Update.xml" content-type="COBOC_FOLDERS_PROCESSTEMPLATE" sub-type="BCP-Update" />           
+        <template path="coboc/folders/ProcessBpmn_BCP.xml" content-type="COBOC_FOLDERS_PROCESSBPMN" />      
+        <template path="coboc/folders/ProcessBpmn_BCP_Update.xml" content-type="COBOC_FOLDERS_PROCESSBPMN" sub-type="BCP-Update" />           
+
+        <!--  CoBOC Rule Bindings -->
+        <template path="coboc/rules/RuleGroup_BCP.xml" content-type="COBOC_RULES_RULEGROUP" />
+        <template path="coboc/rules/Rule_BCP.xml" content-type="COBOC_RULES_RULE" />
+
+        <!--  CoBOC Schedule Bindings -->
+        <template path="coboc/scheduletemplates/Schedule_BCP.xml" content-type="COBOC_SCHEDULE_TEMPLATE" />
+        <template path="coboc/scheduletemplates/Schedule_BCP_Delete.xml" content-type="COBOC_SCHEDULE_TEMPLATE" sub-type="BCP-Delete" />
+        <template path="coboc/scheduletemplates/ScheduleTuple.xml" content-type="COBOC_SCHEDULE_TEMPLATE" sub-type="BCP-tuple"/>
+
+        <!--  CoBOC Inbox Message Model Bindings -->
+        <template path="coboc/messagemodels/MessageModel_BCP.xml" content-type="COBOC_INBOX_MODEL_C1" />
+        <template path="coboc/messagemodels/MessageModel_BCP_Update.xml" content-type="COBOC_INBOX_MODEL_C1" sub-type="BCP-Update" />
+        <template path="coboc/messagemodels/MessageModel_BCP_Insert.xml" content-type="COBOC_INBOX_MODEL_C1" sub-type="BCP-Insert" />
+        <template path="coboc/messagemodels/MessageModel_BCP_Delete.xml" content-type="COBOC_INBOX_MODEL_C1" sub-type="BCP-Delete" />
+
+        <!--  MDM Bindings -->
+        <template path="coboc/mdm/Backend_BCP.xml" content-type="MDM_BACKEND" />      
+        <template path="coboc/mdm/Backend_BCP_Update.xml" content-type="MDM_BACKEND" sub-type="BCP-Update" />
+        <template path="coboc/mdm/Entity_BCP.xml" content-type="MDM_ENTITY" />      
+        <template path="coboc/mdm/Entity_BCP_Update.xml" content-type="MDM_ENTITY" sub-type="BCP-Update" />                 
+        <template path="coboc/mdm/EntityFolder_BCP.xml" content-type="MDM_ENTITY_FOLDER" />      
+        <template path="coboc/mdm/EntityFolder_BCP_Update.xml" content-type="MDM_ENTITY_FOLDER" sub-type="BCP-Update" />                 
+        <template path="coboc/mdm/Model_BCP.xml" content-type="MDM_MODEL" />      
+        <template path="coboc/mdm/Model_BCP_Update.xml" content-type="MDM_MODEL" sub-type="BCP-Update" />    
+    </binding-templates>
+    
+    <read-methods>
+    	<method>
+    		<content-types>COBOC_FOLDERS,MDM</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.BcpReadMethod_CobocFolders</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_RULES</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.BcpReadMethod_CobocRules</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_SCHEDULES</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.BcpReadMethod_CoboScheduleTemplates</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_INBOX_MODEL_C1</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.BcpReadMethod_MessageModels</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_FOLDERS_SPECIAL_ATTRIBUTE</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.BcpReadMethod_SpecialAttributes</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_FOLDERS_ACTIONTEMPLATE_XFORM,COBOC_FOLDERS_CONDITIONTEMPLATE_XFORM</content-types>
+    		<class>com.cordys.coe.bf.content.xmlstore.impl.bcp42_c1.BcpReadMethod_XmlStore</class>
+    	</method>
+    </read-methods>
+    
+	<write-methods>
+    	<method>
+    		<content-types>COBOC_FOLDERS,MDM</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.BcpWriteMethod_Folders</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_RULES</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.BcpWriteMethod_CobocRules</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_SCHEDULES</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.BcpWriteMethod_ScheduleTemplates</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_INBOX_MODEL_C1</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.BcpWriteMethod_MessageModels</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_FOLDERS_SPECIAL_ATTRIBUTE</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c1.BcpWriteMethod_SpecialAttributes</class>
+    	</method>
+    	<method>
+    		<content-types>COBOC_FOLDERS_ACTIONTEMPLATE_XFORM,COBOC_FOLDERS_CONDITIONTEMPLATE_XFORM</content-types>
+    		<class>com.cordys.coe.bf.content.xmlstore.impl.bcp42_c1.BcpWriteMethod_XmlStore</class>
+    	</method>
+    </write-methods>
+</config>
