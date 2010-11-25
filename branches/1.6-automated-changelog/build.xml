@@ -1,0 +1,804 @@
+<project default="dist" basedir=".">
+    <!--
+       Build file for project Cordys Ant Tasks
+    -->
+
+	<property environment="env" />
+	<property file="user.properties" />
+	<property file="build.properties" />
+	<property file="${project.site.settings.file}" />
+	<property file="build.number" />
+	
+	<!--Classpath used for compiling sources -->
+	<path id="classpath">
+		<fileset dir="${lib.dir}">    
+            <include name="**/*.jar"/>
+        </fileset>
+		<fileset dir="${sdk.dir}">    
+            <include name="**/*.jar"/>
+        </fileset>
+		<fileset dir="${platform.dir}">    
+            <include name="**/*.jar"/>
+        </fileset>
+    </path>
+	
+	<typedef resource="svnantlib.xml" classpath="classpath" />
+
+	<!--Pattern set which matches all Non CVS folders -->
+    <patternset id="all.non.cvs.files">
+    	<include name="**/*"/>
+    	<exclude name="**/CVS"/>
+    </patternset>
+	
+	<!--Pattern set which matches all Non VSS folders -->
+	<patternset id="all.non.vss.files">
+		<include name="**/*" />
+		<exclude name="**/*.scc" />
+	</patternset>	
+	
+	<!--Pattern set which matches all Non Subversion folders -->
+    <patternset id="all.non.svn.files">
+    	<include name="**/*"/>
+    	<exclude name="**/.svn/**"/>
+    </patternset>
+
+	<!--Target for cleaning temporary distribution folders -->
+	<target name="cleandist">
+		<delete dir="${dist.dir}"/>
+	</target>
+
+	<!--Target for cleaning temporary build folders -->
+	<target name="cleanbuild">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<!--Target for cleaning all temporary distribution and build folders -->
+	<target name="cleanall"
+		description="Cleans all output directories including build and dist"
+		depends="cleanbuild,cleandist"
+	/>
+
+	<!--Target for making folders for the build and distribution -->
+	<target name="init" depends="cleanbuild">
+        <mkdir dir="${build.dir}" />
+        <mkdir dir="${build.classes}" />
+        <mkdir dir="${build.classes.coboc2}" />		
+        <mkdir dir="${build.jar}" />
+        <mkdir dir="${build.test}" />
+        <mkdir dir="${build.docs}" />
+        <mkdir dir="${build.apidocs}" />
+        <mkdir dir="${dist.dir}" />
+	</target>
+	
+	<!--
+		Macro to check the value of a certain property for true and if it's true
+		add a defined.<propertyname> to the project.
+	-->
+	<macrodef name="defflag">
+		<attribute name="property" />
+		<attribute name="dest-property" default="defined.@{property}" />        
+		<sequential>
+			<condition property="@{dest-property}">
+				<istrue value="${@{property}}"/>
+			</condition>
+		</sequential>
+	</macrodef>
+	
+	<!--
+		Macro to check the if the given property is set and if not fail with an error message.
+	-->
+    <macrodef name="check-property">
+        <attribute name="property" />
+    	<attribute name="message-no-prop" default="Property @{property} needs to be set."/>
+        <sequential>
+    		<fail message="@{message-no-prop}">
+    			<condition>
+    				<not>
+	    				<isset property="@{property}" />
+    				</not>
+    			</condition>
+    		</fail>     
+        </sequential>
+    </macrodef>	
+	
+	<!--
+		Macro to check the if the given property is set and points to an exising file or directory.
+		Otherwise fail with an error message.
+	-->
+    <macrodef name="check-file-property">
+        <attribute name="property" />
+    	<attribute name="message-no-prop" default="Property @{property} needs to be set."/>
+		<attribute name="message-no-file" default="Property @{property} needs to point to an existing file or directory."/>
+        <sequential>
+    		<fail message="@{message-no-prop}">
+    			<condition>
+    				<not>
+	    				<isset property="@{property}" />
+    				</not>
+    			</condition>
+    		</fail>     
+    		<fail message="@{message-no-file}">
+    			<condition>
+    				<not>
+	    				<available file="${@{property}}" />
+    				</not>
+    			</condition>
+    		</fail>      			
+        </sequential>
+    </macrodef>	
+	
+	<!-- Import all the Build framework targets. -->
+	<target name="_loadtaskdefs">
+		<path id="buildtasks-classpath">
+			<pathelement location="${build.classes}"/>
+			<path refid="classpath"/>
+	    </path>	
+	  	<typedef resource="com/cordys/coe/ant/bf/bfantlib.xml" classpathref="buildtasks-classpath"/>
+	</target>
+	
+	<!-- XMLTask -->
+	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpathref="classpath"/>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: _checkdefined
+          
+          This target executes the defflag macro on all properties that have true or false values.
+          The macro is defined in the task-defs.xml file
+         - - - - - - - - - - - - - - - - - -->
+    <target name="_checkdefined">
+    	<defflag property="dist.include.sources"/>
+    	<defflag property="project.site.enabled" />
+    	<defflag property="build.force.changelog" />
+    	<available file="changelog.xml" property="changelog.file.exists"></available>
+    	<defflag property="include.source" />
+    	
+		<!--check-file-property property="project.site.settings.file" /-->    	
+    </target>	
+	
+	<import file="${src.buildfiles.external}/build/build-projectsite.xml"/>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: _init
+          
+          This target checks if properties are set and set to true.
+         - - - - - - - - - - - - - - - - - -->
+    <target name="_init" depends="_checkdefined">
+    	<defflag property="skip.coelib"/>
+    </target>
+
+
+	<!--Target for compiling java source files -->
+	<target name="compile"
+			description="Compiles Java source files"
+			depends="init">
+		<javac srcdir="${src.java}"
+			   destdir="${build.classes}"
+			   debug="${debug}"
+			   deprecation="${deprecation}"
+			   optimize="${optimize}"
+			   includes="**/*.java"
+			   source="${jvm.target.version}"                       
+           	   target="${jvm.target.version}">
+			<classpath refid="classpath"/>
+		</javac>
+	</target>
+	
+	<!--Target for compiling java source files -->
+	<target name="compile-coboc2"
+			description="Compiles Java source files"
+			depends="compile">
+		<javac srcdir="${src.java.coboc2}"
+			   destdir="${build.classes.coboc2}"
+			   debug="${debug}"
+			   deprecation="${deprecation}"
+			   optimize="${optimize}"
+			   includes="**/*.java"
+			   source="${jvm.target.version}"                       
+           	   target="${jvm.target.version}">
+			<classpath>
+				<pathelement path="${build.classes}" />
+				<path refid="classpath" />
+			</classpath>
+		</javac>
+	</target>	
+	
+	<!--Target for making jar file of the project in build folder -->
+	<target name="jar"
+			description="Compiles Java sources and creates a JAR file"
+			depends="compile,compile-coboc2,jar-coboc2">
+		<!--Copy xsl files to be put in jar -->
+		<copy todir="${build.classes}">
+			<fileset dir="${src.java}">
+				<include name="**/*.xsl"/>
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+			</fileset>
+		</copy>
+		
+		<!-- First compile the Version.java so it can be packaged. -->
+					
+		<!-- Create the build directory structure if needed -->
+		<mkdir dir="${build.classes}/${setbuildnumber.class.path}" />
+		
+		<tstamp>
+			<format property="setversionnumber.today" pattern="dd-MM-yyyy HH:mm:ss"/>
+		</tstamp>
+		<!-- Copy the Java file and replace the next version parameter -->
+		<copy file="${src.java}/${setbuildnumber.class.path}/${setbuildnumber.class.name}" 
+			  todir="${build.classes}/${setbuildnumber.class.path}">
+			<filterchain>
+				<replacetokens>
+			    	<token key="majorminor" value="${project.version}"/>
+			    	<token key="milestonenumber" value="${milestone.number}"/>
+			    	<token key="builddate" value="${setversionnumber.today}"/>
+					<token key="productname" value="${project.name}"/>
+					<token key="revisionnumber" value="${svn.info.rev}"/>
+			    	<token key="generated" value="true"/>
+			    </replacetokens>
+		  	</filterchain>			
+		</copy>
+		
+		<!-- Compile the LibraryVersion class -->
+		<javac srcdir="${build.classes}/${setbuildnumber.class.path}"
+			   destdir="${build.classes}"
+			   debug="false"
+			   deprecation="true"
+			   optimize="true"
+			   source="${jvm.target.version}"                       
+        	   target="${jvm.target.version}"			
+		>
+			<include name="*.java"/>
+			<classpath refid="classpath"/>
+		</javac>		
+		
+		<!-- Delete the Java source file -->
+		<delete file="${build.classes}/${setbuildnumber.class.path}/${setbuildnumber.class.name}" />
+		
+		<!-- Package the jar -->
+		<jar jarfile="${build.jar}/${project.jar.name}.jar"
+			 basedir="${build.classes}">
+		    <manifest>
+		      	<attribute name="Manifest-Version" value="${project.version}.${build.number}"/>
+		      	<attribute name="Created-By" value="Cordys Systems B.V."/>
+		    	<attribute name="Main-Class" value="${setbuildnumber.fqn}"/>
+		    	<section id="CordysAntTasks" name="Cordys Ant Tasks" >
+			      	<attribute name="Legal" value="Copyright (c) 2004-2006 by Cordys Systems B.V. All rights reserved."/>
+		    		<attribute name="Build-Number" value="Build ${project.version}.${milestone.number}"/>
+		    	</section>
+		    </manifest>
+		</jar>
+	</target>
+	
+	<!--Target for making jar file of the project in build folder -->
+	<target name="jar-coboc2"
+			description="Compiles CoBOC 2 Java sources and creates a JAR file"
+			depends="compile,compile-coboc2">
+		<!--Copy xsl files to be put in jar -->
+		<copy todir="${build.classes.coboc2}">
+			<fileset dir="${src.java.coboc2}">
+				<include name="**/*.xsl"/>
+				<include name="**/*.properties"/>
+				<include name="**/*.xml"/>
+			</fileset>
+		</copy>
+		
+		<!-- Package the jar -->
+		<jar jarfile="${build.jar}/${coboc2.jar.name}.jar"
+			 basedir="${build.classes.coboc2}">
+		    <manifest>
+		      	<attribute name="Manifest-Version" value="${project.version}.${build.number}"/>
+		      	<attribute name="Created-By" value="Cordys Systems B.V."/>
+		    	<attribute name="Main-Class" value="${setbuildnumber.fqn}"/>
+		    	<section id="CordysAntTasks" name="CoBOC Implementation For Buildtasks, Version 2" >
+			      	<attribute name="Legal" value="Copyright (c) 2004-2006 by Cordys Systems B.V. All rights reserved."/>
+		    		<attribute name="Build-Number" value="Build ${project.version}.${milestone.number}"/>
+		    	</section>
+		    </manifest>
+		</jar>
+	</target>
+	
+	<!--Target for creating API documentation and 
+		copying documentation resources to build folder -->
+	<target name="docs" depends="init" unless="skip.docs">
+		<mkdir dir="${build.docs}" />		
+		<copy todir="${build.docs}">
+			<fileset dir="${docs.dir}">
+				<patternset refid="all.non.cvs.files"></patternset>
+				<exclude name="*.doc" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!--Target for making javadocs -->
+	<target name="javadocs" depends="init" unless="skip.javadocs">	
+		<mkdir dir="${build.apidocs}" />
+		<javadoc 
+			packagenames="${javadoc.packagename}.*"
+			sourcepath="${src.java}"
+			destdir="${build.apidocs}"
+			author="${javadoc.author}"
+			version="${javadoc.version}"
+			use="${javadoc.use}"
+			private="${javadoc.private}"
+			windowtitle="${javadoc.windowtitle}"
+			doctitle="${javadoc.doctitle}">
+			<classpath refid="classpath" />
+		</javadoc>
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: copy-other                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="copy-other">
+    	<copy todir="${dist.setup}">
+			<fileset dir="${src.buildfiles.external}">
+				<patternset refid="all.non.svn.files"/>
+			</fileset>
+		</copy>
+    </target>
+
+	
+	<!--Target for copying resources from build to distribution -->
+	<target name="copy-dist" depends="copy-docs,copy-javadocs,copy-jars,copy-other">
+	</target>
+	
+	<target name="copy-docs" unless="skip.docs">
+		<copy todir="${dist.docs}">
+			<fileset dir="${build.docs}">
+				<include name="**/*" />
+			</fileset>
+		</copy>		
+	</target>
+	
+	<target name="copy-javadocs" unless="skip.javadocs">
+		<copy todir="${dist.apidocs}">
+			<fileset dir="${build.apidocs}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<!--
+		This target builds up the entire sdk/lib structure for deployment.
+	-->
+	<target name="copy-jars">
+		<copy todir="${dist.setup}/lib">
+			<fileset dir="${build.jar}">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${sdk.dir}">
+				<include name="**/junit.jar" />
+			</fileset>
+			<fileset dir="${sdk.dir}">
+				<include name="freemarker.jar" />
+			</fileset>			
+			<fileset dir="${lib.dir}">
+				<include name="**/coelib.jar" />
+			</fileset>
+			<fileset dir="${lib.dir}">
+				<include name="**/xreport-shared.jar" />
+			</fileset>
+			<fileset dir="${lib.dir}">
+				<include name="**/xreport.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.setup}/lib/svn">
+			<fileset dir="${sdk.dir}/svn">
+				<patternset refid="all.non.svn.files" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.setup}/lib/svn-1.5">
+			<fileset dir="${sdk.dir}/svn-1.5">
+				<patternset refid="all.non.svn.files" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.setup}/lib/svn-1.6">
+			<fileset dir="${sdk.dir}/svn-1.6">
+				<patternset refid="all.non.svn.files" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.setup}/lib/ant">
+			<fileset dir="${sdk.dir}/ant">
+				<patternset refid="all.non.svn.files" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.setup}/lib/libs-coboc2">
+			<fileset dir="${sdk.dir}/libs-coboc2">
+				<patternset refid="all.non.svn.files" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.setup}/lib/cobertura">
+			<fileset dir="${sdk.dir}/cobertura">
+				<patternset refid="all.non.svn.files" />
+			</fileset>
+		</copy>
+		<copy todir="${dist.setup}/lib/commons">
+			<fileset dir="${sdk.dir}/commons">
+				<patternset refid="all.non.svn.files" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<!--Target for compiling java unit test sources to build folder -->
+	<target name="compile-test" depends="init,compile,compile-coboc2" unless="skip.test">
+		<javac srcdir="${test.java}"
+			   destdir="${build.test}"
+			   debug="${debug}"
+			   deprecation="${deprecation}"
+			   optimize="${optimize}"
+			   source="${jvm.target.version}"                       
+        	   target="${jvm.target.version}"			
+			>
+			<include name="**/*.java"/>
+			<classpath>
+				<pathelement path="${build.classes}" />
+				<pathelement path="${build.classes.coboc2}" />	
+				<path refid="classpath" />
+			</classpath>
+		</javac>
+	</target>
+	
+	<!--Target for running tests -->
+	<target name="test" depends="init,compile-test" description="Runs the unit tests" unless="skip.test">
+		<junit printsummary="no" haltonfailure="yes">
+			<classpath>
+				<pathelement path="${build.classes}" />
+				<pathelement path="${build.test}" />
+				<path refid="classpath" />
+			</classpath>
+			<formatter type="plain" usefile="false" />
+			<batchtest>
+				<fileset dir="${test.java}">
+					<include name="**/*Test.java"/>
+				</fileset>
+			</batchtest>		
+		</junit>
+	</target>
+	
+	<!-- ================================= 
+          target: createrepos              
+         ================================= -->
+    <target name="createrepos" if="using.svn" description="--> Creates a new repository with this external present">
+        <!-- The repository will include both the build framework and the platform against which this is compiled. -->
+    	<echo message="Creating folders"/>
+    	<delete dir="${build.repos}"/>
+    	<mkdir dir="${build.repos}"/>
+    	<mkdir dir="${dist.repos}"/>
+    	
+    	<!-- Convert the absolute path to a proper file url -->
+    	<property name="tmp.repos.real.location" location="${repos.location}"/>
+    	<propertyfile file="${build.repos}/tmp.repo" comment="Temporary properties.">
+			<entry key="tmp.repos.location" default="${tmp.repos.real.location}"/>
+		</propertyfile>
+		<replaceregexp file="${build.repos}/tmp.repo" match="\\{2}" replace="/" flags="g"/>
+    	<property file="${build.repos}/tmp.repo"/>
+    	<property name="repos.real.location" value="file:///${tmp.repos.location}"/>
+    	
+    	<!-- Fix the version number. -->
+		<!-- Replace the '.' in the version with an '_' -->
+		<concat append="false" force="yes" destfile="${build.dir}/tmpversion.properties">tmpversion=${version.full}</concat>
+		<replaceregexp file="${build.dir}/tmpversion.properties" flags="g">
+			<regexp pattern="[.]"/>
+			<substitution expression="\_"/>
+		</replaceregexp>
+		<property file="${build.dir}/tmpversion.properties"></property>
+    	
+    	<!-- Get the version for the platform -->
+    	<concat destfile="${build.repos}/tmp.platform" append="false" force="true">
+    		<header>platform.version=</header>
+    		<fileset dir="${platform.dir}" includes="*.txt"/>
+    	</concat>
+    	<property file="${build.repos}/tmp.platform"/>
+    	
+    	<!-- Prepare the platform for import -->
+    	<copy todir="${build.repos}/platform">
+			<fileset dir="${platform.dir}">
+				<patternset refid="all.non.svn.files"/>
+			</fileset>
+    	</copy>
+
+    	<!-- Create the actual repository -->
+    	<echo message="Creating repository at ${repos.real.location} with URL ${repos.base.url}" level="verbose"/>
+    	<svn username="admin" password="admin">
+    		<createrepository path="${repos.location}"/>
+    		<mkdir url="${repos.real.location}${repos.ext.location}" message="Created folder externals"/>
+    		<mkdir url="${repos.real.location}${repos.ext.platform}" message="Created folder platform"/>
+    		<mkdir url="${repos.real.location}${repos.ext.buildframework}" message="Created folder buildframework"/>
+    		<!-- Import the Build Framework -->
+			<import url="${repos.real.location}${repos.ext.buildframework}/${tmpversion}" recurse="true" path="${dist.setup}" message="Imported Build Framework version ${full.version}"/>
+    		<!-- Import the platform -->
+			<import url="${repos.real.location}${repos.ext.platform}/${platform.version}" recurse="true" path="${build.repos}/platform" message="Imported Platform version ${platform.version}"/>
+    	</svn>
+    	
+    	<!-- Repository created, so zip it and copy it to the dist folder -->
+    	<zip basedir="${repos.location}" destfile="${dist.repos}/repos.zip"/>
+    </target>
+
+
+	<!--Target for making distribution of the project -->
+	<target name="dist"
+			description="Creates a distribution of the project after running tests."
+			depends="_init,checkuserprops,cleandist,updateworkingcopy,test,dobuildnumber,jar,_loadtaskdefs,labelbuild,_check_changelog,docs,javadocs,copy-dist,copychangelog,makeexternal,createrepos,_create-build-info,_upload-build-to-site,deploy-site,commit-changelog">
+	</target>
+
+	<!--Target for making distribution of the project -->
+	<target name="dev-dist"
+			description="Creates a distribution of the project after running tests."
+			depends="checkuserprops,cleandist,updateworkingcopy-dev,test,jar,docs,copy-dist,makeexternal-dev,createrepos">
+	</target>
+	
+	<!--Target for making distribution of the project -->
+	<target name="ci-dist"
+			description="Creates a distribution of the project after running tests. This is run by the continuous integration server."
+			depends="checkuserprops,cleandist,test,jar,docs,copy-dist,makeexternal-ci">
+	</target>	
+	
+	<target name="_med_init">
+    	<property file="build.number"/>
+		<propertyfile file="${build.dir}/tmp.properties" comment="Temporary properties.">
+			<entry key="tmp.milestone.number" type="int" pattern="0" default="${milestone.number}"/>
+		</propertyfile>
+		<property file="${build.dir}/tmp.properties"/>
+		<property name="version.full" value="${project.version}.${tmp.milestone.number}"/>
+		<property name="version.svn.full" value="${project.version}.${milestone.number}"/>
+    	<!-- Fix the version number. -->
+		<!-- Replace the '.' in the version with an '_' -->
+		<concat append="false" force="yes" destfile="${build.dir}/tmpversion.properties">tmpversion=${version.full}</concat>
+		<replaceregexp file="${build.dir}/tmpversion.properties" flags="g">
+			<regexp pattern="[.]"/>
+			<substitution expression="\_"/>
+		</replaceregexp>
+		<property file="${build.dir}/tmpversion.properties"></property>
+	</target>
+	
+	<target name="_med_checkout" if="dev.external.workcopy">
+		<copy todir="${dev.external.workcopy}">
+			<fileset dir="${dist.setup}">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+		<svn username="${svn.username}">
+			<commit dir="${dev.external.workcopy}" message="Updated dev externals" recurse="true"/>
+		</svn>
+	</target>
+
+	<target name="_med_import" unless="dev.external.workcopy">
+    	<!-- Import it in the external location -->
+		<echo message="Creating/updating external at ${dev.external.svn.base}/${tmpversion}"/>
+    	<svn username="${svn.username}">
+    		<delete url="${dev.external.svn.base}/${tmpversion}" message="New dev version of the buildframework: ${version.full}"/>
+			<mkdir 
+				url="${dev.external.svn.base}/${tmpversion}" 
+				message="New dev version of the buildframework: ${version.full}"
+			/>
+			<import 
+				path="${dist.setup}" 
+				url="${dev.external.svn.base}/${tmpversion}" 
+				message="New dev version of the buildframework: ${version.full}"
+			/>
+		</svn>
+	</target>
+	
+	<target name="_ci_import_externals">
+    	<!-- Import it in the external location -->
+		<property name="ci.version.label" value="${tmpversion}_build_${ci.build.number}" />
+		<echo message="Creating/updating external at ${dev.external.svn.base}/${ci.version.label}"/>
+    	<svn username="${svn.username}">
+			<mkdir 
+				url="${dev.external.svn.base}/${ci.version.label}" 
+				message="New dev version of the buildframework: ${version.full}"
+			/>
+			<import 
+				path="${dist.setup}" 
+				url="${dev.external.svn.base}/${ci.version.label}" 
+				message="New dev version of the buildframework: ${version.full}"
+			/>
+    		
+			<delete url="${dev.external.svn.base}/latest" message="Deleting old version."/>
+			<copy
+				srcUrl="${dev.external.svn.base}/${ci.version.label}"
+				destUrl="${dev.external.svn.base}/latest"
+				message="New dev version of the buildframework: ${version.full}"
+			/>
+		</svn>
+	</target>	
+
+	<!-- ================================= 
+          target: makeexternal-dev              
+         ================================= -->
+    <target name="makeexternal-dev" depends="_med_init,_med_checkout,_med_import" description="--> This target replaces or create the dev-external for this version.">
+    </target>
+
+	<!-- ================================= 
+          target: makeexternal-ci            
+         ================================= -->
+    <target name="makeexternal-ci" depends="_med_init,_ci_import_externals" description="--> This target replaces or create the dev-external for this version.">
+    </target>
+    	
+	<!-- - - - - - - - - - - - - - - - - - 
+	          target: checkuserprops                      
+	         - - - - - - - - - - - - - - - - - -->
+    <target name="checkuserprops" unless="defined.skip.coelib">
+    	<fail unless="coelib.dir" message="The property coelib.dir must be set in the user.properties. It must point to a working copy of the CoE library project"/>
+    </target>
+	
+	<!-- ================================= 
+          target: buildcoelib
+          
+          TODO: Actually, the CoeLib should only be built if there are changes compared to
+          		the current version. 
+         ================================= -->
+    <target name="buildcoelib" description="--> This target builds the CoELibrary and copies the CoELib to this project." unless="defined.skip.coelib">
+    	<echo message="Building the CoE Library."/>
+		<exec dir="${coelib.dir}" executable="build.bat" failonerror="true">
+		  <arg line="release"/>
+		</exec>
+    	<!-- Now copy the coelib.jar to this project. -->
+    	<copy todir="${lib.dir}">
+    		<fileset dir="${coelib.dir}/build/jar">
+    			<include name="coelib.jar"/>
+    		</fileset>
+    	</copy>
+    	<!-- Commit the new release -->
+    	<svn username="${svn.username}">
+			<commit dir="${lib.dir}" message="Committed new coelib.jar."/>
+		</svn>
+    </target>
+	
+    <!-- ================================= 
+          target: updateworkingcopy
+         ================================= -->
+	<target name="updateworkingcopy" if="using.svn" description="This target updates the local working copy">
+		<svn username="${svn.username}">
+			<update dir="."/>
+		</svn>
+		<!-- Revert the build.number file in case we had a failed build and are trying again -->
+		<svn username="${svn.username}">
+			<revert file="build.number" />
+		</svn>				
+		<svn username="${svn.username}">
+			<commit dir="." message="Committed all changes since a new release is being build."/>
+		</svn>
+		<svn username="${svn.username}">
+			<info target="."/>
+		</svn>
+	</target>
+	
+    <!-- ================================= 
+          target: updateworkingcopy-dev
+         ================================= -->
+	<target name="updateworkingcopy-dev" if="using.svn" description="This target updates the local working copy">
+<!--		<svn username="${svn.username}">
+			<update dir="."/>
+		</svn>
+-->		
+		<svn username="${svn.username}">
+			<info target="."/>
+		</svn>
+	</target>
+
+	 
+    <!-- ================================= 
+          target: makeexternal              
+         ================================= -->
+    <target name="makeexternal" if="using.svn" description="--> This target adds the new release to the externals position in the repository.">
+    	<!-- Fix the version number. -->
+		<!-- Replace the '.' in the version with an '_' -->
+		<concat append="false" force="yes" destfile="${build.dir}/tmpversion.properties">tmpversion=${version.full}</concat>
+		<replaceregexp file="${build.dir}/tmpversion.properties" flags="g">
+			<regexp pattern="[.]"/>
+			<substitution expression="\_"/>
+		</replaceregexp>
+		<property file="${build.dir}/tmpversion.properties"></property>
+
+    	<!-- Import it in the external location -->
+    	<echo message="Making external at URL: ${external.svn.base}/${tmpversion}"/>
+    	<svn username="${svn.username}">
+			<mkdir 
+				url="${external.svn.base}/${tmpversion}" 
+				message="New version of the buildframework: ${version.full}"
+			/>
+			<import 
+				path="${dist.setup}" 
+				url="${external.svn.base}/${tmpversion}" 
+				message="New version of the buildframework: ${version.full}"
+			/>
+		</svn>
+    	
+    	<!-- Copy the build to the '0_latest' label --> 
+    	<svn username="${svn.username}">
+			<delete url="${external.svn.base}/0_latest" message="Deleting old latest version."/>
+			<copy
+				srcUrl="${external.svn.base}/${tmpversion}"
+				destUrl="${external.svn.base}/0_latest"
+				message="New latest version tag of the buildframework: ${version.full}"
+			/>    	
+		</svn>
+    	
+    	<!-- 
+    		Write a properties file to the build folder that contains:
+    		- Location of the externals URL
+    		- Version of this build
+    		This can be used by the CEP project to update itself.
+    	-->
+		<propertyfile
+		    file="${build.info.properties}"
+		    comment="Information about the build that was just done.">
+			<entry  key="external.url" type="string" value="${external.svn.base}/${tmpversion}"/>
+			<entry  key="external.escaped.version" type="string" value="${tmpversion}"/>
+			<entry  key="external.version.full" type="string" value="${version.full}"/>
+			<entry  key="external.milestone" type="int" value="${milestone.number}"/>
+		</propertyfile>
+
+    </target>
+	
+	<target name="dobuildnumber" if="using.svn" description="Makes sure a proper release can be built.">
+		<!-- Import the SVN tasks -->
+		<property name="do.build.number" value="true"/>
+		<svn username="${svn.username}">
+			<update dir="."/>
+		</svn>
+		<!-- Commit the new buildnumbers to the repository -->
+		<svn username="${svn.username}">
+			<commit message="Committed all changes" dir="."/>
+		</svn>
+		<!-- generate the new buildnumbers -->
+		<propertyfile
+		    file="build.number"
+		    comment="Project's next build number.">
+		  <entry  key="milestone.number" type="int" default="0000" operation="+" pattern="0000"/>
+		</propertyfile>
+		<property file="build.number"/>
+		<propertyfile file="${build.dir}/tmp.properties" comment="Temporary properties.">
+			<entry key="tmp.milestone.number" type="int" pattern="0" default="${milestone.number}"/>
+		</propertyfile>
+		<property file="${build.dir}/tmp.properties"/>
+	</target>
+			
+	<target name="commit-changelog" if="using.svn" description="Commits the changelog.xml">
+		<svn username="${svn.username}">
+			<commit message="Updated the changelog release information (build ${version.full})">
+				<fileset file="changelog.xml" />
+			</commit>
+		</svn>
+	</target>
+	
+    <!-- ================================= 
+	      target: labelbuild              
+	     ================================= -->
+    <target name="labelbuild" if="using.svn" description="--> To label the build in subversion">
+		<property name="version.full" value="${project.version}.${tmp.milestone.number}"/>
+		<property name="version.svn.full" value="${project.version}.${milestone.number}"/>
+		<tstamp>
+			<format property="now" pattern="yyyyMMdd_HHmm" />
+		</tstamp>
+		<!-- Commit the new buildnumbers to the repository -->
+		<svn username="${svn.username}">
+			<commit message="Updated the buildnumber" file="build.number"/>
+		</svn>
+		<!-- Create the branch in SubVersion -->
+		<svn username="${svn.username}">
+			<copy
+				srcUrl="${svn.main}"
+				destUrl="${svn.branches}/${svn.label}_${version.svn.full}"
+				message="Build ${version.full} on ${now}"
+			>
+			</copy>
+		</svn>	        
+    </target>
+	
+	<!-- ================================= 
+          target: copychangelog              
+         ================================= -->
+    <target name="copychangelog" description="--> This task copies the changelog.txt to the dist folder and replaces the version number with the new version number." if="version.full">
+        <copy todir="${dist.setup}">
+        	<fileset dir="." id="changelog">
+    			<include name="ChangeLog.txt"/>
+			</fileset>
+        </copy>
+    	<replaceregexp file="${dist.setup}/ChangeLog.txt" flags="g">
+			<regexp pattern="@CURRENT_VERSION@"/>
+			<substitution expression="${version.full}"/>
+		</replaceregexp>
+    </target>
+</project>

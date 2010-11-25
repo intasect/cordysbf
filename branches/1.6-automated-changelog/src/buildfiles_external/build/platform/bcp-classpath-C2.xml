@@ -1,0 +1,34 @@
+<libraries source="platform">
+	<library>
+		<name>Integrator</name>
+		<description>Cordys BCP Integrator libraries</description>
+		<jars>	
+			<jar>
+				<location>platform/int/wcp.jar</location>
+				<javadoc type="jar:platform">
+					<location>platform/docs/wcp-javadocs.zip!/</location>
+				</javadoc>					
+			</jar>			
+			<jar>
+				<location>platform/ext/log4j-1.2.14_cordys.jar</location>
+				<match-pattern>^platform/ext/log4j-.*</match-pattern>
+			</jar>			
+			<jar>
+				<location>platform/int/ldap.jar</location>
+			</jar>			
+		</jars>
+	</library>	
+	
+	<library>
+		<name>WS-AppServer</name>
+		<description>Cordys BCP WS-AppServer libraries</description>
+		<jars>
+			<jar>
+				<location>platform/orc/cpc.jar</location>
+				<javadoc type="jar:platform">
+					<location>platform/docs/cpc-javadocs.zip!/</location>
+				</javadoc>					
+			</jar>			
+		</jars>
+	</library>		
+</libraries>

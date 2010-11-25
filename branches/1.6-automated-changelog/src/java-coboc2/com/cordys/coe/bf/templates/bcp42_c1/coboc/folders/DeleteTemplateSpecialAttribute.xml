@@ -1,0 +1,33 @@
+<binding-template templateid="COBOC-DeleteTemplateSpecialAttributes">
+	<beans>
+		<bean beanid="old" class="com.cordys.coe.bf.content.types.coboc.folders.SpecialAttribute" />
+	</beans>
+	
+	<handlers>
+		<handler type="bean" beanid="old" xmlpath="Body/Delete/tuple/old/attribute_template/attribute_name" fieldname="name"  />
+		<handler type="bean" beanid="old" xmlpath="Body/Delete/tuple/old/attribute_template/template_id" fieldname="parentId"  />
+		<handler type="bean" beanid="old" xmlpath="Body/Delete/tuple/old/attribute_template/attribute_type" fieldname="attributeType"  />
+		<handler type="bean" beanid="old" xmlpath="Body/Delete/tuple/old/attribute_template/primary_key" fieldname="primaryKey"  />
+		<handler type="bean" beanid="old" xmlpath="Body/Delete/tuple/old/attribute_template/attribtemplate_id" fieldname="objectId"  />
+	</handlers>
+	
+	<template>
+		<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/" >
+		  	<SOAP:Body>	
+				<Delete xmlns="http://schemas.cordys.com/1.0/coboc" table="attribute_template">
+					<tuple>
+				    	<old>
+					        <attribute_template>
+					        	<attribute_name></attribute_name>
+					           	<template_id></template_id>
+					            <attribute_type></attribute_type>
+					            <primary_key></primary_key>
+					            <attribtemplate_id></attribtemplate_id>
+					        </attribute_template>				    	
+				    	</old>
+				  	</tuple>
+				</Delete>	
+			  </SOAP:Body>
+		</SOAP:Envelope>
+	</template>
+</binding-template>

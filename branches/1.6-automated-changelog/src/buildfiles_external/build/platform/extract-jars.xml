@@ -1,0 +1,197 @@
+<project name="publish-content-project" default="extract-jars">
+	<property file="extract-jars.properties"/>
+	<property environment="env" />
+	
+	<typedef resource="svnantlib.xml">
+		<classpath >
+			<fileset dir="${svn.jar.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</classpath>
+	</typedef>
+		
+	<target name="create-temp-dir">
+		<tempfile destdir="../../../build" prefix="wcp-tmp-" property="temp.dir"/>
+		<mkdir dir="${temp.dir}"/>	
+		
+		<echo>Created a temporary folder ${temp.dir}</echo>
+	</target>
+	
+	<target name="cleanup" if="svn.externals.base.url">
+		<echo>Removing temporary folder ${temp.dir}</echo>
+		<delete dir="${temp.dir}"/>	
+	</target>
+
+	<target name="no-cleanup" unless="svn.externals.base.url">
+		<echo>Cordys BCP platform files left in folder ${temp.dir}</echo>
+	</target>
+
+	<target name="determine-platform-version">
+		<available file="${cordys.home}/wcp/wcp.jar" property="platform.type.c2"/>
+		<available file="${cordys.home}/components/esbserver/esbserver.jar" property="platform.type.c3"/>
+	</target>
+		
+	<target name="copy-files-c2" if="platform.type.c2">
+		<copy todir="${temp.dir}">
+			<fileset dir="${cordys.home}">
+				<include name="ext/**/*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${temp.dir}/int">
+			<fileset dir="${cordys.home}/WCP">
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${temp.dir}/bin">
+			<fileset dir="${cordys.home}/WCP/bin">
+				<include name="*.dll" />
+			</fileset>
+		</copy>
+				
+		<copy todir="${temp.dir}/orc">
+			<fileset dir="${cordys.home}/cpc/bin">
+				<include name="*.jar" />
+			</fileset>
+		</copy>				
+			
+		<copy todir="${temp.dir}/orc">
+			<fileset dir="${cordys.home}/cpc">
+				<include name="castor*.jar" />
+				<include name="cpc.jar" />
+				<include name="cpc_trang.jar" />
+			</fileset>
+		</copy>		
+					
+		<copy todir="${temp.dir}/por">
+			<fileset dir="${cordys.home}/CC">
+				<include name="CC.jar" />
+				<include name="lucene*.jar" />
+				<include name="search.jar" />
+			</fileset>
+		</copy>			
+		
+		<copy todir="${temp.dir}/stu">
+			<fileset dir="${cordys.home}/CAS">
+				<include name="studio.jar" />
+			</fileset>
+		</copy>			
+		
+		<mkdir dir="${temp.dir}/docs" />
+		<zip destfile="${temp.dir}/docs/wcp-javadocs.zip">
+			<fileset dir="${cordys.home}/web/wcp/documentation/wcpsdk"/>
+		</zip>
+		<zip destfile="${temp.dir}/docs/cpc-javadocs.zip">
+			<fileset dir="${cordys.home}/web/documentation/onlinehelp/mergedProjects/cordysorchestratorfordevelopers/sdk"/>
+		</zip>
+		<copy file="bcp-classpath-C2.xml"
+			  tofile="${temp.dir}/docs/bcp-classpath.xml" />
+		
+		<property name="platform.version.number" value="bcp_42_c2" />
+	</target>		
+	
+	<target name="copy-files-c3" if="platform.type.c3">
+		<copy todir="${temp.dir}">
+			<fileset dir="${cordys.home}">
+				<include name="ext/**/*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${temp.dir}">
+			<fileset dir="${cordys.home}">
+				<include name="components/**/*.jar" />
+			</fileset>
+		</copy>
+
+		<copy todir="${temp.dir}/bin">
+			<fileset dir="${cordys.home}/lib">
+				<include name="*.dll" />
+			</fileset>
+		</copy>
+		
+		<mkdir dir="${temp.dir}/docs" />
+		<zip destfile="${temp.dir}/docs/bcp-javadocs.zip">
+			<fileset dir="${cordys.home}/web/documentation/onlinehelp/javadoc"/>
+		</zip>
+		<copy file="bcp-classpath-C3.xml"
+		  	  tofile="${temp.dir}/docs/bcp-classpath.xml" />
+		  	
+		<property name="platform.version.number" value="bcp_42_c3" />
+	</target>
+	
+	<target name="create-version-file-c2" if="platform.type.c2">
+		<java classname="com.eibus.version.Version"
+			  classpath="${temp.dir}/int/wcp.jar" 
+			  output="${temp.dir}/platform-version.txt">
+		</java>
+		
+		<loadproperties srcFile="${temp.dir}/platform-version.txt">
+			<filterchain>
+				<linecontainsregexp>
+				  	<regexp pattern="^Build: "/>
+				</linecontainsregexp>
+			    <replaceregex pattern="Build: " replace="platform.build.number="/>
+			</filterchain>		
+		</loadproperties>
+		
+		<move file="${temp.dir}/platform-version.txt" tofile="${temp.dir}/${platform.version.number}_${platform.build.number}.txt" />
+		<echo>Determined platform version as ${platform.version.number} build ${platform.build.number}</echo>
+	</target>
+	
+	<target name="create-version-file-c3" if="platform.type.c3">
+		<java classname="com.eibus.version.Version"
+			  classpath="${temp.dir}/components/ccutil/ccutil.jar" 
+			  output="${temp.dir}/platform-version.txt">
+		</java>
+		
+		<loadproperties srcFile="${temp.dir}/platform-version.txt">
+			<filterchain>
+				<linecontainsregexp>
+				  	<regexp pattern="^Build: "/>
+				</linecontainsregexp>
+			    <replaceregex pattern="Build: " replace="platform.build.number="/>
+			</filterchain>		
+		</loadproperties>
+		
+		<move file="${temp.dir}/platform-version.txt" tofile="${temp.dir}/${platform.version.number}_${platform.build.number}.txt" />
+		<echo>Determined platform version as ${platform.version.number} build ${platform.build.number}</echo>
+	</target>	
+	
+	<target name="create-c3-meta-jars" if="platform.type.c3">
+		<mkdir dir="${temp.dir}/int"/>
+		<jar destfile="${temp.dir}/int/wcp.jar">
+ 			<manifest>
+      			<attribute name="Class-Path" value="${wcp.jar.classpath}"/>
+			</manifest>
+		</jar>
+		
+		<jar destfile="${temp.dir}/int/ldap.jar">
+ 			<manifest>
+      			<attribute name="Class-Path" value="${wcp.jar.classpath}"/>
+			</manifest>
+		</jar>
+		
+		<mkdir dir="${temp.dir}/orc"/>
+		<jar destfile="${temp.dir}/orc/cpc.jar">
+ 			<manifest>
+      			<attribute name="Class-Path" value="${cpc.jar.classpath}"/>
+			</manifest>
+		</jar>		
+	</target>
+	
+	<target name="import-to-svn" if="svn.externals.base.url">
+		<echo>Importing to URL ${svn.externals.base.url}/${platform.version.number}_${platform.build.number}</echo>
+		<svn username="${svn.username}">
+			<import path="${temp.dir}"
+			      	url="${svn.externals.base.url}/${platform.version.number}_${platform.build.number}"
+			      	message="Imported platform externals ${platform.version.number}_${platform.build.number}"
+			/>
+		</svn>
+	</target>
+				
+	
+
+	<target name="extract-jars" depends="determine-platform-version,create-temp-dir,copy-files-c2,create-version-file-c2,copy-files-c3,create-c3-meta-jars,create-version-file-c3,import-to-svn,cleanup,no-cleanup">
+	</target>
+</project>

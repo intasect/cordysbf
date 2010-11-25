@@ -1,0 +1,7 @@
+<systemenvironment>
+	<!-- 
+		Uncomment this if you want to the project jar to be added to the Cordys classpath. This is not necessary for
+		C2 application connector projects as the class path is set in the connector definition.
+	-->
+	<!-- <variable name="CLASSPATH" value="cordys_install_dir${project.deploy}\${project.jar.name}.jar" unless="skip.java" /> -->
+</systemenvironment>				
