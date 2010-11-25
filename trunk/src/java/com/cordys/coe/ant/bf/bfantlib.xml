@@ -31,4 +31,6 @@
 	<taskdef name="mergebuildinfo" classname="com.cordys.coe.ant.site.MergeBuildInfoTask" />
 	<taskdef name="xpathselect" classname="com.cordys.tools.ant.taskdefs.XPathSelectionTask" />
 	<taskdef name="versiontype" classname="com.cordys.tools.ant.taskdefs.VersionTypeTask" />
+	
+	<taskdef name="changelog" classname="com.cordys.tools.ant.taskdefs.ChangeLogTask"/>
 </antlib>
