@@ -1,4 +1,4 @@
-VERSION 1.6.62 (2010-11-26) 
+VERSION 1.6.51 (2010-11-26) 
 - Add: Added ant script to generate ChangeLog.txt automatically when you build the project.
 
 VERSION 1.6.50 (2010-11-09) 
