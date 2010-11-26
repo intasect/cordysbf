@@ -1,0 +1,23 @@
+<binding-template>
+	<imports>
+		<template file="EmailModel_Common.xml" template-id="common" destpath="tuple/old" />
+	</imports>
+	
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.messagemodels.EmailModel" />
+	</beans>
+	
+	<handlers>
+		<import-handlers template-id="common" />
+		<handler type="bean" beanid="default" xmlpath="@key" fieldname="key" />
+		<handler type="bean" beanid="default" xmlpath="@name" fieldname="name" />		
+		<handler type="bean" beanid="default" xmlpath="@lastModified" fieldname="detailLastModified" />
+	</handlers>
+	
+	<template>
+      	<tuple lastModified="" key="" level="organization" name="" xmlns="http://schemas.cordys.com/1.0/xmlstore">
+        	<old>
+        	</old>
+		</tuple>
+	</template>
+</binding-template>

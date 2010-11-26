@@ -1,0 +1,15 @@
+<binding-template templateid="COBOC-GetEmailModels">
+	<handlers>
+		<handler type="property" propname="messagetemplateid" xmlpath="Body/GetEmailModels/MessageTemplateId"  />
+	</handlers>
+	
+	<template>
+		<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
+		  <SOAP:Body>
+		    <GetEmailModels xmlns="http://schemas.cordys.com/1.0/notification">
+		    	<MessageTemplateId></MessageTemplateId>
+		    </GetEmailModels>
+		  </SOAP:Body>
+		</SOAP:Envelope>
+	</template>
+</binding-template>

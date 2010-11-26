@@ -1,0 +1,12 @@
+<binding-template templateid="COBOC-GetAllScheduleTemplates">
+	<handlers>
+	</handlers>
+	
+	<template>
+		<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
+		  <SOAP:Body>
+		    <GetAllScheduleTemplates xmlns="http://schemas.cordys.com/1.0/coboc"/>
+		  </SOAP:Body>
+		</SOAP:Envelope>
+	</template>
+</binding-template>

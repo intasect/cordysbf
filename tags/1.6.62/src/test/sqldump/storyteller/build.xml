@@ -1,0 +1,78 @@
+<project default="build-project" basedir=".">
+    <!--
+        Test build file for Ant tasks 
+        exportcontent, importcontent, deletecontent, isv 
+    -->
+
+	<property environment="env" />
+
+	<!--Overriding properties specified in build.properties -->
+	<property name="src.content" value="./generated" />
+	<property name="prj.base.dir" value="../../../.." />
+<!--	<property name="build.jar" value="${prj.base.dir}/build/jar" />-->
+
+	<!--Targets for testing-->
+	<target name="test-sqldump" depends="build-project,copy-jar,sqldump" />
+	
+	<!--Target for invoking project build -->
+	<target name="build-project" >
+		<echo message="Building Main Project..." />
+		<ant dir="../../../.." antfile="build.xml" target="jar"></ant>
+	</target>
+	
+	<!--Target for copying distribution to sdk folder -->
+	<target name="copy-jar">
+		<echo message="Updating sdk with latest distribution..." />
+		<copy todir="./..">
+			<fileset dir="..\..\..\..\build\jar">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="sqldump">
+		<sqldump>
+			<database 
+				srcType="sqlserver" 
+				destType="sqlserver"
+				destfile="${src.content}/create.sql"
+				user="sa" 
+				password="C0rdys" 
+				connectionstring="jdbc:odbc:Driver={SQL Server};Server=srv-nl-apps11;Database=VerhalenDB"
+			>
+				
+			</database>
+		</sqldump>
+	</target>
+
+	<target name="sqldump-isales">
+		<sqldump>
+			<database 
+				srcType="sqlserver" 
+				destType="sqlserver"
+				destfile="${src.content}/create.sql"
+				user="insynq1_appl" 
+				password="SimpleAccess" 
+				connectionstring="jdbc:odbc:Driver={SQL Server};Server=srv-nl-insynq0;Database=iSales_ConversieTest"
+			>
+				
+			</database>
+		</sqldump>
+	</target>
+	
+	<target name="sqldump-tempdb">
+			<sqldump>
+				<database 
+					srcType="sqlserver" 
+					destType="sqlserver"
+					destfile="${src.content}/create.sql"
+					user="sa" 
+					password="sa" 
+					connectionstring="jdbc:odbc:Driver={SQL Server};Server=cnd0626;Database=tempdb"
+				>
+					
+				</database>
+			</sqldump>
+		</target>
+
+</project>
