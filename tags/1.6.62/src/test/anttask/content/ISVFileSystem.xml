@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-
-<!-- Filesystem content are stored in this xml -->
-<!-- 'filesystem' is the root tag here -->
-<filesystem xmlns="">
-     <!-- Every file is enclosed within the <file>...</file> tag -->
-	<file srcdir="${docs.dir}" destdir="/${project.name}/docs" ecxdir="cordys_install_dir" />
-</filesystem>

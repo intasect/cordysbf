@@ -1,5 +1,0 @@
-<binding-template extends="../folders/Folder_BCP_Update.xml">
-	<beans>
-		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.mdm.EntityFolder" />
-	</beans>
-</binding-template>
