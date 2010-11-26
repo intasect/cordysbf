@@ -1,0 +1,166 @@
+<project default="build-project" basedir="../../">
+    <!--
+        Test build file for Ant tasks 
+        exportcontent, importcontent, deletecontent, isv 
+    -->
+
+	<property environment="env" />
+
+	<!-- user settings for overidding any property -->
+	<property file="user.properties" />
+
+	<!--Property used only for test build.xml-->
+	<property name="ant.test.dir" value="./test/anttask" />
+	<property name="sdk.dir" value="./sdk" />
+	
+	<!--Overriding properties specified in build.properties -->
+	<property name="src.content" value="${ant.test.dir}/content" />
+	
+	<!--Default build properties -->
+	<property file="build.properties" />
+
+	<!--Targets for testing-->
+	<target name="test-isv" depends="build-project,copy-jar,isv" />
+	<target name="test-export" depends="build-project,copy-jar,exportcontent" />
+	<target name="test-import" depends="build-project,copy-jar,importcontent" />
+	<target name="test-delete" depends="build-project,copy-jar,deletecontent" />
+	
+	<!--Target for invoking project build -->
+	<target name="build-project" >
+		<echo message="Building Main Project..." />
+		<ant antfile="build.xml" ></ant>
+	</target>
+	
+	<!--Target for copying distribution to sdk folder -->
+	<target name="copy-jar">
+		<echo message="Updating sdk with latest distribution..." />
+		<copy todir="${sdk.dir}">
+			<fileset dir="${build.jar}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<!--Target for exporting contents from ECX to File System -->
+  	<target name="exportcontent" 
+  			description="Exports the contents from ECX to File System">
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter="${content.filter}">
+			<content type="roles" dir="${src.content}/Roles" />
+			<content type="methodsets" dir="${src.content}/Methodsets" />
+			<content type="soapnodes" dir="${src.content}/SoapNodes" handler="com.cordys.tools.ant.cm.SoapNodesHandler" />																								
+
+    		<content type="menus" dir="${src.content}/Menus" />
+			<content type="xmlstore" dir="${src.content}/XMLStore" />																								
+			<content type="styles" dir="${src.content}/Styles" />
+			<content type="applicationconnectors" dir="${src.content}/ApplicationConnectors" />
+			<content type="xforms" formatoutput="false" dir="${src.content}/XForms" handler="com.cordys.tools.ant.cm.XFormsHandler" />																								
+
+			<content type="roles" contentfile="${src.content}/Roles/content.xml" />
+			<content type="methodsets" contentfile="${src.content}/Methodsets/content.xml" />
+			<content type="soapnodes" contentfile="${src.content}/SoapNodes/content.xml" handler="com.cordys.tools.ant.cm.SoapNodesHandler" />																								
+
+    		<content type="menus" contentfile="${src.content}/Menus/content.xml" />
+			<content type="xmlstore" contentfile="${src.content}/XMLStore/content.xml" />																								
+			<content type="styles" contentfile="${src.content}/Styles/content.xml" />
+			<content type="applicationconnectors" contentfile="${src.content}/ApplicationConnectors/content.xml" />
+			<content type="xforms" formatoutput="false" contentfile="${src.content}/XForms/content.xml" handler="com.cordys.tools.ant.cm.XFormsHandler" />																								
+    	</contentmanager>
+  	</target>
+  	
+	<!--Target for exporting contents from ECX to File System -->
+  	<target name="export-to-contentfile" 
+  			description="Exports the contents from ECX to File System">
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="ecxtofile"
+   			filter="${content.filter}">
+			<content type="roles" contentfile="${src.content}/Roles.xml" />
+			<content type="methodsets" contentfile="${src.content}/Methodsets.xml" />
+			<content type="menus" contentfile="${src.content}/Menus.xml" />
+			<content type="xmlstore" contentfile="${src.content}/XMLStore.xml" />																								
+			<content type="styles" contentfile="${src.content}/Styles.xml" />
+			<content type="applicationconnectors" contentfile="${src.content}/ApplicationConnectors.xml" />
+    	</contentmanager>
+  	</target>
+  	
+	<!--Target for importing contents from File System to ECX -->
+  	<target name="importcontent"
+  			description="Imports the contents from File System to ECX">
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="filetoecx"
+   			filter="${content.filter}">
+   			<content type="methodsets">
+   				<fileset dir="${src.content}\Methodsets" includes="**/*.xml" />
+   			</content>
+   			<content type="roles">
+   				<fileset dir="${src.content}\Roles" includes="**/*.xml" />
+   			</content>
+   			<content type="menus">
+   				<fileset dir="${src.content}\Menus" includes="**/**" />
+   			</content>
+   			<content type="xmlstore">
+   				<fileset dir="${src.content}\XMLStore" includes="**/**" />
+   			</content>
+   			<content type="applicationconnectors">
+   				<fileset dir="${src.content}\ApplicationConnectors" includes="**/**" />
+   			</content>
+   			<content type="styles">
+   				<fileset dir="${src.content}\Styles" includes="**/**" />
+   			</content>
+    	</contentmanager>
+  	</target>
+  	
+	<!--Target for deleting contents from their sources -->
+  	<target name="deletecontent"
+  			description="Deletes the contents from the sources">
+    	<contentmanager
+ 	    	organization="${content.org}"
+	    	userdn="${content.userdn}"
+   			operation="delete"
+   			filter="${content.filter}">
+   			<content type="roles" />
+   			<content type="methodsets" />
+   			<content type="applicationconnectors" />
+   			<content type="styles" />
+   			<content type="menus" />
+   			<content type="xmlstore" />
+    	</contentmanager>
+  	</target>
+  	
+	<!--Target for creating ISV package -->
+	<target name="isv"
+			description="Creates an ISV package">
+		<isv
+			organization="${content.org}"
+			owner="${isv.owner}"
+			productname="${isv.productname}"
+			version="${isv.version}"
+			type="standard"
+			name="${isv.name}" 
+			filename="${isv.filename}"
+			destdir="${dist.setup}"
+			userdn="${content.userdn}">
+			<content type="roles" contentfile="${src.content}/ISV/ISVRoles.xml" />
+			<content type="menus" contentfile="${src.content}/ISV/ISVMenus.xml" />
+			<content type="methodsets" contentfile="${src.content}/ISV/ISVMethodsets.xml" />
+			<content type="xmlstore" contentfile="${src.content}/ISV/ISVXMLStore.xml" />																								
+			<content type="styles" contentfile="${src.content}/ISV/ISVStyles.xml" />
+			<content type="applicationconnectors" contentfile="${src.content}/ISV/ISVApplicationConnectors.xml" />
+		    <content type="systemenvironment" contentfile="${src.content}/ISV/ISVSystemEnvironment.xml" />
+			<content type="dbschema" contentfile="${src.content}/ISV/ISVDBSchema.xml" />
+			<content type="filesystem" contentfile="${src.content}/ISV/ISVFileSystem.xml" />
+			<content type="prompts" contentfile="${src.content}/ISV/ISVPrompts.xml" />
+			<content type="virtualdirectories" contentfile="${src.content}/ISV/ISVVirtualDirectories.xml" />
+			<!--<content type="custom" handler="com.cordys ..." contentfile=".." />-->
+			<content type="xmlstore" contentfile="${src.content}/ISV/ISVXforms.xml" />
+		</isv>
+	</target>
+  	
+</project>

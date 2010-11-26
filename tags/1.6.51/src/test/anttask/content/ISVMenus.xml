@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menus>
+  <menu key="/Cordys/WCP/Menu/Kanban/AdminHelp" file="${src.content}\Menus\Cordys\WCP\Menu\Kanban\AdminHelp" />
+
+  <menu key="/Cordys/WCP/Menu/Kanban/administrator" name="Kanban MDHM Navigator"
+  file="${src.content}\Menus\Cordys\WCP\Menu\Kanban\administrator" />
+
+  <menu key="/Cordys/WCP/Menu/Kanban/controller" file="${src.content}\Menus\Cordys\WCP\Menu\Kanban\controller" />
+
+  <menu key="/Cordys/WCP/Menu/Kanban/ControllerHelp" file="${src.content}\Menus\Cordys\WCP\Menu\Kanban\ControllerHelp" />
+
+  <menu key="/Cordys/WCP/Menu/Kanban/Kanban MDHM Designer" file="${src.content}\Menus\Cordys\WCP\Menu\Kanban\Kanban MDHM Designer" />
+
+  <menu key="/Cordys/WCP/Menu/Kanban/Kanban MDHM Navigator" name="Kanban MDHM Navigator">
+    <Application focus="true" display="visible" toolbar="false" title="true" menu="true" taskbar="true">
+      <description>MDHM Navigator</description>
+
+      <id>PreLodingMDHMNavigator</id>
+
+      <caption>MDHM Navigator</caption>
+
+      <url>/cordys/CG/mdhm/html/navigation/preloading.htm</url>
+
+      <frame docked="true">left</frame>
+
+      <icon>\cordys\CG\library\images\application_tree.gif</icon>
+
+      <openIcon />
+
+      <data>
+        <application>Kanban</application>
+      </data>
+    </Application>
+  </menu>
+</menus>
+

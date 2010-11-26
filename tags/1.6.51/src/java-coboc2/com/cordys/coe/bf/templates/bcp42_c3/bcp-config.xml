@@ -1,0 +1,50 @@
+<config extends="../bcp42_c1/bcp-config.xml">
+	<soaprequest-templates>
+        <template path="coboc/messagemodels/GetMessageTemplates.xml" />
+        <template path="coboc/messagemodels/GetMessageTemplateDetails.xml" />
+		<template path="coboc/messagemodels/GetInboxModels.xml" />
+		<template path="coboc/messagemodels/GetEmailModels.xml" />
+		<template path="coboc/rules/GetWsAppServerClassregistry.xml" />
+        <template path="coboc/rules/GetRuleGroupsByOrganization.xml" />
+        <template path="coboc/rules/GetRulesByOrganization.xml" />		
+    </soaprequest-templates>
+
+    <binding-templates>
+        <!--  CoBOC Rule Bindings -->
+        <template path="coboc/rules/Rule_BCP.xml" content-type="COBOC_RULES_RULE" />
+        
+        <!--  CoBOC Folders Bindings -->
+        <template path="coboc/folders/ActionTemplate_BCP.xml" content-type="COBOC_FOLDERS_ACTIONTEMPLATE" />      
+        <template path="coboc/folders/ActionTemplate_BCP_Update.xml" content-type="COBOC_FOLDERS_ACTIONTEMPLATE" sub-type="BCP-Update" />       
+        <template path="coboc/folders/ProcessTemplate_BCP.xml" content-type="COBOC_FOLDERS_PROCESSTEMPLATE" />      
+        <template path="coboc/folders/ProcessTemplate_BCP_Update.xml" content-type="COBOC_FOLDERS_PROCESSTEMPLATE" sub-type="BCP-Update" />           
+        <template path="coboc/folders/ProcessBpmn_BCP.xml" content-type="COBOC_FOLDERS_PROCESSBPMN" />      
+        <template path="coboc/folders/ProcessBpmn_BCP_Update.xml" content-type="COBOC_FOLDERS_PROCESSBPMN" sub-type="BCP-Update" />           
+        <template path="coboc/folders/ProcessBpml_BCP.xml" content-type="COBOC_FOLDERS_PROCESSBPML" />      
+        <template path="coboc/folders/ProcessBpml_BCP_Update.xml" content-type="COBOC_FOLDERS_PROCESSBPML" sub-type="BCP-Update" />           
+        
+        <!--  CoBOC Message Model Bindings -->
+        <template path="coboc/messagemodels/MessageTemplate_BCP.xml" content-type="COBOC_MESSAGE_TEMPLATE" />
+        <template path="coboc/messagemodels/MessageTemplate_BCP_Update.xml" sub-type="BCP-Update" content-type="COBOC_MESSAGE_TEMPLATE" />
+        <template path="coboc/messagemodels/InboxModel_BCP.xml" content-type="COBOC_INBOX_MODEL_C3" />
+        <template path="coboc/messagemodels/InboxModel_BCP_Update.xml" sub-type="BCP-Update" content-type="COBOC_INBOX_MODEL_C3" />
+        <template path="coboc/messagemodels/EmailModel_BCP.xml" content-type="COBOC_EMAIL_MODEL" />
+        <template path="coboc/messagemodels/EmailModel_BCP_Detail.xml" content-type="COBOC_EMAIL_MODEL" sub-type="BCP-Details" />
+        <template path="coboc/messagemodels/EmailModel_BCP_Detail_Update.xml" content-type="COBOC_EMAIL_MODEL" sub-type="BCP-Details-Update" />
+        <template path="coboc/messagemodels/EmailModel_BCP_Update.xml" content-type="COBOC_EMAIL_MODEL" sub-type="BCP-Update" />
+    </binding-templates>
+    
+    <write-methods>
+    	<method>
+    		<content-types>COBOC_MESSAGE_TEMPLATE,COBOC_INBOX_MODEL_C3,COBOC_EMAIL_MODEL</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c3.BcpWriteMethod_MessageModels</class>
+    	</method>
+    </write-methods>  
+    
+    <read-methods>
+    	<method>
+    		<content-types>COBOC_MESSAGE_TEMPLATE,COBOC_INBOX_MODEL_C3,COBOC_EMAIL_MODEL</content-types>
+    		<class>com.cordys.coe.bf.content.coboc.impl.bcp42_c3.BcpReadMethod_MessageModels</class>
+    	</method>
+    </read-methods>    
+</config>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XMLStore content are stored in this xml -->
+<!-- 'xmlcontents' is the root tag here -->
+<xmlcontents>
+	<!-- Every content is enclosed within the <xmlcontent>...</xmlcontent> tag -->
+    <xmlcontent key="/Cordys/WCP/XForms/Sample/Hello World.caf" name="Hello World.caf">
+        <xformhtml xmlns:xforms="http://www.w3.org/2002/xforms/cr" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:wcpforms="http://schemas.cordys.com/wcp/xforms" key="/Cordys/WCP/XForms/Sample/Hello World.caf">
+            <xhead xmlns="http://schemas.cordys.com/1.0/xmlstore"/>
+            <xbody>
+                <xforms:group xmlns:xforms="http://www.w3.org/2002/xforms/cr" id="xbody_group" wcpforms:layout="vertical">
+                    <xforms:input wcpforms:anchors="anchored anchored null null" wcpforms:position="10 10" wcpforms:size="141 22">
+                        <xforms:label>Input</xforms:label>
+                    </xforms:input>
+                    <xforms:secret wcpforms:anchors="anchored anchored null null" wcpforms:position="10 44" wcpforms:size="141 22">
+                        <xforms:label>Password</xforms:label>
+                    </xforms:secret>
+                </xforms:group>
+            </xbody>
+        </xformhtml>
+    </xmlcontent>
+	<xmlcontent key="/Cordys/WCP/Menu/Helloworld/Test" name="Helloworld" file="${src.xmlstore}/menus/TestMenu.xml" />
+</xmlcontents>

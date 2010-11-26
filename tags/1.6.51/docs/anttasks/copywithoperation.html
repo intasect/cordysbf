@@ -1,0 +1,119 @@
+<html>
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<title>Copy Task</title>
+	<link rel="stylesheet" type="text/css" href="../stylesheets/antmanual.css">
+</head>
+
+<body>
+<h2><a name="copywithoperation">CopyWithOperation</a></h2>
+<h3>Description</h3>
+<p>Extension of Copy task provided by ANT. It takes all the parameters supported by Copy task. Additional parameters are given below.</p>
+<p>
+<strong>Note: </strong>Works with Ant 1.6.2 (Donot work with Ant 1.5.*)
+</p>
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Attribute</b></td>
+    <td valign="top"><b>Description</b></td>
+    <td align="center" valign="top"><b>Required</b></td>
+  </tr>
+  <tr>
+    <td valign="top">operation</td>
+    <td valign="top">The operation that should be applied while copying is done.</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">copyright</td>
+    <td valign="top">File which contains copyright information. Valid only when value of operation attribute is compress</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+</table>
+
+<h3>Possible value for attribute operation</h3>
+<table border="1" cellpadding="2" cellspacing="0">
+  <tr>
+    <td valign="top"><b>Value</b></td>
+    <td valign="top"><b>Description</b></td>
+  </tr>
+  <tr>
+    <td valign="top">default</td>
+    <td valign="top">It will act as copy task provided by Ant (Better use Copy task)</td>
+  </tr>
+  <tr>
+    <td valign="top">compress</td>
+    <td valign="top">Removes comments in html pages. You have to set filter properly so that only html pages are handled by the task. If you have copyright attribute set, then it will place the contents of copyright file at the start of each pages which are copied<br/>
+    Note: Used by Collaborative Learning team.</td>
+  </tr>
+  <tr>
+     <td valign="top">eliminateindent</td>
+     <td valign="top">Eliminate INDENT portion in html pages.<br/>
+     Indent should be specified in the page as:<br/>
+		&lt;!--INDENT BEGIN--&gt;<br/>
+		Text carrying information used by developers and not to be shipped with product.<br/>
+		&lt;!--INDENT END--&gt;<br/>
+    Note: Used by Orchestrator team.</td>
+  </tr>
+  <tr>
+     <td valign="top">eliminatecomment</td>
+     <td valign="top">Used for comment removal for eibus htcs</td>
+  </tr>
+  <tr>
+	 <td valign="top">replaceproperties</td>
+	 <td valign="top">There are cases in which we need to fill the data of the file with property value specified in ant build script. In such cases we can use this option.<br/>
+	 Example: Version.java<br/>
+	 public static final String BUILD_NUMBER = "${build.number}";<br/>
+	 Here during build, value has to be repaced with current build number. Here we can copy the source file to build directory with replaceproperties set, and compile source from build folder.
+	 </td>
+  </tr>
+</table>
+
+<h3>Examples</h3>
+<p><b>Used by Collaborative Learning</b></p>
+<pre>
+	&lt;copywithoperation
+	  operation=&quot;compress&quot;
+	  copyright=&quot;${src.misc}/copyright.txt&quot;
+	  todir=&quot;${build.web}&quot; &gt;
+	  &lt;fileset dir=&quot;${src.web}&quot;&gt;
+	    &lt;include name=&quot;**/*.htm&quot; /&gt;
+	    &lt;include name=&quot;**/*.html&quot; /&gt;
+	    &lt;exclude name=&quot;Dialog.htm&quot; /&gt;
+	    &lt;exclude name=&quot;cordys/desktopLMS.htm&quot; /&gt;
+	  &lt;/fileset&gt;
+	&lt;/copywithoperation&gt;
+</pre>
+<p><b>Used by Orchestrator</b></p>
+<pre>
+  	&lt;target name=&quot;web&quot;
+	  description=&quot;Copies web resources to the build folder&quot;
+	  depends=&quot;init&quot;&gt;
+	  &lt;copy todir=&quot;${build.web}&quot;&gt;
+	    &lt;fileset dir=&quot;${src.web}&quot;&gt;
+	      &lt;include name=&quot;**/*&quot;/&gt;
+	      &lt;exclude name=&quot;**/*.htm&quot; /&gt;
+	      &lt;exclude name=&quot;**/*.html&quot; /&gt;
+	      &lt;exclude name=&quot;**/*.js&quot; /&gt;
+	      &lt;exclude name=&quot;**/*.xml&quot; /&gt;
+	      &lt;exclude name=&quot;**/*.xsl&quot; /&gt;
+	    &lt;/fileset&gt;
+	  &lt;/copy&gt;
+	  &lt;copywithoperation
+	    operation=&quot;eliminateindent&quot;
+	    todir=&quot;${build.web}&quot;&gt;
+	    &lt;fileset dir=&quot;${src.web}&quot;&gt;
+	      &lt;include name=&quot;**/*.htm&quot; /&gt;
+	      &lt;include name=&quot;**/*.html&quot; /&gt;
+	      &lt;include name=&quot;**/*.js&quot; /&gt;
+	      &lt;include name=&quot;**/*.xml&quot; /&gt;
+	      &lt;include name=&quot;**/*.xsl&quot; /&gt;
+	    &lt;/fileset&gt;
+	  &lt;/copywithoperation&gt;
+	&lt;/target&gt;
+</pre>
+<hr><p align="center">Copyright &copy; 2004 Cordys All rights Reserved.</p>
+</body>
+</html>
+
