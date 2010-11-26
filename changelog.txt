@@ -1,5 +1,12 @@
+VERSION 1.6.62 (2010-11-26) 
+- Add: Added ant script to generate ChangeLog.txt automatically when you build the project.
+
+VERSION 1.6.50 (2010-11-09) 
+- Add: Removed _upload-build-to-site,deploy-site,_make_svn_build_label from the buildfiles_external/build/build-framework.xml so that dependent projects can be built without svn integration & site related activities to start with. Later this can be revisited.
+
 VERSION 1.6.48 (2010-06-08) 
 - Fix: Fixed Issue 3 : Exporting processes fails in the case of clustered environment.
+
 VERSION 1.6.48 (2010-06-08) 
 - Fix: Fixed INC5103 duplicate folder names while exporting a BPM.
 
