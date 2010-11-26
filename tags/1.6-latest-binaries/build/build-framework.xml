@@ -821,7 +821,7 @@
 	-->
 	<target name="release"
 	        description="Creates a distribution of the project after running tests."
-	        depends="cleanall,_labelrelease,_check_changelog,test,jar,docs,javadocs,_isv,copy-release,publish"
+	        depends="cleanall,_labelrelease,_check_changelog,test,jar,docs,javadocs,_isv,copy-release,publish,create_changelog_txt"
 	>
 	</target>
 
@@ -1395,4 +1395,12 @@
 			</fileset>
 		</copy>
 	</target>
+	
+	<!-- Generate changelog.txt from changelog.xml -->
+	
+	<target name="create_changelog_txt" description="Genrerate changelog.txt">
+        <changelog infile="changelog.xml" outfile="changelog.txt"/>
+    </target>
+	
+	
 </project>
