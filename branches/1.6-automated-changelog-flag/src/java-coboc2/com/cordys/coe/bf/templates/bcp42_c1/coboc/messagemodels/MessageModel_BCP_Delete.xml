@@ -1,0 +1,21 @@
+<binding-template>
+	<beans>
+		<bean beanid="default" class="com.cordys.coe.bf.content.types.coboc.messagemodels.InboxModel_C1" />
+	</beans>
+	
+	<handlers>
+		<handler type="bean" beanid="default" xmlpath="old/MESSAGE_MODEL/MODEL_ID" fieldname="objectId"  />			
+		<handler type="bean" beanid="default" xmlpath="old/MESSAGE_MODEL/LAST_MODIFIED" fieldname="lastModified"  />	
+	</handlers>
+	
+	<template>
+      	<tuple>
+        	<old>
+	          	<MESSAGE_MODEL>
+           			<MODEL_ID></MODEL_ID>
+            		<LAST_MODIFIED></LAST_MODIFIED>
+          		</MESSAGE_MODEL>
+        	</old>
+		</tuple>
+	</template>
+</binding-template>
