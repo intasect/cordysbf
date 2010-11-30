@@ -39,13 +39,11 @@ public class ChangeLogTask extends Task
     * Holds the name of the input xml file.
     */
     private String inFile = null;
-
     /**
     * Holds the name of the output text file.
     */
     private String outFile = null;
-	    
-	/**
+    /**
     * This method sets the input xml file to generate output text file.
     *
     * @param infile The name of the input xml file.
@@ -54,7 +52,6 @@ public class ChangeLogTask extends Task
     {
         this.inFile = infile;
     }
-    
     /**
     * This method sets the output text file to be generated.
     *
@@ -64,7 +61,6 @@ public class ChangeLogTask extends Task
     {
         this.outFile = outfile;
     }
-    
     /**
     * This method executes the taks
     *
