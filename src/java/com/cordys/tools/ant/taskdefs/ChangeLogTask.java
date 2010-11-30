@@ -45,7 +45,7 @@ public class ChangeLogTask extends Task
     */
     private String outFile = null;
 	    
-    /**
+	/**
     * This method sets the input xml file to generate output text file.
     *
     * @param infile The name of the input xml file.
@@ -75,6 +75,25 @@ public class ChangeLogTask extends Task
     {
         try
         {
+			String flag = getProject().getProperty("generate.changelog.txt");
+			
+			if(flag==null)
+			{
+				return;
+			}
+			
+			flag = flag.trim();
+			
+			if(flag.equalsIgnoreCase("false"))
+            {
+                return;
+            }
+			
+			if(!flag.equalsIgnoreCase("true"))
+			{
+				return;
+			}
+			
             // Defining file object
             File file = new File(inFile);
             
