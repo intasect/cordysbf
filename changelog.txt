@@ -1,3 +1,5 @@
+VERSION 1.6.52 (2010-12-01)
+- Update: changelog.txt gets generated based on the 'generate.changelog.txt' flag
 VERSION 1.6.51 (2010-11-26) 
 - Add: Added ant script to generate ChangeLog.txt automatically when you build the project.
 
