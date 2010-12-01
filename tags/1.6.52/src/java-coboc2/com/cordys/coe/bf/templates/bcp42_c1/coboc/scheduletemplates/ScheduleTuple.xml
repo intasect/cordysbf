@@ -1,0 +1,17 @@
+<binding-template>
+	<handlers>
+		<handler type="property" propname="TEMPLATEID" xmlpath="TEMPLATEID"/>
+		<handler type="property" propname="LASTUPDATED" xmlpath="LASTUPDATED"/>
+		<handler type="property" propname="TEMPLATENAME" xmlpath="TEMPLATENAME"/>
+		<handler type="property" propname="SCHEDULEXML" xmlpath="SCHEDULEXML"/>
+	</handlers>
+	
+	<template>
+       <SCHEDULETEMPLATE>
+         <TEMPLATEID></TEMPLATEID>
+         <LASTUPDATED></LASTUPDATED>
+         <TEMPLATENAME></TEMPLATENAME>
+         <SCHEDULEXML></SCHEDULEXML>
+       </SCHEDULETEMPLATE>
+	</template>
+</binding-template>
