@@ -1,0 +1,15 @@
+@ECHO OFF 
+setlocal 
+
+REM Point to a Java 6 JDK
+set JAVA_HOME=C:\Progra~1\Java\jdk1.6.0_11
+set PATH=%PATH%;%JAVA_HOME%\bin
+REM The location of the buildframework
+set BUILDFRAMEWORK=D:\teststreet\trunk\buildframework_runtime_bop4
+set PATH=%CORDYS_INSTALL_DIR%\lib;%PATH% 
+set ANT_HOME=%BUILDFRAMEWORK%\ext\ant
+set ANT_CP=%ANT_HOME%\lib\ant-launcher.jar;%ANT_CP%
+set ANT_LIBS=%ANT_HOME%\lib
+set CLASSPATH=%ANT_HOME%\lib;%CLASSPATH% 
+
+java -Dant.home=%ANT_HOME% -Djava.home=%JAVA_HOME% -cp "%ANT_CP%;%ANT_HOME%;%CLASSPATH%;%ANT_LIBS%" org.apache.tools.ant.launch.Launcher -lib %ANT_LIBS% %* 
