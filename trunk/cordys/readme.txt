@@ -1,0 +1,1 @@
+This folder should contain the BOP-4 platform binaries. These can be downloaded from http://code.google.com/p/cordysbf/downloads

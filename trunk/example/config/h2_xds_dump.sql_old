@@ -1,0 +1,350 @@
+
+DROP TABLE IF EXISTS XDS_BRANCH;
+DROP TABLE IF EXISTS XDS_COLLECTION;
+DROP TABLE IF EXISTS XDS_DOCUMENT_TYPE;
+DROP TABLE IF EXISTS XDS_DOCUMENT;
+DROP FUNCTION IF EXISTS GET_DOCUMENTS_RECURSIVELY;
+DROP FUNCTION IF EXISTS GET_DOCUMENT_KEY_FROM_ID;
+
+CREATE TABLE XDS_BRANCH (
+  BRANCH_ID VARCHAR(50) NOT NULL,
+  PARENT_ID VARCHAR(50) DEFAULT ' ',
+  REGISTERED_REVISION VARCHAR(50) NOT NULL,
+  NAME NVARCHAR(500) NOT NULL,
+  INTERNAL_NAME NVARCHAR(500) NOT NULL,
+  DESCRIPTION NVARCHAR(200) NULL,
+  READ_ONLY DECIMAL(3, 0) NOT NULL,
+  STACK_LEVEL DECIMAL(3, 0) NULL,
+  IS_ACTIVE DECIMAL(3, 0) NOT NULL,
+  CREATED_BY NVARCHAR(500) NOT NULL DEFAULT 'XDS',
+  CREATED_DATE VARCHAR(50)  NOT NULL,
+  LASTMODIFIED_DATE VARCHAR(50) NOT NULL,
+  ACCESSCONTROLPOLICY_ID VARCHAR(50) NOT NULL
+)Type=InnoDB;
+
+CREATE TABLE XDS_COLLECTION (
+  BRANCH_ID VARCHAR(50) NOT NULL,
+  TYPE_ID VARCHAR(50) NOT NULL,
+  OWNER_ID VARCHAR(50) NOT NULL,
+  ROLE NVARCHAR(150) NOT NULL,
+  MEMBER_ID VARCHAR(50) NOT NULL,
+  SEQUENCE_ID DECIMAL(18,0) NOT NULL
+)Type=InnoDB;
+
+
+CREATE TABLE XDS_DOCUMENT (
+  REVISION VARCHAR(50) NOT NULL,
+  DOCUMENT_ID VARCHAR(50) NOT NULL,
+  NAME NVARCHAR(255) NOT NULL,
+  INTERNAL_NAME NVARCHAR(255) NOT NULL,
+  QUALIFIED_NAME NVARCHAR(1023) NULL,
+  DESCRIPTION NVARCHAR(255) NULL,
+  CREATED_BY NVARCHAR(500) NOT NULL,
+  LASTMODIFIED_BY NVARCHAR(500) NULL,
+  LASTMODIFIED_DATE VARCHAR(50) NOT NULL,
+  OPTIMISTIC_LOCK DECIMAL(18,0) NOT NULL,
+  CREATED_DATE VARCHAR(50)  NOT NULL,
+  ANNOTATION NVARCHAR(1023) NULL,
+  TYPE_ID VARCHAR(50) NOT NULL,
+  TYPE_REVISION VARCHAR(50) NOT NULL,
+  PARENT_ID VARCHAR(50) DEFAULT ' ',
+  CONTENT LONGTEXT NULL,
+  CUSTOM_PROPERTIES LONGTEXT NULL, 
+  ACCESSCONTROLPOLICY_ID VARCHAR(50) NULL ,
+  INHERIT_PARENT_ACP DECIMAL(2,0) NOT NULL 	  
+)Type=InnoDB;
+
+
+CREATE TABLE XDS_DOCUMENT_TYPE (
+  REVISION VARCHAR(50) NOT NULL,
+  DOCUMENT_ID VARCHAR(50) NOT NULL,
+  SCHEMA_VALIDATE DECIMAL(3, 0) NOT NULL,  
+  IS_AVAILABLE DECIMAL(3, 0) NOT NULL,
+  IS_CONTAINER DECIMAL(3, 0) NOT NULL,
+  REGISTERED_BY NVARCHAR(500) NULL
+)Type=InnoDB;
+
+ALTER TABLE XDS_BRANCH ADD CONSTRAINT PK_SPACE PRIMARY KEY (BRANCH_ID);
+ALTER TABLE XDS_DOCUMENT ADD CONSTRAINT PK_XDS_ENTITY PRIMARY KEY (REVISION, DOCUMENT_ID);
+ALTER TABLE XDS_DOCUMENT_TYPE ADD CONSTRAINT PK_DOCUMENT_TYPE PRIMARY KEY (REVISION, DOCUMENT_ID);
+ALTER TABLE XDS_COLLECTION ADD CONSTRAINT PK_COLLECTION PRIMARY KEY (BRANCH_ID, OWNER_ID, ROLE, MEMBER_ID);
+
+ALTER TABLE XDS_DOCUMENT ADD CONSTRAINT UNIQUE KEY IX_XDS_ENTITY (REVISION, TYPE_ID, PARENT_ID, INTERNAL_NAME);
+
+CREATE INDEX IX_XDS_DOCUMENT ON XDS_DOCUMENT  ( REVISION, PARENT_ID );
+CREATE INDEX IX_XDS_DOCUMENT_TYPEID_TO_REVISION ON XDS_DOCUMENT (TYPE_ID, TYPE_REVISION);
+
+ALTER TABLE XDS_DOCUMENT_TYPE ADD CONSTRAINT FK_DOC_TYPE_2_DOC FOREIGN KEY (REVISION, DOCUMENT_ID) REFERENCES XDS_DOCUMENT (REVISION, DOCUMENT_ID);
+
+CREATE FUNCTION GET_DOCUMENTS_RECURSIVELY(REVISION_LIST VARCHAR(1000), 
+PARENT_CONTAINER_ID_LIST VARCHAR(1000), 
+FILTER_LIST VARCHAR(1000))
+RETURNS LONGTEXT
+READS SQL DATA
+BEGIN	
+	 DECLARE RESULT_DOCUMENT_IDS LONGTEXT;
+	 DECLARE result_document VARCHAR(50);	 
+	 DECLARE tempTableRowCount TINYINT default 0;
+	 DECLARE pos TINYINT DEFAULT 0;
+	 DECLARE TypeID VARCHAR(50);
+	 DECLARE Parent_Container_Id VARCHAR(50);
+	 DECLARE Branch_Id VARCHAR(50);
+	 DECLARE is_filtered_query BOOLEAN DEFAULT FALSE;
+	 
+	 IF(PARENT_CONTAINER_ID_LIST IS NULL) THEN
+		SET PARENT_CONTAINER_ID_LIST = '';	 
+	 END IF;
+	 	
+	 IF(FILTER_LIST IS NULL) THEN
+		SET FILTER_LIST = '';
+	 ELSE
+		SET FILTER_LIST = LTRIM(RTRIM(FILTER_LIST));
+	 END IF;
+	 	 
+	 CREATE TEMPORARY TABLE IF NOT EXISTS TempContainerList ( ContainerID VARCHAR(50) );
+	 IF (PARENT_CONTAINER_ID_LIST IS NOT NULL AND LENGTH(PARENT_CONTAINER_ID_LIST) > 0) THEN
+		DELETE FROM TempContainerList;
+		SET PARENT_CONTAINER_ID_LIST = LTRIM(RTRIM(PARENT_CONTAINER_ID_LIST));
+		SET PARENT_CONTAINER_ID_LIST = CONCAT(PARENT_CONTAINER_ID_LIST,',');
+		SET pos = instr(PARENT_CONTAINER_ID_LIST, ',');
+
+		REPEAT
+			SET Parent_Container_Id = LTRIM(RTRIM(LEFT(PARENT_CONTAINER_ID_LIST, pos - 1)));
+			IF Parent_Container_Id IS NOT NULL THEN
+				INSERT INTO TempContainerList (ContainerID) VALUES (Parent_Container_Id);
+			END IF;
+
+			SET PARENT_CONTAINER_ID_LIST = RIGHT(PARENT_CONTAINER_ID_LIST, LENGTH(PARENT_CONTAINER_ID_LIST) - pos);
+			SET pos = instr(PARENT_CONTAINER_ID_LIST, ',');
+		 UNTIL pos = 0
+		 END REPEAT;
+	 ELSE 
+		INSERT INTO TempContainerList (ContainerID) VALUES (PARENT_CONTAINER_ID_LIST);	
+	 END IF;
+	 
+	 IF (REVISION_LIST IS NOT NULL AND LENGTH(REVISION_LIST) > 0) THEN
+		CREATE TEMPORARY TABLE IF NOT EXISTS TempRevisionList ( Branch_Id VARCHAR(50) );
+		DELETE FROM TempRevisionList;
+		SET REVISION_LIST = CONCAT(REVISION_LIST,',');
+		SET pos = instr(REVISION_LIST, ',');
+
+		REPEAT
+			SET Branch_Id = LTRIM(RTRIM(LEFT(REVISION_LIST, pos - 1)));
+			IF Branch_Id IS NOT NULL THEN
+				INSERT INTO TempRevisionList (Branch_Id) VALUES (Branch_Id);
+			END IF;
+
+			SET REVISION_LIST = RIGHT(REVISION_LIST, LENGTH(REVISION_LIST) - pos);
+			SET pos = instr(REVISION_LIST, ',');
+		 UNTIL pos = 0
+		 END REPEAT;
+	 END IF;
+	 
+	 IF (FILTER_LIST IS NOT NULL AND LENGTH(FILTER_LIST) > 0) THEN
+		
+		CREATE TEMPORARY TABLE IF NOT EXISTS TempFilterList ( Type_ID VARCHAR(50) );
+		DELETE FROM TempFilterList;
+		SET FILTER_LIST = CONCAT(FILTER_LIST,',');
+		SET pos = instr(FILTER_LIST, ',');
+
+		REPEAT
+			SET TypeID = LTRIM(RTRIM(LEFT(FILTER_LIST, pos - 1)));
+			IF TypeID IS NOT NULL THEN
+				INSERT INTO TempFilterList (Type_ID) VALUES (TypeID);
+			END IF;
+
+			SET FILTER_LIST = RIGHT(FILTER_LIST, LENGTH(FILTER_LIST) - pos);
+			SET pos = instr(FILTER_LIST, ',');
+		 UNTIL pos = 0
+		 END REPEAT;
+		 SET is_filtered_query = TRUE;
+	 END IF;
+
+	SELECT SQL_CALC_FOUND_ROWS ContainerID INTO Parent_Container_Id FROM TempContainerList ORDER BY RAND() LIMIT 1;
+	SELECT FOUND_ROWS() INTO tempTableRowCount;
+
+	IF (tempTableRowCount > 0 ) THEN
+		DELETE FROM TempContainerList WHERE ContainerID = Parent_Container_Id;		
+	END IF;	
+	
+	REPEAT			
+		IF (is_filtered_query) THEN
+		BEGIN
+			DECLARE done BOOLEAN DEFAULT FALSE;
+			DECLARE c1 CURSOR FOR SELECT x.DOCUMENT_ID FROM XDS_DOCUMENT AS x 
+			JOIN TempRevisionList tr ON x.REVISION = tr.Branch_Id 
+			JOIN TempFilterList tf ON x.TYPE_ID = tf.Type_ID 
+			AND x.PARENT_ID = Parent_Container_Id;
+			DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+			OPEN c1;
+			REPEAT
+				FETCH c1 INTO result_document;
+				IF (NOT done) THEN
+					IF (RESULT_DOCUMENT_IDS = '' OR RESULT_DOCUMENT_IDS IS NULL) THEN
+						SET RESULT_DOCUMENT_IDS = result_document;
+					ELSE
+						SET RESULT_DOCUMENT_IDS = CONCAT(RESULT_DOCUMENT_IDS, ',' , result_document);
+					END IF;
+				END IF;
+			UNTIL done
+			END REPEAT;
+			CLOSE c1;	
+			#SELECT CONCAT('RESULT_DOCUMENT_IDS:',RESULT_DOCUMENT_IDS);
+		END;
+		ELSE
+		BEGIN			
+			DECLARE done BOOLEAN DEFAULT FALSE;			
+			DECLARE c1 CURSOR FOR SELECT x.DOCUMENT_ID FROM XDS_DOCUMENT AS x 
+			JOIN TempRevisionList tr ON x.REVISION = tr.Branch_Id 
+			AND x.PARENT_ID = Parent_Container_Id;	
+			DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+						
+			OPEN c1;
+			REPEAT
+				FETCH c1 INTO result_document;					
+				IF (NOT done) THEN
+					IF (RESULT_DOCUMENT_IDS = '' OR RESULT_DOCUMENT_IDS IS NULL) THEN
+						SET RESULT_DOCUMENT_IDS = result_document;
+					ELSE						
+						SET RESULT_DOCUMENT_IDS = CONCAT(RESULT_DOCUMENT_IDS, ',' , result_document);
+					END IF;
+				END IF;
+				
+			UNTIL done
+			END REPEAT;
+			CLOSE c1;	
+			#SELECT CONCAT('RESULT_DOCUMENT_IDS:',RESULT_DOCUMENT_IDS);		
+		END;
+		END IF;
+
+		INSERT INTO TempContainerList(ContainerID) SELECT x.DOCUMENT_ID FROM XDS_DOCUMENT AS x
+		JOIN TempRevisionList tr ON x.REVISION = tr.Branch_Id 				
+		JOIN XDS_DOCUMENT_TYPE xdt ON x.TYPE_ID = xdt.DOCUMENT_ID 
+		AND x.PARENT_ID = Parent_Container_Id AND xdt.IS_CONTAINER = 1;		
+		
+		SELECT SQL_CALC_FOUND_ROWS ContainerID INTO Parent_Container_Id FROM TempContainerList ORDER BY RAND() LIMIT 1;
+		SELECT FOUND_ROWS() INTO tempTableRowCount;		
+
+		IF (tempTableRowCount > 0 ) THEN
+			DELETE FROM TempContainerList WHERE ContainerID = Parent_Container_Id;		
+		END IF;
+	UNTIL tempTableRowCount = 0
+    END REPEAT;
+
+   DROP TEMPORARY TABLE IF EXISTS TempContainerList;
+   DROP TEMPORARY TABLE IF EXISTS TempFilterList;
+   DROP TEMPORARY TABLE IF EXISTS TempRevisionList;
+   RETURN RESULT_DOCUMENT_IDS;
+	
+END;
+
+CREATE FUNCTION GET_DOCUMENT_KEY_FROM_ID(REVISION_LIST VARCHAR(1000),  
+DOCUMENT_ID VARCHAR(50))
+RETURNS VARCHAR(4000)
+READS SQL DATA
+BEGIN	
+	 DECLARE RESULT_DOCUMENT_KEY VARCHAR(4000);
+	 DECLARE DOCUMENT_PARENT_ID VARCHAR(50);
+	 DECLARE DOCUMENT_NAME VARCHAR(255);
+     DECLARE pos TINYINT DEFAULT 0;
+	 DECLARE Branch_Id VARCHAR(50);
+	 
+	 SET RESULT_DOCUMENT_KEY = '/';
+
+	 IF (REVISION_LIST IS NOT NULL AND LENGTH(REVISION_LIST) > 0) THEN	
+		CREATE TEMPORARY TABLE IF NOT EXISTS TempRevisionList ( Branch_Id VARCHAR(50) );
+		DELETE FROM TempRevisionList;
+		
+		SET REVISION_LIST = CONCAT(REVISION_LIST,',');
+		SET pos = instr(REVISION_LIST, ',');
+		
+		REPEAT
+			SET Branch_Id = LTRIM(RTRIM(LEFT(REVISION_LIST, pos - 1)));
+			IF Branch_Id IS NOT NULL THEN
+				INSERT INTO TempRevisionList (Branch_Id) VALUES (Branch_Id);
+			END IF;
+
+			SET REVISION_LIST = RIGHT(REVISION_LIST, LENGTH(REVISION_LIST) - pos);
+			SET pos = instr(REVISION_LIST, ',');
+		 UNTIL pos = 0
+		 END REPEAT;
+	 END IF;
+			 
+	  REPEAT 
+		SELECT x.PARENT_ID,x.NAME INTO DOCUMENT_PARENT_ID,DOCUMENT_NAME FROM XDS_DOCUMENT AS x 
+		JOIN TempRevisionList tr ON x.REVISION = tr.Branch_Id AND x.DOCUMENT_ID = DOCUMENT_ID 
+		ORDER BY RAND() DESC LIMIT 1;
+		
+		SET DOCUMENT_ID = DOCUMENT_PARENT_ID;
+		
+		IF(DOCUMENT_ID IS NOT NULL) THEN
+			IF (RESULT_DOCUMENT_KEY = '/') THEN
+				SET RESULT_DOCUMENT_KEY = CONCAT(RESULT_DOCUMENT_KEY, DOCUMENT_NAME);
+			ELSE						
+				SET RESULT_DOCUMENT_KEY = CONCAT('/' , DOCUMENT_NAME, RESULT_DOCUMENT_KEY);
+			END IF;
+		END IF;				
+
+	 UNTIL DOCUMENT_ID = '' OR DOCUMENT_ID IS NULL
+	 END REPEAT;
+
+	 DROP TEMPORARY TABLE IF EXISTS TempRevisionList;
+	 RETURN RESULT_DOCUMENT_KEY;
+	
+END;
+
+
+
+
+-- Fill XDS_BRANCH table --
+insert into XDS_BRANCH (BRANCH_ID, REGISTERED_REVISION,NAME,DESCRIPTION,READ_ONLY,STACK_LEVEL,IS_ACTIVE,CREATED_BY,CREATED_DATE, LASTMODIFIED_DATE, ACCESSCONTROLPOLICY_ID, INTERNAL_NAME) 
+values ('XDS_ROOT_BRANCH', '_XDS_ROOT_BRANCH', 'XDS ROOT BRANCH', 'Default branch created by XDS', '0', 1, '1', 'system', '2006-11-17', '2006-11-17', 'OPEN_TO_ALL_ACL', UPPER('XDS ROOT BRANCH'));
+
+insert into XDS_BRANCH (BRANCH_ID, REGISTERED_REVISION,NAME,DESCRIPTION,READ_ONLY,STACK_LEVEL,IS_ACTIVE,CREATED_BY,CREATED_DATE, LASTMODIFIED_DATE, ACCESSCONTROLPOLICY_ID, INTERNAL_NAME) 
+values ('ISV', '_ISV', 'ISV', 'Default branch created by XDS', '0', 1, '1', 'system', '2006-11-17', '2006-11-17', 'OPEN_TO_ALL_ACL', 'ISV');
+
+-- Fill XDS_DOCUMENT table --
+insert into XDS_DOCUMENT (DOCUMENT_ID,REVISION,NAME,DESCRIPTION,OPTIMISTIC_LOCK,CREATED_BY,LASTMODIFIED_DATE,CREATED_DATE,TYPE_ID,TYPE_REVISION,CONTENT, INHERIT_PARENT_ACP, INTERNAL_NAME) 
+values('ID_TYPE_REGISTEREDDOCUMENT','_XDS_ROOT_BRANCH','TYPE_REGISTEREDDOCUMENT','The base document to which all documents belong',1,'system','2006-11-17','2006-11-17','ID_TYPE_REGISTEREDDOCUMENT','_XDS_ROOT_BRANCH','<DocumentType xmlns="http://schemas.cordys.com/xds/1.0" />', 0, UPPER('TYPE_REGISTEREDDOCUMENT'));
+
+insert into XDS_DOCUMENT (DOCUMENT_ID,REVISION,NAME,DESCRIPTION,OPTIMISTIC_LOCK,CREATED_BY,LASTMODIFIED_DATE,CREATED_DATE,TYPE_ID,TYPE_REVISION,CONTENT, INHERIT_PARENT_ACP, INTERNAL_NAME) 
+values('ID_TYPE_ACCESSCONTROLPOLICY','_XDS_ROOT_BRANCH','TYPE_ACCESSCONTROLPOLICY','The access control policy document type',1,'system','2006-11-17','2006-11-17','ID_TYPE_REGISTEREDDOCUMENT','_XDS_ROOT_BRANCH','<DocumentType xmlns="http://schemas.cordys.com/xds/1.0"><Configuration><SchemaValidate>true</SchemaValidate><IsContainer>false</IsContainer></Configuration><Schema><xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://schemas.cordys.com/xds/acl/1.0" version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><xsd:element name="ACL"><xsd:complexType><xsd:sequence><xsd:element minOccurs="1" maxOccurs="unbounded" name="ACE"><xsd:complexType><xsd:all><xsd:element minOccurs="1" maxOccurs="1" name="Principal" type="xsd:string"/><xsd:element minOccurs="1" maxOccurs="1" name="DocumentType" type="xsd:string"/><xsd:element name="Privilege"><xsd:complexType><xsd:all><xsd:element xmlns:q1="http://schemas.cordys.com/xds/acl/1.0" minOccurs="1" maxOccurs="1" name="all" type="q1:privilegeType"/><xsd:element xmlns:q1="http://schemas.cordys.com/xds/acl/1.0" minOccurs="1" maxOccurs="1" name="read" type="q1:privilegeType"/><xsd:element xmlns:q1="http://schemas.cordys.com/xds/acl/1.0" minOccurs="1" maxOccurs="1" name="create" type="q1:privilegeType"/><xsd:element xmlns:q1="http://schemas.cordys.com/xds/acl/1.0" minOccurs="1" maxOccurs="1" name="update" type="q1:privilegeType"/><xsd:element xmlns:q1="http://schemas.cordys.com/xds/acl/1.0" minOccurs="1" maxOccurs="1" name="delete" type="q1:privilegeType"/><xsd:element xmlns:q1="http://schemas.cordys.com/xds/acl/1.0" minOccurs="1" maxOccurs="1" name="grant" type="q1:privilegeType"/></xsd:all></xsd:complexType></xsd:element></xsd:all></xsd:complexType></xsd:element></xsd:sequence></xsd:complexType></xsd:element><xsd:simpleType name="privilegeType"><xsd:restriction base="xsd:string"><xsd:enumeration value="0"/><xsd:enumeration value="1"/><xsd:enumeration value=""/></xsd:restriction></xsd:simpleType></xsd:schema></Schema></DocumentType>', 0, UPPER('TYPE_ACCESSCONTROLPOLICY'));
+
+insert into XDS_DOCUMENT (DOCUMENT_ID,REVISION,NAME,DESCRIPTION,OPTIMISTIC_LOCK,CREATED_BY,LASTMODIFIED_DATE,CREATED_DATE,TYPE_ID,TYPE_REVISION,CONTENT, INHERIT_PARENT_ACP, INTERNAL_NAME) 
+values('READ_ONLY_ACL','_XDS_ROOT_BRANCH','READ_ONLY_ACL','Read only acl inserted by system',1,'system','2006-11-17','2006-11-17','ID_TYPE_ACCESSCONTROLPOLICY','_XDS_ROOT_BRANCH','<ACL xmlns="http://schemas.cordys.com/xds/acl/1.0"><ACE><Principal>*</Principal><DocumentType>*</DocumentType><Privilege><all>0</all><read>1</read><create>0</create><update>0</update><delete>0</delete><grant>0</grant></Privilege></ACE></ACL>', 0, UPPER('READ_ONLY_ACL'));
+
+insert into XDS_DOCUMENT (DOCUMENT_ID,REVISION,NAME,DESCRIPTION,OPTIMISTIC_LOCK,CREATED_BY,LASTMODIFIED_DATE,CREATED_DATE,TYPE_ID,TYPE_REVISION,CONTENT, INHERIT_PARENT_ACP, INTERNAL_NAME) 
+values('OPEN_TO_ALL_ACL','_XDS_ROOT_BRANCH','OPEN_TO_ALL_ACL','Open for all acl inserted by system',1,'system','2006-11-17','2006-11-17','ID_TYPE_ACCESSCONTROLPOLICY','_XDS_ROOT_BRANCH','<ACL xmlns="http://schemas.cordys.com/xds/acl/1.0"><ACE><Principal>*</Principal><DocumentType>*</DocumentType><Privilege><all>1</all><read>1</read><create>1</create><update>1</update><delete>1</delete><grant>1</grant></Privilege></ACE></ACL>', 0, UPPER('OPEN_TO_ALL_ACL'));
+
+insert into XDS_DOCUMENT (DOCUMENT_ID,REVISION,NAME, DESCRIPTION,OPTIMISTIC_LOCK,CREATED_BY,LASTMODIFIED_DATE,CREATED_DATE,TYPE_ID,TYPE_REVISION,CONTENT, INHERIT_PARENT_ACP, INTERNAL_NAME) 
+values('ID_TYPE_FOLDER','_XDS_ROOT_BRANCH','TYPE_FOLDER','The folder document type',1,'system','2006-11-17','2006-11-17','ID_TYPE_REGISTEREDDOCUMENT','_XDS_ROOT_BRANCH', '<DocumentType xmlns="http://schemas.cordys.com/xds/1.0"> <Configuration> <IsContainer>true</IsContainer> </Configuration> </DocumentType>', 0, UPPER('TYPE_FOLDER'));
+
+insert into XDS_DOCUMENT (DOCUMENT_ID,REVISION,NAME,DESCRIPTION,OPTIMISTIC_LOCK,CREATED_BY,LASTMODIFIED_DATE,CREATED_DATE,TYPE_ID,TYPE_REVISION,CONTENT, INHERIT_PARENT_ACP, INTERNAL_NAME) 
+values('ID_TYPE_XMLDOCUMENT','_XDS_ROOT_BRANCH','TYPE_XMLDOCUMENT','The xml document type',1,'system','2006-11-17','2006-11-17','ID_TYPE_REGISTEREDDOCUMENT','_XDS_ROOT_BRANCH','<DocumentType xmlns="http://schemas.cordys.com/xds/1.0" />', 0, UPPER('TYPE_XMLDOCUMENT'));
+
+insert into XDS_DOCUMENT (DOCUMENT_ID,REVISION,NAME,DESCRIPTION,OPTIMISTIC_LOCK,CREATED_BY,LASTMODIFIED_DATE,CREATED_DATE,TYPE_ID,TYPE_REVISION,CONTENT, INHERIT_PARENT_ACP, INTERNAL_NAME) 
+values('ID_TYPE_DOCUMENTTYPE','_XDS_ROOT_BRANCH','TYPE_DOCUMENTTYPE','The document type definition',1,'system','2006-11-17','2006-11-17','ID_TYPE_REGISTEREDDOCUMENT','_XDS_ROOT_BRANCH','<DocumentType xmlns="http://schemas.cordys.com/xds/1.0"><Configuration><SchemaValidate>true</SchemaValidate></Configuration><Schema><xsd:schema targetNamespace="http://schemas.cordys.com/xds/1.0" version="1.0" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><xsd:element name="DocumentType"><xsd:complexType><xsd:all><xsd:element minOccurs="0" maxOccurs="1" name="Schema"><xsd:complexType><xsd:sequence><xsd:any minOccurs="0" maxOccurs="1" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" /></xsd:sequence></xsd:complexType></xsd:element><xsd:element minOccurs="0" maxOccurs="1" name="Configuration"><xsd:complexType><xsd:all><xsd:element minOccurs="0" maxOccurs="1" name="SchemaValidate" type="xsd:boolean" /><xsd:element minOccurs="0" maxOccurs="1" name="History" type="xsd:boolean" /><xsd:element minOccurs="0" maxOccurs="1" name="PersistInDb" type="xsd:boolean" /><xsd:element minOccurs="0" maxOccurs="1" name="IsContainer" type="xsd:boolean" /><xsd:element minOccurs="0" maxOccurs="1" name="Behaviour" type="xsd:integer" /><xsd:element minOccurs="0" maxOccurs="1" name="CustomPlugInClass" type="xsd:string" /><xsd:element minOccurs="0" maxOccurs="1" name="PluginConfiguration"><xsd:complexType><xsd:sequence><xsd:element minOccurs="0" maxOccurs="unbounded" name="PlugIn"><xsd:complexType><xsd:all><xsd:element minOccurs="1" maxOccurs="1" name="PluginDocumentId" type="xsd:string" /><xsd:element minOccurs="1" maxOccurs="1" name="Type"><xsd:simpleType><xsd:restriction base="xsd:string"><xsd:enumeration value="behaviour" /><xsd:enumeration value="build" /><xsd:enumeration value="synchronize" /><xsd:enumeration value="deploy" /></xsd:restriction></xsd:simpleType></xsd:element><xsd:element minOccurs="1" maxOccurs="1" name="ClassName" type="xsd:string" /></xsd:all></xsd:complexType></xsd:element></xsd:sequence></xsd:complexType></xsd:element></xsd:all></xsd:complexType></xsd:element><xsd:element minOccurs="0" maxOccurs="1" name="Custom"><xsd:complexType><xsd:sequence><xsd:any processContents="lax" /></xsd:sequence></xsd:complexType></xsd:element></xsd:all></xsd:complexType></xsd:element></xsd:schema></Schema></DocumentType>', 0, UPPER('TYPE_DOCUMENTTYPE'));
+
+insert into XDS_DOCUMENT (DOCUMENT_ID,REVISION,NAME,DESCRIPTION,OPTIMISTIC_LOCK,CREATED_BY,LASTMODIFIED_DATE,CREATED_DATE,TYPE_ID,TYPE_REVISION,CONTENT, INHERIT_PARENT_ACP, INTERNAL_NAME) 
+values('DB_SCHEMA_VERSION','_XDS_ROOT_BRANCH','D1_DB_SCHEMA_1','The version of DB Schema',1,'system','2008-06-05','2008-06-05','ID_TYPE_XMLDOCUMENT','_XDS_ROOT_BRANCH','<DocumentType xmlns="http://schemas.cordys.com/xds/1.0" />', 0, UPPER('D1_DB_SCHEMA_1'));
+
+update XDS_DOCUMENT set ACCESSCONTROLPOLICY_ID='READ_ONLY_ACL', INHERIT_PARENT_ACP='0' where REVISION='_XDS_ROOT_BRANCH' and TYPE_ID='ID_TYPE_REGISTEREDDOCUMENT';
+
+
+-- Fill XDS_DOCUMENT_TYPE table --
+insert into XDS_DOCUMENT_TYPE(DOCUMENT_ID,REVISION,SCHEMA_VALIDATE,IS_AVAILABLE,IS_CONTAINER,REGISTERED_BY)
+values('ID_TYPE_REGISTEREDDOCUMENT','_XDS_ROOT_BRANCH','0','1','0','system');
+
+insert into XDS_DOCUMENT_TYPE(DOCUMENT_ID,REVISION,SCHEMA_VALIDATE,IS_AVAILABLE,IS_CONTAINER,REGISTERED_BY)
+values('ID_TYPE_FOLDER','_XDS_ROOT_BRANCH','0','1','1','system');
+
+insert into XDS_DOCUMENT_TYPE(DOCUMENT_ID,REVISION,SCHEMA_VALIDATE,IS_AVAILABLE,IS_CONTAINER,REGISTERED_BY)
+values('ID_TYPE_XMLDOCUMENT','_XDS_ROOT_BRANCH','0','1','0','system');
+
+insert into XDS_DOCUMENT_TYPE(DOCUMENT_ID,REVISION,SCHEMA_VALIDATE,IS_AVAILABLE,IS_CONTAINER,REGISTERED_BY)
+values('ID_TYPE_DOCUMENTTYPE','_XDS_ROOT_BRANCH','1','1','1','system');
+
+insert into XDS_DOCUMENT_TYPE(DOCUMENT_ID,REVISION,SCHEMA_VALIDATE,IS_AVAILABLE,IS_CONTAINER,REGISTERED_BY)
+values('ID_TYPE_ACCESSCONTROLPOLICY','_XDS_ROOT_BRANCH','1','1','0','system');
+

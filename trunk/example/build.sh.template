@@ -1,0 +1,46 @@
+#!/bin/bash
+# build.sh
+
+#TRUE for batchtesting of JUnits. 
+export SKIP_DUMMY_DIR=TRUE
+#Point to a Java 6 JDK
+export JAVA_HOME=/usr/java/latest/bin
+#Location of buildframework
+export BUILDFRAMEWORK=/home/rudi/workspace/buildframeworkSDF-1.2
+export CORDYS_INSTALL_DIR=$BUILDFRAMEWORK/cordys
+export ANT_HOME=$BUILDFRAMEWORK/ext/ant
+export ANT_CP=$ANT_HOME/lib/ant-launcher.jar:$ANT_CP
+export ANT_LIBS=$ANT_HOME/lib
+
+export PATH=$PATH:$JAVA_HOME/bin
+export CLASSPATH=$ANT_HOME/lib:$CLASSPATH
+export LD_LIBRARY_PATH=$CORDYS_INSTALL_DIR/lib:$LD_LIBRARY_PATH
+
+export CLASSPATH=$CLASSPATH:$CORDYS_INSTALL_DIR/cordyscp.jar
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/cws.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.gmf.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.worflow.model.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.acl.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.bam.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.bcm.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.bpm.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.bpmexport.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.bpmimport.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.kpi.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.mdm.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.organization.rolebase.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.security.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cws/lib/cordys.vcm.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cmc/cordys.cmc.util.jar:$CLASSPATH
+export CLASSPATH=$CORDYS_INSTALL_DIR/components/cmc/cordys.cmc.audit.jar:$CLASSPATH
+
+export CLASSPATH=$BUILDFRAMEWORK/lib/mysql-connector-java-5.0.8-bin.jar:$CLASSPATH
+
+export SKIP_DUMMY_DIR=TRUE
+
+echo " "
+echo "Isn't it amazing Jim? Yeah Mike, an amazing discovery! "
+echo " " 
+
+java -Dant.home=$ANT_HOME -cp $ANT_CP:$ANT_HOME:$CLASSPATH:$ANT_LIBS org.apache.tools.ant.launch.Launcher -lib $ANT_LIBS "$@"
+

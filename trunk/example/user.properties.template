@@ -1,0 +1,15 @@
+# For Windows, use // as path separator, like c://trunk//ucf
+
+# Directory that contains CWS project that you want to build/test. Maps to CWS Solution directory.
+project.src.dir	= /home/rudi/workspace/SDF\ Solution
+
+#Project to build / test
+project.dir = /home/rudi/workspace/SDF\ Solution/Ucf
+
+#Properties for retrieving cmx files
+cmx.server=srv-nl-crd89
+cmx.organization=dev
+cmx.userName=kkleerma
+cmx.password=klaas
+cmx.ldapRoot=cn=cordys,cn=bop4,o=vanenburg.com
+cmx.outputDir=/home/rudi/workspace/SDF Solution/Test/src/wsapps/runtime

@@ -1,0 +1,16 @@
+#!/bin/bash
+# stopSoapProcessor.sh
+
+export JAVA_HOME=/usr/java/latest/bin
+#Location of buildframework
+export BUILDFRAMEWORK=/home/rudi/workspace/buildframeworkSDF-1.2
+export CORDYS_INSTALL_DIR=/opt/Cordys/bop4
+export ANT_HOME=$BUILDFRAMEWORK/ext/ant
+export ANT_CP=$ANT_HOME/lib/ant-launcher.jar:$ANT_CP
+export ANT_LIBS=$ANT_HOME/lib
+export PATH=$PATH:$JAVA_HOME/bin
+export CLASSPATH=$ANT_HOME/lib:$CLASSPATH
+export LD_LIBRARY_PATH=$CORDYS_INSTALL_DIR/lib:$LD_LIBRARY_PATH
+
+java -Dant.home=$ANT_HOME -cp $ANT_CP:$ANT_HOME:$CLASSPATH:$ANT_LIBS org.apache.tools.ant.launch.Launcher -lib $ANT_LIBS "$@"
+
