@@ -1,0 +1,17 @@
+<binding-template templateid="COBOC-GetTemplateSpecialAttributes">
+	<handlers>
+		<handler type="property" xmlpath="Body/Select/data/template_id" propname="template_id" />
+	</handlers>
+	
+	<template>
+		<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/" >
+		  	<SOAP:Body>
+		    	<Select xmlns="http://schemas.cordys.com/1.0/coboc" table="attribute_template" criteria="template_id">
+			    	<data>
+        				<template_id></template_id>
+      				</data>
+    			</Select>
+		  </SOAP:Body>
+		</SOAP:Envelope>
+	</template>
+</binding-template>

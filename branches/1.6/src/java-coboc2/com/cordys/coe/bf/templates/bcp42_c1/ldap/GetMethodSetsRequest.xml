@@ -1,0 +1,17 @@
+<binding-template templateid="LDAP-GetMethodSets">
+	<handlers>
+		<handler type="property" propname="ORG_DN" xmlpath="Body/GetMethodSets/dn"  />
+	</handlers>
+	
+	<template>
+		<SOAP:Envelope xmlns:SOAP="http://schemas.xmlsoap.org/soap/envelope/">
+		  <SOAP:Body>
+		    <GetMethodSets xmlns="http://schemas.cordys.com/1.0/ldap">
+		      <dn>o=testing,cn=cordys,o=vanenburg.com</dn>
+		      <labeleduri>*</labeleduri>
+		      <sort>ascending</sort>
+		    </GetMethodSets>
+		  </SOAP:Body>
+		</SOAP:Envelope>
+	</template>
+</binding-template>

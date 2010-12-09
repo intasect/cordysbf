@@ -1,0 +1,79 @@
+/* Cordys CoE Javadoc Stylesheet */
+
+body
+{	color : #003758;
+	background-color : #eeeee6;
+	border-width : 0px;
+	font-family : Verdana,Arial;
+	font-size : smaller;
+	scrollbar-track-color : #eeeee6;
+	scrollbar-face-color : #e2e2d9;
+	scrollbar-3dlight-color : #eeeee6;
+	scrollbar-darkshadow-color : #eeeee6;
+	scrollbar-highlight-color : #6b90be;
+	scrollbar-shadow-color : #6b90be;
+	scrollbar-arrow-color : #406593;
+	line-height : normal;
+}
+
+h1 
+{ 
+	font-size: 145% 
+}
+
+.TableHeadingColor     
+{
+	color : #fff9f0;
+	background-color : #4e73b7 
+} /* Dark */
+.TableSubHeadingColor  
+{ 
+	color : #f5efe6;
+	background-color : #7ba0c5;
+} /* lightmedium */
+.TableRowColor
+{  
+	color : #000;
+	background-color : #fff9f0;
+} /* Light */
+
+.FrameTitleFont   
+{ 
+	font-size: 100% 
+}
+.FrameHeadingFont
+{ 
+	font-size: 90% 
+}
+.FrameItemFont
+{ 
+	font-size: 90% 
+}
+
+.NavBarCell1
+{ 
+	color : #000;
+	background-color : #d9dedf
+}
+.NavBarCell1Rev 
+{ 
+	color : #fff9f0;
+	background-color : #4e73b7
+}
+.NavBarFont1    
+{
+}
+.NavBarFont1Rev
+{
+}
+
+.NavBarCell2    
+{
+	color : #000;
+	background-color : #d9dedf; 
+}
+.NavBarCell3
+{
+	color : #000;
+	background-color : #d9dedf;
+}
