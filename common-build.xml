@@ -1,0 +1,161 @@
+
+	<!--
+		This file contains the default taskdefs for the buildframework
+	-->
+<project name="taskdef" default="dummy">
+
+
+
+	<taskdef onerror="fail" resource="net/sf/antcontrib/antlib.xml"
+		uri="http://ant-contrib.sourceforge.net">
+		<classpath>
+			<pathelement location="${buildframework.lib.ant-contrib}" />
+		</classpath>
+	</taskdef>
+
+	<path id="cobertura.classpath">
+		<fileset dir="${cobertura.dir}">
+			<include name="cobertura.jar" />
+			<include name="lib/**/*.jar" />
+		</fileset>
+	</path>
+
+	<taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+
+	<!--
+		takes care of stopping soap processor gracefully to retrieve cobertura
+		statistics. Ask Rudi/Gerwin Jansen
+	-->
+	<taskdef name="servicecontainer" classname="com.cordys.bpm.utils.ServiceContainerTask">
+		<classpath>
+			<fileset file="${buildframework.lib}/servicecontainer.jar" />
+		</classpath>
+		<classpath refid="project.dependency.classpath" />
+	</taskdef>
+
+	<taskdef name="switch" classname="net.sf.antcontrib.logic.Switch">
+		<classpath>
+			<pathelement path="${buildframework.lib.ant-contrib}" />
+		</classpath>
+	</taskdef>
+
+	<taskdef name="if" classname="net.sf.antcontrib.logic.IfTask">
+		<classpath>
+			<pathelement path="${buildframework.lib.ant-contrib}" />
+		</classpath>
+	</taskdef>
+
+	<path id="ant.lib">
+		<fileset dir="${buildframework.ant.lib}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<taskdef name="junit"
+		classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+		<classpath>
+			<path refid="dependency.classpath" />
+			<path refid="ant.lib" />
+		</classpath>
+	</taskdef>
+
+	<taskdef name="junitreport"
+		classname="org.apache.tools.ant.taskdefs.optional.junit.XMLResultAggregator">
+		<classpath>
+			<path refid="dependency.classpath" />
+			<path refid="ant.lib" />
+		</classpath>
+	</taskdef>
+
+	<switch value="${os.name}">
+		<case value="Windows XP">
+			<property name="platform.base" value="windows" />
+			<property name="nativelib.path" value="${build.lib}/${platform.base}-${os.arch}" />
+
+			<condition property="path" value="${env.PATH}" else="${env.Path}">
+				<isset property="env.PATH" />
+			</condition>
+			<condition property="project.pathvariable" value="PATH"
+				else="Path">
+				<isset property="env.PATH" />
+			</condition>
+			<property name="project.path" value="${nativelib.path}" />
+		</case>
+		<case value="Windows 2003">
+			<property name="platform.base" value="windows" />
+			<property name="nativelib.path" value="${build.lib}/${platform.base}-${os.arch}" />
+
+			<condition property="path" value="${env.PATH}" else="${env.Path}">
+				<isset property="env.PATH" />
+			</condition>
+			<condition property="project.pathvariable" value="PATH"
+				else="Path">
+				<isset property="env.PATH" />
+			</condition>
+			<property name="project.path" value="${nativelib.path}" />
+		</case>
+		<case value="Linux">
+			<property name="platform.base" value="Linux" />
+			<property name="nativelib.path" value="${build.lib}/${platform.base}-${os.arch}" />
+			<property name="nativelibisv.path" value="${nativelib.path}_isv" />
+			<property name="project.path" value="${nativelib.path}" />
+			<property name="path" value="${env.LD_LIBRARY_PATH}" />
+			<property name="project.pathvariable" value="LD_LIBRARY_PATH" />
+
+		</case>
+	</switch>
+
+
+	<patternset id="non.svn">
+		<include name="**/*" />
+		<exclude name="**/*svn/**" />
+	</patternset>
+
+	<!-- CWS  -->
+	<patternset id="cws.cordys.jars.pattern">
+		<include name="basicutil/basicutil.jar" />
+		<include name="ccutil/ccutil.jar" />
+		<include name="cmc/cordys.cmc.util.jar" />
+		<include name="dbconnection/dbconnection.jar" />
+		<include name="eibxml/eibxml.jar" />
+		<include name="esbclient/esbclient.jar" />
+		<include name="esbserver/esbserver.jar" />
+		<include name="isvpconn/isvpconn.jar" />
+		<include name="managementlib/managementlib.jar" />
+		<include name="wsdltoolkit/wsdltoolkit.jar" />
+		<include name="wsappserver/wsappserver.jar" />
+		<include name="tagserver/tagserver.jar" />
+		<include name="xds/xds.jar" />
+		<include name="cws/cws.jar" />
+	</patternset>
+
+	<patternset id="cws.ext.jars.pattern">
+		<include name="**/*.jar" />
+	</patternset>
+
+	<path id="cws.jars.classpath">
+		<fileset dir="${buildframework.lib}">
+			<include name="mysql-connector-java-5.0.8-bin.jar" />
+		</fileset>
+		<fileset dir="${env.CORDYS_INSTALL_DIR}/components">
+			<patternset refid="cws.cordys.jars.pattern" />
+		</fileset>
+		<fileset dir="${env.CORDYS_INSTALL_DIR}/ext">
+			<patternset refid="cws.ext.jars.pattern" />
+		</fileset>
+	</path>
+
+
+
+	<taskdef onerror="fail" resource="com/cordys/cws/ant/cwstasks.properties">
+		<classpath>
+			<fileset file="${buildframework.lib}/cwsant.jar" />
+			<path refid="cws.jars.classpath" />
+		</classpath>
+	</taskdef>
+
+
+
+
+	<target name="dummy" />
+</project>

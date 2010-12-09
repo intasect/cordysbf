@@ -1,0 +1,1 @@
+This folder should contain the build framework 2.0 libaries. These can be downloaded from http://code.google.com/p/cordysbf/downloads

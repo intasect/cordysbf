@@ -1,0 +1,1079 @@
+<?xml version="1.0"?>
+<project name="sdf" default="junit-local" basedir="."
+	xmlns:artifact="urn:maven-artifact-ant" xmlns:ac="http://ant-contrib.sourceforge.net"
+	xmlns:cordys="http://schemas.cordys.com/cordys/ant/bop4"
+	xmlns:antcontrib="http://ant-contrib.sourceforge.net">
+
+	<!--
+		- Call build -projecthelp to get een overview of all targets and their
+		description - Call build -vizant to get a build.png with a graphical
+		representation of this build file - Get the location of the project
+		root directory from path of this Ant script
+	-->
+	<property environment="env" />
+	<property name="buildframework.dir" value="${env.BUILDFRAMEWORK}" />
+	<property name="cordys.install.dir" value="${env.CORDYS_INSTALL_DIR}" />
+	<property name="project.test.dir" value="${basedir}" />
+	<property file="${project.test.dir}/user.properties" />
+	<property file="${project.test.dir}/project.properties" />
+	<property file="${buildframework.dir}/projectbase.properties" />
+
+	<taskdef onerror="fail" resource="org/apache/maven/artifact/ant/antlib.xml"
+		uri="urn:maven-artifact-ant">
+		<classpath>
+			<pathelement location="${buildframework.lib.ant-maven}" />
+		</classpath>
+	</taskdef>
+
+	<artifact:install-provider artifactId="wagon-webdav"
+		version="1.0-beta-2" />
+
+	<artifact:remoteRepository id="ewesb.repository"
+		url="${deploy.repo}">
+		<snapshots enabled="true" updatePolicy="${deploy.updatepolicy.snapshot}" />
+		<releases enabled="true" />
+	</artifact:remoteRepository>
+
+	<artifact:dependencies pathId="dependency.classpath">
+		<pom id="buildframework.pom" file="${buildframework.dir}/pom.xml" />
+		<remoteRepository refid="ewesb.repository" />
+	</artifact:dependencies>
+
+	<artifact:dependencies pathId="project.dependency.classpath">
+		<pom id="project.pom" file="${project.src.dir}/pom.xml" />
+		<remoteRepository refid="ewesb.repository" />
+	</artifact:dependencies>
+
+	<macrodef name="forwardpath" uri="http://schemas.cordys.com/cordys/ant/bop4">
+		<attribute name="path" />
+		<attribute name="property" />
+		<attribute name="override" default="false" />
+		<sequential>
+			<antcontrib:propertyregex property="@{property}"
+				override="@{override}" input="@{path}" regexp="[\\]" replace="/"
+				global="true" defaultValue="@{path}" />
+		</sequential>
+	</macrodef>
+
+	<import file="${buildframework.dir}/common-build.xml" />
+
+	<taskdef name="for" classname="net.sf.antcontrib.logic.ForTask">
+		<classpath>
+			<pathelement location="${buildframework.lib.ant-contrib}" />
+		</classpath>
+	</taskdef>
+
+	<!--
+		MAIN TARGETS
+		######################################################################################
+	-->
+
+	<target name="clean" unless="skip.clean" description="Clean up test environment">
+		<delete dir="${build}" />
+	</target>
+
+	<target name="junit-local" description="Run JUnit on laptop"
+		depends="clean, -cobertura-instrument-junit, cobertura-report-junit-html" />
+
+	<target name="junit" unless="skip.test" description="Run JUnit"
+		depends="-cobertura-instrument-junit, cobertura-report-junit" />
+
+	<target name="soapui" description="Build ISVP locally, install it and run Soapui"
+		depends="-silent-install-isvp-soapui, -cobertura-instrument-soapui, -silent-install-installer-isvp-soapui, report-soapui, stop-soap-processor-flexi, cobertura-report-soapui" />
+
+	<target name="soapui2"
+		description="Get isvp from build server and install and prepare for SoapUI"
+		depends="-silent-install-isvp-soapui-fast, -cobertura-instrument-soapui, -silent-install-installer-isvp-soapui, report-soapui, stop-soap-processor-flexi, cobertura-report-soapui" />
+
+	<target name="soapui3" description="Install Customer Cluster"
+		depends="report-soapui, stop-soap-processor-flexi, cobertura-report-soapui, -restart-soapui-server" />
+
+	<target name="install-admin-cluster" description="Install Customer Cluster"
+		depends="-silent-install-isvp-soapui-fast, -cobertura-instrument-soapui, -silent-install-installer-isvp-soapui" />
+
+	<target name="install-customer-cluster" description="Install Customer Cluster"
+		depends="-silent-install-isvp-soapui-fast-customer-cluster, -silent-install-installer_customer_cluster-isvp-soapui-fast" />
+		
+
+	<target name="uiunit" description="Build ISVP locally, install it and run UiUnit"
+		depends="-silent-install-isvp-uiunit, -cobertura-instrument-uiunit, -silent-install-installer-isvp-uiunit,-run-uiunit-tests, stop-soap-processor-flexi, -cobertura-report-uiunit" />
+
+	<target name="uiunit2"
+		description="Get isvp from build server and install and prepare for UIUnit"
+		depends="-silent-install-isvp-uiunit-fast, -cobertura-instrument-uiunit, -silent-install-installer-isvp-uiunit,-run-uiunit-tests, stop-soap-processor-flexi, -cobertura-report-uiunit" />
+
+	<target name="-test-prepare" description="Prepare test environment">
+		<mkdir dir="${build}" />
+		<mkdir dir="${test.build}" />
+		<mkdir dir="${test.build.classes}" />
+		<mkdir dir="${test.build.classes.java}" />
+		<mkdir dir="${test.results}" />
+		<mkdir dir="${report}" />
+	</target>
+
+	<target name="-test-prepare-junit" description="Prepare JUnit test environment"
+		depends="-test-prepare, -setup-test-cordys-junit, -copy-cordys-native-libs">
+		<mkdir dir="${test.build.classes.junit}" />
+		<mkdir dir="${test.results.junit}" />
+		<mkdir dir="${report.junit}" />
+		<mkdir dir="${coveragereport.dir.junit}" />
+	</target>
+
+	<target name="-test-prepare-soapui" description="Prepare SoapUI test environment"
+		depends="-test-prepare, -copy-cordys-native-libs">
+		<mkdir dir="${test.results.soapui}" />
+		<mkdir dir="${report.soapui}" />
+		<mkdir dir="${coveragereport.dir.soapui}" />
+	</target>
+
+	<target name="-test-prepare-uiunit" description="Prepare UIUnit test environment"
+		depends="-test-prepare, -copy-cordys-native-libs">
+		<mkdir dir="${coveragereport.dir.uiunit}" />
+		<mkdir dir="${uiunit.build.dir}" />
+		<mkdir dir="${uiunit.build.dir}/classes" />
+		<mkdir dir="${uiunit.build.dir}/classes-utils" />
+		<mkdir dir="${uiunit.build.dir}/report" />
+		<mkdir dir="${uiunit.build.dir}/javadocs" />
+		<mkdir dir="${uiunit.build.dir}/classes-autopilot" />
+		<mkdir dir="${uiunit.build.dir}/jarsdir" />
+
+		<delete dir="c:\UiUnit" />
+		<mkdir dir="c:\UiUnit" />
+		<!-- HACK in copying files, needs cleanup-->
+		<copy file="${project.test.dir}/UIUnit.properties" todir="c:\UiUnit" />
+		<copy file="${project.test.dir}/Tests.properties" todir="c:\UiUnit" />
+		<condition property="makeJarsDir" value="true">
+			<not>
+				<isset property="${jars.dir}" />
+			</not>
+		</condition>
+		<if>
+			<istrue value="${makeJarsDir}" />
+			<then>
+				<copy flatten="true" todir="${uiunit.build.dir}/jarsdir">
+					<fileset dir="${cordys.install.dir}">
+						<patternset refid="cordys.jars.pattern" />
+					</fileset>
+				</copy>
+				<property name="jars.dir" value="${uiunit.build.dir}/jarsdir" />
+			</then>
+		</if>
+		<path id="uiunit.jars.classpath">
+			<path refid="dependency.classpath" />
+			<path refid="project.dependency.classpath" />
+		</path>
+	</target>
+
+	<target name="-prepare-cws" depends="-copy-cordys-native-libs"
+		description="Prepare cws environment">
+	</target>
+
+	<!--
+		UTILS
+		######################################################################################
+	-->
+
+	<target name="-test-compile-java" description="Compile java project source code"
+		depends="-test-prepare">
+		<path id="test.compile.java.classpath.internal">
+			<path refid="dependency.classpath" />
+			<path refid="project.dependency.classpath" />
+			<pathelement location="${test.build.classes.java}" />
+			<fileset dir="${test.compile.java.lib}">
+				<include name="**/*.jar" />
+				<include name="**/*.zip" />
+			</fileset>
+		</path>
+		<javac fork="true" memoryInitialSize="256m" memoryMaximumSize="1024m"
+			debug="${test.compile.java.debug}" target="${compile.java.target}"
+			deprecation="${test.compile.java.deprecation}" optimize="${test.compile.java.optimize}"
+			nowarn="${test.compile.java.nowarn}" srcdir="${src.java}"
+			destdir="${test.build.classes.java}" classpathref="test.compile.java.classpath.internal" />
+		<copy todir="${test.build.classes.java}">
+			<fileset dir="${src.java}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!--
+		Setup test Cordys for JUnit
+		######################################################################################
+	-->
+
+	<target name="-setup-test-cordys-junit" depends="-copy-cordys-native-libs"
+		description="Create Cordys dummy install dir">
+		<java fork="true" classname="com.eibus.soap.junit.DummyInstallDir">
+			<classpath>
+				<pathelement location="${buildframework.lib}/testframework.jar" />
+				<path refid="project.dependency.classpath" />
+			</classpath>
+			<sysproperty key="CORDYS_INSTALL_DIR" value="${test.platform.dir.junit}" />
+			<env key="${project.pathvariable}" path="${build.platform.dir}/lib:${path}/lib:${path}" />
+		</java>
+	</target>
+
+	<!--
+		Setup test Cordys
+		######################################################################################
+	-->
+
+	<target name="-copy-cordys-native-libs" description="Unzip native libs from maven into test Cordys">
+		<artifact:dependencies filesetId="dependency.fileset">
+			<dependency groupId="cordys"
+				artifactId="native-core-${platform.base}-${os.arch}" version="${native-dep-version}"
+				type="zip" />
+			<remoteRepository refid="ewesb.repository" />
+		</artifact:dependencies>
+		<unzip dest="${build.platform.dir}/lib">
+			<fileset refid="dependency.fileset" />
+		</unzip>
+	</target>
+
+	<!--
+		JUNIT
+		######################################################################################
+	-->
+
+	<target name="-test-compile-junit" depends="-test-prepare-junit"
+		description="Compile JUnit tests">
+		<path id="test.compile.junit.classpath.internal">
+			<path refid="test.compile.java.classpath.internal" />
+			<fileset dir="${test.compile.junit.lib}">
+				<include name="**/*.jar" />
+				<include name="**/*.zip" />
+			</fileset>
+		</path>
+		<javac fork="true" memoryInitialSize="256m" memoryMaximumSize="1024m"
+			debug="${test.compile.junit.debug}" target="${compile.java.target}"
+			deprecation="${test.compile.junit.deprecation}" optimize="${test.compile.junit.optimize}"
+			nowarn="${test.compile.junit.nowarn}" srcdir="${test.src.junit}"
+			destdir="${test.build.classes.junit}" classpathref="test.compile.junit.classpath.internal" />
+		<copy todir="${test.build.classes.junit}">
+			<fileset dir="${test.src.junit}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="-run-junit-tests" depends="-test-compile-java, -test-compile-junit"
+		description="Run JUnit tests">
+		<junit printsummary="yes" haltonfailure="yes" fork="yes"
+			showoutput="yes">
+			<sysproperty key="net.sourceforge.cobertura.datafile"
+				file="${basedir}/cobertura.ser" />
+			<classpath>
+				<pathelement location="${instrumented.dir.junit}" />
+				<path refid="dependency.classpath" />
+				<path refid="project.dependency.classpath" />
+				<pathelement location="${test.build.classes.junit}" />
+				<pathelement location="${test.build.classes.java}" />
+			</classpath>
+			<env key="CORDYS_INSTALL_DIR" value="${test.platform.dir.junit}" />
+			<env key="${project.pathvariable}" path="${build.platform.dir}/lib:${path}" />
+			<classpath refid="cobertura.classpath" />
+			<formatter type="xml" />
+			<batchtest fork="yes" todir="${test.results.junit}">
+				<fileset dir="${test.src.junit}">
+					<include name="**/*Test.java" />
+					<exclude name="**/AllTests.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<target name="report-junit" depends="-run-junit-tests"
+		description="Generate JUnit report based on test results">
+		<junitreport todir="${report.junit}">
+			<fileset dir="${test.results.junit}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="${report.junit.format}" todir="${report.junit.html}">
+				<param name="TITLE" expression="SoapUI test-soapui results" />
+			</report>
+		</junitreport>
+		<echo>You can find the test report in:</echo>
+		<echo> ${report.junit.html}</echo>
+	</target>
+
+	<target name="-cobertura-instrument-junit" depends="-test-compile-java"
+		description="Instrument Java code for testing with JUnit">
+		<!-- DELETE THE FOLLOWING FILE AFTER COMPLETION -->
+		<delete file="cobertura.ser" />
+		<mkdir dir="${instrumented.dir.junit}" />
+		<cobertura-instrument todir="${instrumented.dir.junit}">
+			<fileset dir="${test.build.classes.java}">
+				<include name="**/*.class" />
+				<exclude name="**/*Test.class" />
+			</fileset>
+		</cobertura-instrument>
+	</target>
+
+	<target name="cobertura-report-junit" depends="report-junit"
+		description="Create Cobertura coverage xml report based on JUnit test results">
+		<cobertura-report format="xml"
+			destdir="${coveragereport.dir.junit}" srcdir="${src.java}" />
+	</target>
+
+	<target name="cobertura-report-junit-html" depends="report-junit"
+		description="Create Cobertura coverage html report based on JUnit test results">
+		<cobertura-report format="html"
+			destdir="${coveragereport.dir.junit}" srcdir="${src.java}" />
+	</target>
+
+	<!--
+		SOAPUI
+		######################################################################################
+	-->
+
+	<target name="-cobertura-instrument-soapui" depends="-test-compile-java"
+		description="Instrument Java code for testing with SoapUI">
+		<delete file="${test.platform.dir.soapui}/cobertura.ser" />
+		<mkdir dir="${instrumented.dir.soapui}" />
+
+		<cobertura-instrument todir="${instrumented.dir.soapui}"
+			datafile="${test.platform.dir.soapui}/cobertura.ser">
+			<fileset dir="${test.build.classes.java}">
+				<include name="**/*.class" />
+				<exclude name="**/*Test.class" />
+			</fileset>
+		</cobertura-instrument>
+		<chmod file="${test.platform.dir.soapui}/cobertura.ser" perm="777" />
+	</target>
+
+	<target name="-run-soapui-tests" description="Run SoapUI tests"
+		depends="-test-prepare-soapui">
+		<if>
+			<equals arg1="${platform.base}" arg2="Linux" />
+			<then>
+				<for param="file" keepgoing="true">
+					<path>
+						<fileset dir="${test.src}/soapui/">
+							<include name="SDF-Testing-soapui-setup.xml" />
+						</fileset>
+						<fileset dir="${test.src}/soapui/">
+							<include name="SDF-Testing-soapui-tests*.xml" />
+						</fileset>
+					</path>
+					<sequential>
+						<exec executable="/bin/bash" dir="${soapui.dir}" failonerror="true">
+							<arg value="testrunner.sh" />
+							<arg
+								line="-j -f${test.results.soapui} -r -a -PFromBuild=true -PProjectFileLocation=${test.src}/soapui @{file}" />
+							<env key="CLASSPATH" path="${env.CLASSPATH}:${cobertura.dir}/lib" />
+							<env key="CLASSPATH" path="${env.CLASSPATH}:${cobertura.dir}/cobertura.jar" />
+						</exec>
+					</sequential>
+				</for>
+			</then>
+			<else>
+				<exec executable="testrunner.bat" dir="${soapui.dir}"
+					failonerror="true">
+					<arg line="-j -f${test.results.soapui} -r -a ${test.src.soapui}" />
+					<!-- Can we use cobertura.classpath here somehow? JARS REQUIRED?-->
+					<env key="CLASSPATH" path="${env.CLASSPATH}:${cobertura.dir}/lib" />
+					<env key="CLASSPATH" path="${env.CLASSPATH}:${cobertura.dir}/cobertura.jar" />
+				</exec>
+			</else>
+		</if>
+	</target>
+
+	<target name="report-soapui" depends="-run-soapui-tests"
+		description="Generate SoapUI report based on test results">
+		<junitreport todir="${report.soapui}">
+			<fileset dir="${test.results.soapui}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="${report.junit.format}" todir="${report.soapui.html}">
+				<param name="TITLE" expression="SoapUI test-soapui results" />
+			</report>
+		</junitreport>
+	</target>
+
+	<target name="stop-soap-processor-flexi"
+		description="Call stop-soap-processor.sh/bat script to stop a soap processor gracefully">
+		<!--
+			We need to call stop-soap-processor via the exec command, because it
+			is the only way to make a change to CORDYS_INSTALL_DIR. We need to
+			change CORDYS_INSTALL_DIR from test Cordys install dir to the running
+			Cordys install dir because we want to stop the soap processor there.
+		-->
+		<if>
+			<equals arg1="${platform.base}" arg2="Linux" />
+			<then>
+				<exec executable="/bin/bash" dir="." failonerror="true">
+					<arg value="stopSoapProcessor.sh" />
+					<arg line="stop-soap-processor" />
+					<env key="CORDYS_INSTALL_DIR" path="${test.platform.dir.soapui}" />
+					<env key="CLASSPATH" path="${env.CLASSPATH}:${test.build.classes.java}" />
+					<env key="${project.pathvariable}" path="${project.path}" />
+				</exec>
+			</then>
+			<else>
+				<exec executable="stopSoapProcessor.bat" dir="." failonerror="true">
+					<arg line="stop-soap-processor" />
+					<env key="CORDYS_INSTALL_DIR" path="${test.platform.dir.uiunit}" />
+					<env key="CLASSPATH" path="${env.CLASSPATH}:${test.build.classes.java}" />
+					<env key="${project.pathvariable}" path="${project.path}" />
+				</exec>
+			</else>
+		</if>
+	</target>
+
+	<target name="stop-soap-processor"
+		description="Stop a soap processor gracefully (will write collected Cobertura test results to the .ser file)">
+		<servicecontainer>
+			<stop name="${soap-processor}" />
+		</servicecontainer>
+	</target>
+
+	<target name="cobertura-report-soapui"
+		description="Create Cobertura coverage xml report based on SoapUI test results">
+		<sleep seconds="120" />
+		<cobertura-report format="xml"
+			datafile="${test.platform.dir.soapui}/cobertura.ser" destdir="${coveragereport.dir.soapui}"
+			srcdir="${src.java}" />
+	</target>
+	
+	<target name="-restart-soapui-server" description="Restart the Cordys monitor on the soapui test server to restart the provisioning soap processor">
+		<exec executable="/bin/bash" dir="/etc/init.d" failonerror="true">
+			<arg value="wcpd${soapuiserver.instancename}" />
+			<arg line="restart" />
+			<env key="CORDYS_HOME" path="${soapuiserver.dir}" />
+		</exec>
+	</target>
+
+	<!--
+		UIUNIT
+		######################################################################################
+
+		Contains ant code that was copied from other team so it has a
+		different approach, with macros.
+	-->
+
+	<patternset id="cordys.jars.pattern">
+		<include name="**/managementlib.jar" />
+		<include name="**/wsappserver.jar" />
+		<include name="**/xfruntime.jar" />
+		<include name="**/eibxml.jar" />
+		<include name="**/basicutil.jar" />
+	</patternset>
+
+	<macrodef name="compiletest">
+		<attribute name="sourcePath" />
+		<attribute name="compileDirectory" />
+		<attribute name="exclusionList" default="abcdef" />
+		<sequential>
+			<mkdir dir="@{compileDirectory}" />
+			<path id="compile.jars.classpath">
+				<path refid="uiunit.jars.classpath" />
+				<path path="${uiunitutil.jar}" />
+			</path>
+			<javac destdir="@{compileDirectory}" debug="${debug}" nowarn="${debug}"
+				deprecation="${deprecation}" optimize="${optimize}">
+				<classpath refid="compile.jars.classpath" />
+				<src path="@{sourcePath}" />
+				<exclude name="@{exclusionList}" />
+			</javac>
+			<copy todir="@{compileDirectory}">
+				<fileset dir="@{sourcePath}">
+					<exclude name="**/*.java" />
+				</fileset>
+			</copy>
+			<copy todir="${uiunit.build.dir}/classes-autopilot">
+				<fileset dir="@{compileDirectory}">
+					<include name="com/**/*.*" />
+					<include name="artifacts/*.*" />
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="runtest">
+		<attribute name="sourcePath" />
+		<attribute name="junitTimeout" default="10000000" />
+		<attribute name="jvmargs" default="-Dcom.cordys.empty.dummy.arg=true" />
+		<attribute name="maxMemory" default="-Xmx256M" />
+		<attribute name="cordysHome" default="${cordys.install.dir}" />
+		<attribute name="runDirectory" default="${project.test.dir}/build}" />
+		<attribute name="compileDirectory" default="${project.test.dir}/build/classes" />
+		<sequential>
+			<compiletest sourcePath="@{sourcePath}" compileDirectory="@{compileDirectory}" />
+			<if>
+				<istrue value="${compile.only}" />
+				<then />
+				<else>
+					<path id="test.jars.classpath">
+						<path refid="compile.jars.classpath" />
+						<path path="${uiunitutil.jar}" />
+						<path location="@{compileDirectory}" />
+					</path>
+					<patternset id="uiunit.patternset">
+						<!--<include name="**/**Suite.class" /> -->
+						<include name="**/**Tests.class" />
+					</patternset>
+					<call-junit junitTimeout="@{junitTimeout}" maxMemory="@{maxMemory}"
+						cordysHome="@{cordysHome}" jvmargs="@{jvmargs}" runDirectory="@{runDirectory}">
+						<classpath-element>
+							<path refid="test.jars.classpath" />
+						</classpath-element>
+						<sysproperties-element />
+						<batchtestfileset-element>
+							<fileset dir="@{compileDirectory}">
+								<patternset refid="uiunit.patternset" />
+							</fileset>
+						</batchtestfileset-element>
+					</call-junit>
+					<if>
+						<istrue value="${break.on.failure}" />
+						<then>
+							<if>
+								<istrue value="${test.junit.failed}" />
+								<then>
+									<fail message="Build failed, one of the UIUnit tests was unsuccessful" />
+								</then>
+							</if>
+						</then>
+					</if>
+				</else>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<!-- junit test macro, setting the right options and environment -->
+	<macrodef name="call-junit">
+		<attribute name="junitTimeout" default="240000" />
+		<attribute name="jvmargs" default="-Dcom.cordys.empty.dummy.arg=true" />
+		<attribute name="maxMemory" default="-Xmx256M" />
+		<attribute name="cordysHome" default="${cordys.install.dir}" />
+		<attribute name="runDirectory" default="${project.test.dir}/build}" />
+		<element name="classpath-element" />
+		<element name="batchtestfileset-element" />
+		<element name="sysproperties-element" optional="true" />
+		<sequential>
+			<mkdir dir="@{runDirectory}" />
+			<junit errorProperty="test.junit.error" printsummary="withOutAndErr"
+				failureProperty="test.junit.failed" haltonfailure="no" haltonerror="no"
+				fork="true" dir="@{runDirectory}" showoutput="true" timeout="@{junitTimeout}">
+				<sysproperties-element />
+				<jvmarg value="-Dbus.xml.nom.exceptions.enabled=true" />
+				<jvmarg value="@{jvmargs}" />
+				<jvmarg value="@{maxMemory}" />
+				<jvmarg value="-Duiunit.trace.indentstyle=${uiunit.trace.indentstyle}" />
+				<env key="${project.pathvariable}" path="${project.path}" />
+				<env key="CORDYS_INSTALL_DIR" value="@{cordysHome}" />
+				<env key="${project.pathvariable}" path="${build.platform.dir}/lib:${path}" />
+				<classpath>
+					<classpath-element />
+				</classpath>
+				<formatter type="xml" />
+				<test fork="true" name="com.cordys.ucf.uiunit.tests.AllTests"
+					todir="${report.uiunit}">
+					<formatter type="plain" />
+				</test>
+			</junit>
+		</sequential>
+	</macrodef>
+
+	<target name="-jar-uiunit" depends="-test-compile-uiunit"
+		description="Create jar file from UIUnit tests and required files">
+		<copy todir="${uiunit.build.dir}/classes-utils">
+			<fileset dir="${test.src.uiunit}">
+				<exclude name="**/*.java" />
+				<exclude name="UIUnit.properties" />
+			</fileset>
+		</copy>
+		<jar jarfile="${uiunitutil.jar}" basedir="${uiunit.build.dir}/classes-utils" />
+	</target>
+
+	<target name="-test-compile-uiunit" description="Compile UIUnit tests"
+		depends="-test-prepare-uiunit">
+		<javac fork="true" memoryInitialSize="256m" memoryMaximumSize="1024m"
+			debug="${test.compile.uiunit.debug}" target="${compile.java.target}"
+			deprecation="${test.compile.uiunit.deprecation}" optimize="${test.compile.uiunit.optimize}"
+			nowarn="${test.compile.uiunit.nowarn}" srcdir="${test.src.uiunit}"
+			destdir="${uiunit.build.dir}" classpathref="test.compile.java.classpath.internal" />
+	</target>
+
+	<target name="compile-uiunit" description="Compile UIUnit tests"
+		depends="-test-prepare-uiunit">
+		<javac fork="true" memoryInitialSize="256m" memoryMaximumSize="1024m"
+			debug="${test.compile.uiunit.debug}" target="${compile.java.target}"
+			deprecation="${test.compile.uiunit.deprecation}" optimize="${test.compile.uiunit.optimize}"
+			nowarn="${test.compile.uiunit.nowarn}" srcdir="${test.src.uiunit}"
+			destdir="${uiunit.build.dir}" classpathref="test.compile.java.classpath.internal" />
+	</target>
+
+	<target name="-cobertura-instrument-uiunit" depends="-test-compile-java"
+		description="Instrument Java code for testing with UIUnit">
+		<delete file="${test.platform.dir.uiunit}/cobertura.ser" />
+		<mkdir dir="${instrumented.dir.uiunit}" />
+
+		<cobertura-instrument todir="${instrumented.dir.uiunit}"
+			datafile="${test.platform.dir.uiunit}/cobertura.ser">
+			<fileset dir="${test.build.classes.java}">
+				<include name="**/*.class" />
+				<exclude name="**/*Test.class" />
+			</fileset>
+		</cobertura-instrument>
+		<chmod file="${test.platform.dir.uiunit}/cobertura.ser" perm="777" />
+	</target>
+
+	<target name="-run-uiunit-tests" depends="-jar-uiunit"
+		description="Run UIUnit tests">
+		<runtest sourcepath="${test.src.uiunit}" rundirectory="${uiunit.build.dir}/sdf"
+			compiledirectory="${uiunit.build.dir}/classes" />
+	</target>
+
+	<target name="-cobertura-report-uiunit"
+		description="Create Cobertura coverage xml report based on UIUnit test results">
+		<sleep seconds="120" />
+		<cobertura-report format="xml"
+			datafile="${test.platform.dir.uiunit}/cobertura.ser" destdir="${coveragereport.dir.uiunit}"
+			srcdir="${src.java}" />
+	</target>
+
+	<!--
+		SILENT INSTALLS
+		######################################################################################
+	-->
+
+	<target name="get-isvp" description="download isvp from build server">
+		<if>
+			<equals arg1="${platform.base}" arg2="Linux" />
+			<then>
+				<scp
+					file="${buildserver.user}:${buildserver.password}@${buildserver}:${buildserver.isv.dir}/${buildserver.isv.linux}.isvp"
+					todir="${test.platform.dir.soapui}/isvcontent/packages" />
+			</then>
+			<else>
+				<exec executable="${buildframework.dir}/ext/pscp/pscp.exe">
+					<arg value="-v" />
+					<arg value="-pw" />
+					<arg value="${buildserver.password}" />
+					<arg
+						value="${buildserver.user}@${buildserver}:${buildserver.isv.dir}/${buildserver.isv.windows}.isvp" />
+					<arg value="${test.platform.dir.uiunit}/isvcontent/packages" />
+				</exec>
+			</else>
+		</if>
+	</target>
+
+	<target name="get-isvp-linux-customer-cluster" description="download isvp from build server">
+		<scp
+			file="${buildserver.user}:${buildserver.password}@${buildserver}:${buildserver.isv.dir}/${buildserver.isv.linux}.isvp"
+			todir="${test.platform.dir.customer.cluster.soapui}/isvcontent/packages"
+			trust="yes" />
+	</target>
+
+	<target name="-copy-isvp-to-test-platform-soapui" depends="synchronize, package"
+		description="Copy just created isvp to Cordys so that it can be installed">
+		<copy file="${build.isv.dir}/${isv.filename}.isvp" todir="${test.platform.dir.soapui}/isvcontent/packages" />
+	</target>
+
+	<target name="-copy-isvp-to-test-platform-uiunit" depends="synchronize, package"
+		description="Copy just created isvp to Cordys so that it can be installed">
+		<copy file="${build.isv.dir}/${isv.filename}.isvp" todir="${test.platform.dir.uiunit}/isvcontent/packages" />
+	</target>
+
+	<target name="-copy-installer-isvp-to-test-platform-soapui"
+		description="Copy installer isvp to Cordys so that it can be installed">
+		<copy file="${installer.soapui.isvp}" todir="${test.platform.dir.soapui}/isvcontent/packages" />
+	</target>
+
+	<target name="-copy-installer-isvp-to-test-platform-uiunit"
+		description="Copy installer isvp to Cordys so that it can be installed">
+		<copy file="${installer.uiunit.isvp}" todir="${test.platform.dir.uiunit}/isvcontent/packages" />
+	</target>
+
+	<target name="-silent-install-isvp-soapui" depends="-copy-isvp-to-test-platform-soapui"
+		description="Install isvp in Cordys">
+		<java classname="com.cordys.isvp.tool.ISVPCommand" fork="true"
+			dir="${test.platform.dir.soapui}/lib" failonerror="true">
+			<arg line="-r ${silent.install.template.soapui}" />
+			<classpath>
+				<pathelement location="${test.platform.dir.soapui}/cordyscp.jar" />
+			</classpath>
+			<env key="${project.pathvariable}" path="${test.platform.dir.soapui}/lib" />
+			<env key="CORDYS_INSTALL_DIR" value="${test.platform.dir.soapui}" />
+		</java>
+	</target>
+
+	<target name="-silent-install-isvp-soapui-fast" description="Install isvp in Cordys"
+		depends="get-isvp">
+		<java classname="com.cordys.isvp.tool.ISVPCommand" fork="true"
+			dir="${test.platform.dir.soapui}/lib" failonerror="true">
+			<arg line="-r ${silent.install.template.soapui}" />
+			<classpath>
+				<pathelement location="${test.platform.dir.soapui}/cordyscp.jar" />
+			</classpath>
+			<env key="${project.pathvariable}" path="${test.platform.dir.soapui}/lib" />
+			<env key="CORDYS_INSTALL_DIR" value="${test.platform.dir.soapui}" />
+		</java>
+	</target>
+
+	<target name="-silent-install-isvp-soapui-fast-customer-cluster"
+		description="Install isvp in Cordys" depends="get-isvp-linux-customer-cluster">
+		<java classname="com.cordys.isvp.tool.ISVPCommand" fork="true"
+			dir="${test.platform.dir.customer.cluster.soapui}/lib" failonerror="true">
+			<arg line="-r ${silent.install.template.soapui.customer.cluster} -s" />
+			<classpath>
+				<pathelement
+					location="${test.platform.dir.customer.cluster.soapui}/cordyscp.jar" />
+			</classpath>
+			<env key="${project.pathvariable}" path="${test.platform.dir.customer.cluster.soapui}/lib" />
+			<env key="CORDYS_INSTALL_DIR" value="${test.platform.dir.customer.cluster.soapui}" />
+		</java>
+	</target>
+
+	<target name="-silent-install-isvp-uiunit" depends="-copy-isvp-to-test-platform-uiunit"
+		description="Install isvp in Cordys">
+		<java classname="com.cordys.isvp.tool.ISVPCommand" fork="true"
+			dir="${test.platform.dir.uiunit}/lib" failonerror="true">
+			<arg line="-r ${silent.install.template.uiunit}" />
+			<classpath>
+				<pathelement location="${test.platform.dir.uiunit}/cordyscp.jar" />
+			</classpath>
+			<env key="${project.pathvariable}" path="${test.platform.dir.uiunit}/lib:${path}" />
+			<env key="CORDYS_INSTALL_DIR" value="${test.platform.dir.uiunit}" />
+		</java>
+	</target>
+
+	<target name="-silent-install-isvp-uiunit-fast" description="Install isvp in Cordys"
+		depends="get-isvp">
+		<java classname="com.cordys.isvp.tool.ISVPCommand" fork="true"
+			dir="${test.platform.dir.uiunit}/lib" failonerror="true">
+			<arg line="-r ${silent.install.template.uiunit}" />
+			<classpath>
+				<pathelement location="${test.platform.dir.uiunit}/cordyscp.jar" />
+			</classpath>
+			<env key="${project.pathvariable}" path="${test.platform.dir.uiunit}/lib:${path}" />
+			<env key="CORDYS_INSTALL_DIR" value="${test.platform.dir.uiunit}" />
+		</java>
+	</target>
+
+	<target name="-silent-install-installer-isvp-soapui" depends="-copy-installer-isvp-to-test-platform-soapui"
+		description="Install isvp in Cordys">
+		<copy file="${installer.soapui.isvp}" todir="${test.platform.dir.soapui}/isvcontent/packages" />
+		<java classname="com.cordys.isvp.tool.ISVPCommand" fork="true"
+			dir="${test.platform.dir.soapui}/lib" failonerror="true">
+			<arg line="-r ${silent.install.template.installer.soapui}" />
+			<classpath>
+				<pathelement location="${test.platform.dir.soapui}/cordyscp.jar" />
+				<path refid="cobertura.classpath" />
+			</classpath>
+			<env key="${project.pathvariable}" path="${test.platform.dir.soapui}/lib:${path}" />
+			<env key="CORDYS_INSTALL_DIR" value="${test.platform.dir.soapui}" />
+		</java>
+	</target>
+
+	<target name="-silent-install-installer_customer_cluster-isvp-soapui-fast"
+		description="Install isvp in Cordys">
+		<copy file="${installer.soapui.isvp}"
+			todir="${test.platform.dir.customer.cluster.soapui}/isvcontent/packages" />
+		<java classname="com.cordys.isvp.tool.ISVPCommand" fork="true"
+			dir="${test.platform.dir.customer.cluster.soapui}/lib" failonerror="true">
+			<arg
+				line="-r ${silent.install.template.installer.soapui.customer.cluster}" />
+			<classpath>
+				<pathelement
+					location="${test.platform.dir.customer.cluster.soapui}/cordyscp.jar" />
+			</classpath>
+			<env key="${project.pathvariable}"
+				path="${test.platform.dir.customer.cluster.soapui}/lib:${path}" />
+			<env key="CORDYS_INSTALL_DIR" value="${test.platform.dir.customer.cluster.soapui}" />
+		</java>
+	</target>
+
+	<target name="-silent-install-installer-isvp-uiunit" depends="-copy-installer-isvp-to-test-platform-uiunit"
+		description="Install isvp in Cordys">
+		<java classname="com.cordys.isvp.tool.ISVPCommand" fork="true"
+			dir="${test.platform.dir.uiunit}/lib" failonerror="true">
+			<arg line="-r ${silent.install.template.installer.uiunit}" />
+			<classpath>
+				<pathelement location="${test.platform.dir.uiunit}/cordyscp.jar" />
+			</classpath>
+			<env key="${project.pathvariable}" path="${test.platform.dir.uiunit}/lib:${path}" />
+			<env key="CORDYS_INSTALL_DIR" value="${test.platform.dir.uiunit}" />
+		</java>
+	</target>
+
+	<!--
+		CWS
+		######################################################################################
+	-->
+
+	<target name="package-on-real-cordys" description="Call package on a real Cordys server"
+		depends="-copy-cordys-native-libs,update-isvp-build-number">
+		<exec executable="/bin/bash" dir="/etc/init.d" failonerror="true">
+			<arg value="wcpd${buildserver.instancename}" />
+			<arg line="restart" />
+			<env key="CORDYS_HOME" path="${buildserver.dir}" />
+		</exec>
+		<sleep seconds="90" />
+		<exec executable="/bin/bash"
+			dir="${buildserver.dir}/components/cws/scripts/linux" failonerror="true">
+			<arg value="CWSSynchronizer.sh" />
+			<arg line="${buildserver.organization}" />
+			<arg line="${buildserver.workspace}" />
+			<env key="CORDYS_HOME" path="${buildserver.dir}" />
+		</exec>
+		<exec executable="/bin/bash"
+			dir="${buildserver.dir}/components/cws/scripts/linux" failonerror="true">
+			<arg value="CWSPackage.sh" />
+			<arg line="${buildserver.organization}" />
+			<arg line="${buildserver.workspace}" />
+			<arg line="${project.name}" />
+			<env key="CORDYS_HOME" path="${buildserver.dir}" />
+		</exec>
+		<copy file="${buildserver.isv.dir}/${isv.filename}.${svn.version}.isvp"
+			tofile="${buildserver.isv.dir}/${isv.filename}.isvp" />
+		<copy file="${buildserver.isv.dir}/${isv.filename}.${svn.version}.isvp"
+			todir="${project.test.dir}" />
+		<copy file="${buildserver.isv.dir}/${isv.filename}.${svn.version}.isvp"
+			tofile="${project.test.dir}/${isv.filename}.isvp" />
+	</target>
+	
+	<target name="clean-package-folder-on-real-cordys" description="Clean the CWS package folder">
+		<delete dir="${buildserver.dir}/cws/build/${buildserver.organization}/${buildserver.workspace}/cws" />
+		<delete dir="${buildserver.dir}/cws/build/${buildserver.organization}/${buildserver.workspace}/cws_temp" />
+		<delete dir="${buildserver.dir}/cws/build/${buildserver.organization}/${buildserver.workspace}/state" />
+		<for param="file" keepgoing="true">
+			<path>
+				<fileset dir="${buildserver.isv.dir}">
+					<include name="${buildserver.isv.windows}.*.isvp" />
+				</fileset>
+			</path>
+			<sequential>
+				<delete file="@{file}" />
+			</sequential>
+		</for>
+		<for param="file" keepgoing="true">
+			<path>
+				<last>
+					<sort>
+						<fileset dir="${project.src.dir}/Test">
+							<include name="*.isvp" />
+						</fileset>
+						<reverse xmlns="antlib:org.apache.tools.ant.types.resources.comparators">
+							<date />
+						</reverse>
+					</sort>
+				</last>
+			</path>
+			<sequential>
+				<delete file="@{file}" />
+			</sequential>
+		</for>
+	</target>
+
+	<target name="synchronize" depends="-prepare-cws"
+		description="Synchronize CWS project with test sync folder and database using embedded Cordys">
+		<mkdir dir="${build.cws.config.dir}" />
+		<mkdir dir="${build.cws.output.dir}" />
+		<mkdir dir="${build.cws.db.dir}" />
+		<cordys:forwardpath path="${build.cws.config.dir}"
+			property="tmp.build.cws.config.dir" />
+		<cordys:forwardpath path="${build.cws.output.dir}"
+			property="tmp.build.cws.output.dir" />
+		<cordys:forwardpath path="${build.cws.sync.dir}"
+			property="tmp.build.cws.sync.dir" />
+		<cordys:forwardpath path="${build.cws.db.dir}"
+			property="tmp.build.cws.db.dir" />
+		<cordys:forwardpath path="${env.JAVA_HOME}"
+			property="tmp.java.home" />
+		<cordys:forwardpath path="${cws.config.dir}"
+			property="tmp.config.dir" />
+		<copy file="${cws.config.dir}/cws.properties" todir="${build.cws.config.dir}">
+			<filterset>
+				<filter token="build.cws.config.dir" value="${tmp.build.cws.config.dir}" />
+				<filter token="build.cws.output.dir" value="${tmp.build.cws.output.dir}" />
+				<filter token="build.cws.sync.dir" value="${tmp.build.cws.sync.dir}" />
+				<filter token="java.home" value="${tmp.java.home}" />
+			</filterset>
+		</copy>
+		<copy file="${cws.config.dir}/xdsconfig-${cws.db.type}.properties"
+			tofile="${build.cws.config.dir}/xdsconfig.properties">
+			<filterset>
+				<filter token="cws.config.dir" value="${tmp.config.dir}" />
+			</filterset>
+		</copy>
+		<cws organizationname="${cws.default.organization}" workspacename="${cws.default.workspace}">
+			<initialize configfolder="${build.cws.config.dir}"
+				reinitializedatabase="true" />
+			<synchronizewithcopy>
+				<fileset dir="${project.src.dir}">
+					<patternset refid="non.svn" />
+				</fileset>
+			</synchronizewithcopy>
+		</cws>
+	</target>
+
+	<target name="package"
+		description="Package CWS content of test database into an isvp, using embedded Cordys, requires sychronize">
+		<!--
+			Target needs to be executed based on changed jar files in CWS (the
+			ones with the hacks done in pre-package) and calling exec makes sure
+			this happens.
+		-->
+		<exec executable="/bin/bash" dir="." failonerror="true">
+			<arg value="build.sh" />
+			<arg line="package-internal" />
+		</exec>
+	</target>
+
+	<target name="package-internal"
+		description="Package CWS test database content filled during synchronize into an isvp">
+		<cordys:forwardpath path="${build.cws.config.dir}"
+			property="tmp.build.cws.config.dir" />
+		<cordys:forwardpath path="${build.cws.output.dir}"
+			property="tmp.build.cws.output.dir" />
+		<cordys:forwardpath path="${build.cws.sync.dir}"
+			property="tmp.build.cws.sync.dir" />
+		<cordys:forwardpath path="${build.cws.db.dir}"
+			property="tmp.build.cws.db.dir" />
+		<cordys:forwardpath path="${env.JAVA_HOME}"
+			property="tmp.java.home" />
+		<cordys:forwardpath path="${cws.config.dir}"
+			property="tmp.config.dir" />
+		<cws organizationname="${cws.default.organization}" workspacename="${cws.default.workspace}">
+			<initialize configfolder="${build.cws.config.dir}"
+				reinitializedatabase="false" />
+			<createisvpackage projectname="${project.name}" />
+		</cws>
+	</target>
+
+	<!--
+		Application signing
+		######################################################################################
+	-->
+
+	<path id="applicationsigner.classpath">
+		<fileset dir="${buildframework.lib.applicationsigner}"
+			includes="*.jar" />
+	</path>
+
+	<target name="sign-application" description="Sign the application package"
+		depends="-copy-cordys-native-libs">
+		<java fork="true" classname="com.cordys.tools.signisvp.CordysApplicationSigner"
+			classpathref="applicationsigner.classpath">
+			<arg value="${sign.isvp.path}" />
+			<arg value="${sign.certificate.path}" />
+			<arg value="${sign.key.password}" />
+			<env key="${project.pathvariable}" path="${build.platform.dir}/lib:${path}" />
+		</java>
+	</target>
+
+	<!--
+		SVANT
+		######################################################################################
+	-->
+
+	<path id="svntask.path">
+		<fileset dir="${buildframework.lib.svntask}" includes="*.jar" />
+	</path>
+
+	<target name="svnupdate">
+		<typedef resource="com/googlecode/svntask/svntask.xml">
+			<classpath>
+				<path refid="svntask.path" />
+			</classpath>
+		</typedef>
+		<!-- Do an update first to make sure you have the latest version -->
+		<svn>
+			<update
+				path="${buildserver.dir}/cws/sync/${buildserver.organization}/${buildserver.workspace}"
+				force="true" recursive="true" />
+		</svn>
+		<svn>
+			<info
+				path="${buildserver.dir}/cws/sync/${buildserver.organization}/${buildserver.workspace}"
+				revisionProperty="revisionVersion" />
+		</svn>
+		<property name="svn.version" value="${revisionVersion}" />
+	</target>
+
+	<path id="isvp.buildnumber.classpath">
+		<fileset dir="${buildframework.lib.isvp.buildnumber}"
+			includes="*.jar" />
+	</path>
+
+	<target name="update-isvp-build-number" depends="svnupdate"
+		description="updates build number of project on build server with latest svn revision number">
+		<echo>Buildnumber = ${svn.version}</echo>
+		<java fork="true" classname="com.cordys.ucf.buildframework.BuildNumber">
+			<arg
+				value="${buildserver.dir}/cws/sync/${buildserver.organization}/${buildserver.workspace}" />
+			<arg value="${project.name}" />
+			<arg value="${svn.version}" />
+			<arg value="${isv.filename}" />
+			<classpath>
+				<pathelement location="${buildframework.lib.isvp.buildnumber}" />
+				<path refid="project.dependency.classpath" />
+			</classpath>
+		</java>
+	</target>
+
+	<!--
+		CMX
+		######################################################################################
+		See
+		https://wiki.cordys.com/display/PDi/Ws-Apps+package+change+procedure
+	-->
+
+	<target name="get-cmx" description="Retrieve cmx files from developer's machine"
+		depends="-copy-cordys-native-libs">
+		<java classname="com.cordys.cpc.bsf.test.cmx.Cmx" fork="true">
+			<arg value="${project.test.dir}" />
+			<classpath>
+				<path refid="dependency.classpath" />
+				<path refid="project.dependency.classpath" />
+			</classpath>
+			<env key="${project.pathvariable}" path="${build.platform.dir}/lib:${path}" />
+		</java>
+	</target>
+
+	<!--
+		PMD
+		######################################################################################
+	-->
+
+	<path id="pmd.path">
+		<fileset dir="${buildframework.lib.pmd}" includes="*.jar" />
+	</path>
+
+	<target name="pmd" description="Generate PMD report">
+		<mkdir dir="${report.pmd}" />
+		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask">
+			<classpath>
+				<path refid="pmd.path" />
+			</classpath>
+		</taskdef>
+		<pmd shortFilenames="true" targetjdk="1.6">
+			<ruleset>pmd_rules_cordys.xml</ruleset>
+			<formatter type="xml" toFile="${report.pmd}/pmd_report.xml"
+				linkPrefix="http://pmd.sourceforge.net/xref/" />
+			<fileset dir="${src.java}">
+				<include name="**/*.java" />
+			</fileset>
+		</pmd>
+	</target>
+
+	<!--
+		VIZANT
+		######################################################################################
+	-->
+
+	<taskdef name="vizant" classname="net.sourceforge.vizant.Vizant"
+		classpath="${buildframework.lib.vizant}" />
+
+	<target name="vizant"
+		description="Generate picture with a graph representing the dependency structure inside this build file">
+		<vizant antfile="build.xml" outfile="build.dot" />
+		<exec executable="dot">
+			<arg line="-Tpng build.dot -o build.png" />
+		</exec>
+		<delete file="build.dot" />
+	</target>
+
+</project>

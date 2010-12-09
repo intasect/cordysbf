@@ -1,0 +1,117 @@
+# Build framework
+#buildframework.dir = ../buildframework
+buildframework.dummyinstalldir.src = ${buildframework.dir}/src/installdir.zip
+dummyinstalldir.dir = ${project.test.dir}/build/dummyinstall
+
+# Library
+lib = ${buildframework.dir}/lib
+#lib.ant = ${lib}/ant/lib/ant.jar
+lib.ant.path = ${buildframework.dir}/buildframework/lib/ant/lib/
+lib.ant-maven = ${lib}/maven-ant-tasks-2.1.0.jar
+lib.ant-contrib.jar = ${lib}/ant-contrib-1.0b3.jar
+
+#project
+project.name = ${ant.project.name}
+project.revision = 1.0
+project.dir =
+project.test.dir =
+
+# Source
+src.java = ${project.dir}/Java
+src.messagebundles = ${test.src}/messageBundles
+src.content.xas = ${test.src}/wsapps/
+
+# Test
+test = ${project.test.dir}/test
+test.src = ${project.test.dir}/src
+# dirty location
+test.src.junit = ${project.test.dir}/junit
+test.src.java = ${src.java}
+
+# Build
+build = ${project.test.dir}/build
+build.classes = ${build}/classes
+build.classes.java = ${build.classes}/java
+build.lib = ${build}/lib
+build.dir = ${build}
+
+# Test Compile
+compile.java.target = 6
+
+test.compile.junit.debug = on
+test.compile.junit.deprecation = on
+test.compile.junit.optimize = off
+test.compile.junit.nowarn = off
+test.compile.junit.lib = ${project.test.dir}/lib
+
+test.compile.java.debug = on
+test.compile.java.deprecation = on
+test.compile.java.optimize = off
+test.compile.java.nowarn = off
+test.compile.java.lib = ${project.test.dir}/lib
+
+
+
+test.build = ${build}/test
+test.build.classes = ${test.build}/classes
+test.results = ${test.build}/results
+test.build.classes.junit = ${test.build.classes}/junit
+test.build.classes.java = ${test.build.classes}/java
+test.results.junit = ${test.results}/junit
+test.results.soapui = ${test.results}/soapui
+
+test.junit.formatter = xml
+test.junit.printsummary = withOutAndErr
+test.junit.haltonfailure = on
+test.junit.haltonerror = on
+test.junit.fork = true
+test.junit.timeout = 480000
+test.junit.failureproperty = test.junit.failed
+test.junit.errorproperty = test.junit.error
+test.junit.showoutput = true
+test.junit.testcase.formatter = plain
+test.junit.developer = true
+test.junit.bus.xml.nom.exceptions.enabled=true
+
+# Report
+reports.dir = ${project.root.dir}/reports
+
+report = ${build}/report
+report.junit.format = frames
+
+report.junit = ${report}/junit
+junit.reports.html=${report.junit}/html
+
+soapui.reports=${report}/soapui
+soapui.reports.html=${soapui.reports}/html
+#soapui.reports.junit=${soapui.reports}/junit
+
+#Cordys version - will retrieve native libs from maven
+native-dep-version = 4.2-D1.000-004-1
+
+# default deploy SNAPSHOT policy
+deploy.updatepolicy.snapshot = always
+
+# The name of the deployment repository
+deploy.repo = dav:http://srv-ind-scrat/mavenrepo/ewesb/
+# The user and password to be used to deploy to the repository
+# These should be overriden in the user.properties found in the
+# base directory of the component (where the build.xml is found)
+deploy.user = nouser
+deploy.password = changethis
+
+#Cordys BCP version
+#product.version = 4.2
+
+#cobertura settings
+
+cobertura.dir=${buildframework.dir}/src/cobertura
+
+instrumented.dir.junit=${build}/cobertura/instrumented_junit
+coveragereport.dir.junit=${report}/cobertura_junit
+
+instrumented.dir.soapui=/opt/Cordys/bop4/instrumented
+coveragereport.dir.soapui=${report}/cobertura_soapui
+
+instrumented.dir.uiunit=e:\\Cordys\\defaultInst\\instrumented
+coveragereport.dir.uinit=${report}/cobertura_uiunit
