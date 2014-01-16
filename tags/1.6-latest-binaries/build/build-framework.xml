@@ -8,6 +8,7 @@
 <project default="all"
          basedir="."
          xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+    xmlns:sa="http://subclipse.tigris.org/svnant"
 >
 	<import file="build-projectsite.xml" />
 	
