@@ -5,7 +5,7 @@
 	
 	Customizations should be done in the build-project.xml or the build-user.xml.
 -->
-<project default="dummy">
+<project default="dummy" xmlns:sa="http://subclipse.tigris.org/svnant">
 	<!-- Cobertura coverage checker -->
 	<taskdef classpathref="classpath" name="cobertura-instrument" classname="net.sourceforge.cobertura.ant.InstrumentTask"/>
 	<taskdef classpathref="classpath" name="cobertura-merge" classname="net.sourceforge.cobertura.ant.MergeTask"/>
@@ -20,6 +20,7 @@
   	
   	<!-- Import the svnAnt targets -->
   	<typedef resource="svnantlib.xml" classpathref="classpath"/>
+	<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="classpath" uri="http://subclipse.tigris.org/svnant"/>
 	
 	<!-- XMLTask -->
 	<taskdef name="xmltask" classname="com.oopsconsultancy.xmltask.ant.XmlTask" classpathref="classpath"/>
