@@ -358,6 +358,7 @@
 		         doctitle="${project.name} ${version.full}"
 		         source="${javac.source.version}"
 		         stylesheetfile="${sdk.dir}/build/stylesheet.css"
+			     useexternalfile="true"
 		>
 			<classpath refid="classpath" />
 		</javadoc>
@@ -779,7 +780,7 @@
 	<!-- - - - - - - - - - - - - - - - - - 
           target: cobertura-instrument                      
          - - - - - - - - - - - - - - - - - -->
-	<target name="cobertura-instrument" depends="init,compile,compile-test">
+	<target name="cobertura-instrument" depends="init,compile,compile-test" unless="skip.test">
 		<!--
 				Remove the coverage data file and any old instrumentation.
 			-->
